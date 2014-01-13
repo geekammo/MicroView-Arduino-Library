@@ -21,6 +21,9 @@
 #define LCDWIDTH			64
 #define LCDHEIGHT			48
 
+#define NORM				0
+#define XOR					1
+
 #define PAGE				0
 #define ALL					1
 
@@ -66,9 +69,13 @@ class MICROVIEW {
 		void clear(uint8_t mode);
 		void invert(uint8_t i);
 		void display(void);
-		void pixel(uint8_t x, uint8_t y, uint8_t color);
-		void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color);
-		
+		void pixel(uint8_t x, uint8_t y, uint8_t color, uint8_t mode);
+		void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color, uint8_t mode);
+		void lineH(uint8_t x, uint8_t y, uint8_t width, uint8_t color, uint8_t mode);
+		void lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8_t mode);
+		void rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode);
+		void rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode);
+		void circle(uint8_t x, uint8_t y, uint8_t radius, uint8_t color, uint8_t mode);
 		void drawBitmap(void);
 		
 		

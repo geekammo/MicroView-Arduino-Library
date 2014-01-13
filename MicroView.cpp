@@ -171,20 +171,25 @@ void MICROVIEW::display(void) {
 	}
 }
 
-void MICROVIEW::pixel(uint8_t x, uint8_t y, uint8_t color) {
+void MICROVIEW::pixel(uint8_t x, uint8_t y, uint8_t color, uint8_t mode) {
 	if ((x<0) ||  (x>LCDWIDTH-1) || (y<0) || (y>LCDHEIGHT-1))
 	return;
 	
-	if (color==WHITE)
-	screenmemory[x+ (y/8)*LCDWIDTH] |= _BV((y%8));
-	else
-	screenmemory[x+ (y/8)*LCDWIDTH] &= ~_BV((y%8)); 
+	if (mode==XOR) {
+		screenmemory[x+ (y/8)*LCDWIDTH] ^= _BV((y%8));
+	}
+	else {
+		if (color==WHITE)
+		screenmemory[x+ (y/8)*LCDWIDTH] |= _BV((y%8));
+		else
+		screenmemory[x+ (y/8)*LCDWIDTH] &= ~_BV((y%8)); 
+	}
 	
 	//display();
 }
 
 // bresenham's algorithm 
-void MICROVIEW::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color) {
+void MICROVIEW::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color, uint8_t mode) {
 	uint8_t steep = abs(y1 - y0) > abs(x1 - x0);
 	if (steep) {
 		swap(x0, y0);
@@ -210,9 +215,9 @@ void MICROVIEW::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t col
 
 	for (; x0<x1; x0++) {
 		if (steep) {
-			pixel(y0, x0, color);
+			pixel(y0, x0, color, mode);
 		} else {
-			pixel(x0, y0, color);
+			pixel(x0, y0, color, mode);
 		}
 		err -= dy;
 		if (err < 0) {
@@ -220,6 +225,62 @@ void MICROVIEW::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t col
 			err += dx;
 		}
 	}	
+}
+
+void MICROVIEW::lineH(uint8_t x, uint8_t y, uint8_t width, uint8_t color, uint8_t mode) {
+	line(x,y,x+width,y,color,mode);
+}
+
+void MICROVIEW::lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8_t mode) {
+	line(x,y,x,y+height,color,mode);
+}
+
+void MICROVIEW::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
+	lineH(x,y, width, color, mode);
+	lineV(x,y, height, color, mode);
+	lineH(x,y+height-1, width, color, mode);
+	lineV(x+width-1, y, height, color, mode);
+}
+
+void MICROVIEW::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
+	for (int i=x; i<x+width;i++) {
+		lineV(i,y, height, color, mode);
+	}
+}
+
+void MICROVIEW::circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
+  int8_t f = 1 - radius;
+  int8_t ddF_x = 1;
+  int8_t ddF_y = -2 * radius;
+  int8_t x = 0;
+  int8_t y = radius;
+
+  pixel(x0, y0+radius, color, mode);
+  pixel(x0, y0-radius, color, mode);
+  pixel(x0+radius, y0, color, mode);
+  pixel(x0-radius, y0, color, mode);
+
+  while (x<y) {
+    if (f >= 0) {
+      y--;
+      ddF_y += 2;
+      f += ddF_y;
+    }
+    x++;
+    ddF_x += 2;
+    f += ddF_x;
+  
+    pixel(x0 + x, y0 + y, color, mode);
+    pixel(x0 - x, y0 + y, color, mode);
+    pixel(x0 + x, y0 - y, color, mode);
+    pixel(x0 - x, y0 - y, color, mode);
+    
+    pixel(x0 + y, y0 + x, color, mode);
+    pixel(x0 - y, y0 + x, color, mode);
+    pixel(x0 + y, y0 - x, color, mode);
+    pixel(x0 - y, y0 - x, color, mode);
+    
+  }
 }
 
 void MICROVIEW::stopScroll(void){
