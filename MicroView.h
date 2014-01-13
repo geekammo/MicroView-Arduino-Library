@@ -7,17 +7,22 @@
  #include "WProgram.h"
 #endif
 
-// CS is defined when constructing MICROVIEW class, thus the library can control multiple slave MicroViews.
-#define DC 8
-#define SCK 13
-#define MOSI 11
-#define RESET 12
+#define swap(a, b) { uint8_t t = a; a = b; b = t; }
+
+#define DC		8
+#define SCK		13
+#define MOSI	11
+#define RESET	12
+#define CS 		10
 
 #define BLACK 0
 #define WHITE 1
 
 #define LCDWIDTH			64
 #define LCDHEIGHT			48
+
+#define PAGE				0
+#define ALL					1
 
 #define SETCONTRAST 		0x81
 #define DISPLAYALLONRESUME 	0xA4
@@ -54,17 +59,22 @@
 
 class MICROVIEW {
 	public:
-		MICROVIEW(uint8_t CS) :cs(CS) {} 
+		MICROVIEW(void) {};
 		void begin(void);
 		void command(uint8_t c);
 		void data(uint8_t c);
-		void clear(void);
+		void clear(uint8_t mode);
 		void invert(uint8_t i);
 		void display(void);
-		void drawPixel(uint8_t x, uint8_t y, uint8_t color);
+		void pixel(uint8_t x, uint8_t y, uint8_t color);
+		void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color);
+		
 		void drawBitmap(void);
+		
+		
 		void setColumnAddress(uint8_t add);
 		void setPageAddress(uint8_t add);
+		
 
 		void scrollRight(uint8_t start, uint8_t stop);
 		void scrollLeft(uint8_t start, uint8_t stop);
@@ -74,7 +84,7 @@ class MICROVIEW {
   
 	
 	private:
-		uint8_t cs;
+		//uint8_t cs;
 		volatile uint8_t *mosiport, *sckport, *csport, *dcport;	// use volatile because these are fixed location port address
 		uint8_t mosipinmask, sckpinmask, cspinmask, dcpinmask;
 };

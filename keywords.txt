@@ -6,7 +6,7 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-MicroView	KEYWORD1
+MICROVIEW	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -15,6 +15,7 @@ MicroView	KEYWORD1
 begin	KEYWORD2
 clear	KEYWORD2
 home	KEYWORD2
+display	KEYWORD2
 
 
 #######################################
