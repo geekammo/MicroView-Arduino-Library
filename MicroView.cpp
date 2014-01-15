@@ -1,5 +1,6 @@
 #include <avr/pgmspace.h>
 #include <MicroView.h>
+#include <font5x7.h>
 #include <SPI.h>
 
 /*
@@ -236,50 +237,109 @@ void MICROVIEW::lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8
 }
 
 void MICROVIEW::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
+	uint8_t tempHeight;
+	
 	lineH(x,y, width, color, mode);
-	lineV(x,y, height, color, mode);
 	lineH(x,y+height-1, width, color, mode);
-	lineV(x+width-1, y, height, color, mode);
+	
+	tempHeight=height-2;
+	
+	// skip drawing vertical lines to avoid overlapping of pixel that will 
+	// affect XOR plot if no pixel in between horizontal lines		
+	if (tempHeight<1) return;			
+
+	lineV(x,y+1, tempHeight, color, mode);
+	lineV(x+width-1, y+1, tempHeight, color, mode);
 }
 
 void MICROVIEW::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
+	// TODO - need to optimise the memory map draw so that this function will not call pixel one by one
 	for (int i=x; i<x+width;i++) {
 		lineV(i,y, height, color, mode);
 	}
 }
 
 void MICROVIEW::circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
-  int8_t f = 1 - radius;
-  int8_t ddF_x = 1;
-  int8_t ddF_y = -2 * radius;
-  int8_t x = 0;
-  int8_t y = radius;
+	
+	//TODO - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
+	int8_t f = 1 - radius;
+	int8_t ddF_x = 1;
+	int8_t ddF_y = -2 * radius;
+	int8_t x = 0;
+	int8_t y = radius;
 
-  pixel(x0, y0+radius, color, mode);
-  pixel(x0, y0-radius, color, mode);
-  pixel(x0+radius, y0, color, mode);
-  pixel(x0-radius, y0, color, mode);
+	pixel(x0, y0+radius, color, mode);
+	pixel(x0, y0-radius, color, mode);
+	pixel(x0+radius, y0, color, mode);
+	pixel(x0-radius, y0, color, mode);
 
-  while (x<y) {
-    if (f >= 0) {
-      y--;
-      ddF_y += 2;
-      f += ddF_y;
-    }
+	while (x<y) {
+		if (f >= 0) {
+			y--;
+			ddF_y += 2;
+			f += ddF_y;
+		}
+		x++;
+		ddF_x += 2;
+		f += ddF_x;
+
+		pixel(x0 + x, y0 + y, color, mode);
+		pixel(x0 - x, y0 + y, color, mode);
+		pixel(x0 + x, y0 - y, color, mode);
+		pixel(x0 - x, y0 - y, color, mode);
+		
+		pixel(x0 + y, y0 + x, color, mode);
+		pixel(x0 - y, y0 + x, color, mode);
+		pixel(x0 + y, y0 - x, color, mode);
+		pixel(x0 - y, y0 - x, color, mode);
+		
+	}
+}
+
+
+void MICROVIEW::circleFill(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color, uint8_t mode) {
+	// TODO - - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
+	int8_t f = 1 - r;
+	int8_t ddF_x = 1;
+	int8_t ddF_y = -2 * r;
+	int8_t x = 0;
+	int8_t y = r;
+
+	// Temporary disable fill circle for XOR mode.
+	if (mode==XOR) return;
+	
+	for (uint8_t i=y0-r; i<=y0+r; i++) {
+		pixel(x0, i, color, mode);
+	}
+
+	while (x<y) {
+		if (f >= 0) {
+			y--;
+			ddF_y += 2;
+			f += ddF_y;
+		}
+		x++;
+		ddF_x += 2;
+		f += ddF_x;
+
+		for (uint8_t i=y0-y; i<=y0+y; i++) {
+			pixel(x0+x, i, color, mode);
+			pixel(x0-x, i, color, mode);
+		} 
+		for (uint8_t i=y0-x; i<=y0+x; i++) {
+			pixel(x0+y, i, color, mode);
+			pixel(x0-y, i, color, mode);
+		}    
+	}
+}
+
+void  MICROVIEW::drawChar(uint8_t x, uint8_t line, uint8_t c, uint8_t mode) {
+	// TODO - char must be able to be drawn anywhere, not limited by line
+  if ((line >= LCDHEIGHT/8) || (x >= (LCDWIDTH - 6)))
+      return;
+  for (uint8_t i =0; i<5; i++ ) {
+    screenmemory[x + (line*64) ] = pgm_read_byte(font+(c*5)+i);
     x++;
-    ddF_x += 2;
-    f += ddF_x;
-  
-    pixel(x0 + x, y0 + y, color, mode);
-    pixel(x0 - x, y0 + y, color, mode);
-    pixel(x0 + x, y0 - y, color, mode);
-    pixel(x0 - x, y0 - y, color, mode);
-    
-    pixel(x0 + y, y0 + x, color, mode);
-    pixel(x0 - y, y0 + x, color, mode);
-    pixel(x0 + y, y0 - x, color, mode);
-    pixel(x0 - y, y0 - x, color, mode);
-    
   }
 }
 
