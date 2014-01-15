@@ -2,9 +2,9 @@
 #define MICROVIEW_H
 
 #if ARDUINO >= 100
- #include "Arduino.h"
+#include "Arduino.h"
 #else
- #include "WProgram.h"
+#include "WProgram.h"
 #endif
 
 #define swap(a, b) { uint8_t t = a; a = b; b = t; }
@@ -61,40 +61,46 @@
 #define VERTICALLEFTHORIZONTALSCROLL	0x2A
 
 class MICROVIEW {
-	public:
-		MICROVIEW(void) {};
-		void begin(void);
-		void command(uint8_t c);
-		void data(uint8_t c);
-		void clear(uint8_t mode);
-		void invert(uint8_t i);
-		void display(void);
-		void pixel(uint8_t x, uint8_t y, uint8_t color, uint8_t mode);
-		void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color, uint8_t mode);
-		void lineH(uint8_t x, uint8_t y, uint8_t width, uint8_t color, uint8_t mode);
-		void lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8_t mode);
-		void rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode);
-		void rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode);
-		void circle(uint8_t x, uint8_t y, uint8_t radius, uint8_t color, uint8_t mode);
-		void circleFill(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color, uint8_t mode);
-		void drawChar(uint8_t x, uint8_t line, uint8_t c, uint8_t mode);
-		void drawBitmap(void);
-		
-		
-		void setColumnAddress(uint8_t add);
-		void setPageAddress(uint8_t add);
-		
+public:
+	MICROVIEW(void) {};
+	void begin(void);
+	void command(uint8_t c);
+	void data(uint8_t c);
+	void clear(uint8_t mode);
+	void invert(uint8_t i);
+	void display(void);
+	void pixel(uint8_t x, uint8_t y, uint8_t color, uint8_t mode);
+	void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color, uint8_t mode);
+	void lineH(uint8_t x, uint8_t y, uint8_t width, uint8_t color, uint8_t mode);
+	void lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8_t mode);
+	void rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode);
+	void rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode);
+	void circle(uint8_t x, uint8_t y, uint8_t radius, uint8_t color, uint8_t mode);
+	void circleFill(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color, uint8_t mode);
+	void drawChar(uint8_t x, uint8_t line, uint8_t c, uint8_t mode);
+	void drawBitmap(void);
 
-		void scrollRight(uint8_t start, uint8_t stop);
-		void scrollLeft(uint8_t start, uint8_t stop);
-		void scrollVertRight(uint8_t start, uint8_t stop);
-		void scrollVertLeft(uint8_t start, uint8_t stop);
-		void stopScroll(void);
-  
+	uint8_t getFontWidth(void);
+	uint8_t getFontHeight(void);
+	uint8_t getTotalFonts(void);
+	uint8_t getFontType(void);
+	uint8_t setFontType(uint8_t type);
 	
-	private:
-		//uint8_t cs;
-		volatile uint8_t *mosiport, *sckport, *csport, *dcport;	// use volatile because these are fixed location port address
-		uint8_t mosipinmask, sckpinmask, cspinmask, dcpinmask;
+	void setColumnAddress(uint8_t add);
+	void setPageAddress(uint8_t add);
+	
+	void scrollRight(uint8_t start, uint8_t stop);
+	void scrollLeft(uint8_t start, uint8_t stop);
+	void scrollVertRight(uint8_t start, uint8_t stop);
+	void scrollVertLeft(uint8_t start, uint8_t stop);
+	void stopScroll(void);
+	
+private:
+	//uint8_t cs;
+	volatile uint8_t *mosiport, *sckport, *csport, *dcport;	// use volatile because these are fixed location port address
+	uint8_t mosipinmask, sckpinmask, cspinmask, dcpinmask;
+	uint8_t fontWidth, fontHeight, fontType;
+	//unsigned char *fontsPointer[TOTALFONTS];
+	static const unsigned char *fontsPointer[];
 };
 #endif

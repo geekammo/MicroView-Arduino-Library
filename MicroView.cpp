@@ -5,7 +5,7 @@
 
 /*
 Screen memory buffer 64 x 48 divided by 8 = 384 bytes
-Screen memory buffer is required because in SPI mode, the host cannot read the GDRAM of the controller.  This buffer serves as a scratch RAM for graphical functions.
+Screen memory buffer is required because in SPI mode, the host cannot read the SSD1306's GDRAM of the controller.  This buffer serves as a scratch RAM for graphical functions.
 */
 static uint8_t screenmemory [] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -34,7 +34,15 @@ static uint8_t screenmemory [] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+#define TOTALFONTS			2
+
+const unsigned char *MICROVIEW::fontsPointer[]={font,font};
+
 void MICROVIEW::begin() {
+	
+	// default 5x7 font
+	fontType=0;
+	
 	// Setting up SPI pins
 	pinMode(MOSI, OUTPUT);
 	pinMode(SCK, OUTPUT);
@@ -333,14 +341,37 @@ void MICROVIEW::circleFill(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color, uin
 	}
 }
 
+uint8_t MICROVIEW::getFontWidth(void) {
+	return pgm_read_byte(fontsPointer[fontType]+1);
+}
+
+uint8_t MICROVIEW::getFontHeight(void) {
+	return pgm_read_byte(fontsPointer[fontType]+2);
+}
+
+uint8_t MICROVIEW::getTotalFonts(void) {
+	return TOTALFONTS;
+}
+
+uint8_t MICROVIEW::getFontType(void) {
+	return fontType;
+}
+
+uint8_t MICROVIEW::setFontType(uint8_t type) {
+	if ((type>=TOTALFONTS) || (type<0))
+	return -1;
+
+	fontType=type;
+}
+
 void  MICROVIEW::drawChar(uint8_t x, uint8_t line, uint8_t c, uint8_t mode) {
 	// TODO - char must be able to be drawn anywhere, not limited by line
-  if ((line >= LCDHEIGHT/8) || (x >= (LCDWIDTH - 6)))
-      return;
-  for (uint8_t i =0; i<5; i++ ) {
-    screenmemory[x + (line*64) ] = pgm_read_byte(font+(c*5)+i);
-    x++;
-  }
+	if ((line >= LCDHEIGHT/8) || (x >= (LCDWIDTH - 6)))
+	return;
+	for (uint8_t i =0; i<5; i++ ) {
+		screenmemory[x + (line*LCDWIDTH) ] = pgm_read_byte(fontsPointer[fontType]+3+(c*5)+i);
+		x++;
+	}
 }
 
 void MICROVIEW::stopScroll(void){
