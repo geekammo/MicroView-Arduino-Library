@@ -20,12 +20,16 @@
 
 #define LCDWIDTH			64
 #define LCDHEIGHT			48
+#define FONTHEADERSIZE		7
+
 
 #define NORM				0
 #define XOR					1
 
 #define PAGE				0
 #define ALL					1
+
+
 
 #define SETCONTRAST 		0x81
 #define DISPLAYALLONRESUME 	0xA4
@@ -64,8 +68,14 @@ class MICROVIEW {
 public:
 	MICROVIEW(void) {};
 	void begin(void);
+
+// RAW LCD functions
 	void command(uint8_t c);
 	void data(uint8_t c);
+	void setColumnAddress(uint8_t add);
+	void setPageAddress(uint8_t add);
+	
+// LCD Draw functions	
 	void clear(uint8_t mode);
 	void invert(uint8_t i);
 	void display(void);
@@ -80,15 +90,16 @@ public:
 	void drawChar(uint8_t x, uint8_t line, uint8_t c, uint8_t mode);
 	void drawBitmap(void);
 
+// Font functions
 	uint8_t getFontWidth(void);
 	uint8_t getFontHeight(void);
 	uint8_t getTotalFonts(void);
 	uint8_t getFontType(void);
 	uint8_t setFontType(uint8_t type);
+	uint8_t getFontStartChar(void);
+	uint8_t getFontTotalChar(void);
 	
-	void setColumnAddress(uint8_t add);
-	void setPageAddress(uint8_t add);
-	
+// LCD Rotate Scroll functions	
 	void scrollRight(uint8_t start, uint8_t stop);
 	void scrollLeft(uint8_t start, uint8_t stop);
 	void scrollVertRight(uint8_t start, uint8_t stop);
@@ -99,7 +110,8 @@ private:
 	//uint8_t cs;
 	volatile uint8_t *mosiport, *sckport, *csport, *dcport;	// use volatile because these are fixed location port address
 	uint8_t mosipinmask, sckpinmask, cspinmask, dcpinmask;
-	uint8_t fontWidth, fontHeight, fontType;
+	uint8_t fontWidth, fontHeight, fontType, fontStartChar, fontTotalChar;
+	uint16_t fontMapWidth;
 	//unsigned char *fontsPointer[TOTALFONTS];
 	static const unsigned char *fontsPointer[];
 };

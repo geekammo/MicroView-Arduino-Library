@@ -4,9 +4,9 @@
 #include <avr/pgmspace.h>
 
 // Standard ASCII 5x7 font
-static const unsigned char font[] PROGMEM = {
-	// first row FONTTYPE, FONTWIDTH, FONTHEIGHT
-	0,5,7,
+static const unsigned char font5x7[] PROGMEM = {
+	// first row FONTTYPE, FONTWIDTH, FONTHEIGHT, ASCII START CHAR, TOTAL CHARACTERS, FONT MAP WIDTH
+	0,5,7,0,255,12,75,
 	0x00, 0x00, 0x00, 0x00, 0x00,
 	0x3E, 0x5B, 0x4F, 0x5B, 0x3E,
 	0x3E, 0x6B, 0x4F, 0x6B, 0x3E,
