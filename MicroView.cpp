@@ -62,14 +62,6 @@ static uint8_t screenmemory [] = {
 void MICROVIEW::begin() {
 	
 	// default 5x7 font
-	/*
-	fontType=0;
-	fontWidth=pgm_read_byte(fontsPointer[fontType]+1);
-	fontHeight=pgm_read_byte(fontsPointer[fontType]+2);
-	fontStartChar=pgm_read_byte(fontsPointer[fontType]+3);
-	fontTotalChar=pgm_read_byte(fontsPointer[fontType]+4);
-	*/
-
 	setFontType(0);
 	setFontColor(WHITE);
 	setFontDrawMode(NORM);
@@ -185,7 +177,6 @@ void MICROVIEW::setColumnAddress(uint8_t add) {
 void MICROVIEW::clear(uint8_t mode) {
 	uint8_t page=6, col=0x40;
 	if (mode==ALL) {
-
 		for (int i=0;i<8; i++) {
 			setPageAddress(i);
 			setColumnAddress(0);
@@ -200,6 +191,30 @@ void MICROVIEW::clear(uint8_t mode) {
 		display();
 	}
 }
+
+/*	
+	Clear GDRAM inside the LCD controller - mode = ALL with c character.
+	Clear screen page buffer - mode = PAGE with c character.
+*/
+void MICROVIEW::clear(uint8_t mode, uint8_t c) {
+	uint8_t page=6, col=0x40;
+	if (mode==ALL) {
+		for (int i=0;i<8; i++) {
+			setPageAddress(i);
+			setColumnAddress(0);
+			for (int j=0; j<0x80; j++) {
+				data(c);
+			}
+		}
+	}
+	else
+	{
+		memset(screenmemory,c,384);			// (64 x 48) / 8 = 384
+		display();
+	}	
+}
+
+
 
 void MICROVIEW::display(void) {
 	uint8_t i, j;
@@ -246,6 +261,7 @@ size_t MICROVIEW::write(uint8_t c) {
 		return;
 		
 		if (mode==XOR) {
+			if (color==WHITE)
 			screenmemory[x+ (y/8)*LCDWIDTH] ^= _BV((y%8));
 		}
 		else {
@@ -402,6 +418,14 @@ size_t MICROVIEW::write(uint8_t c) {
 		}
 	}
 
+	uint8_t MICROVIEW::getLCDHeight(void) {
+		return LCDHEIGHT;
+	}
+	
+	uint8_t MICROVIEW::getLCDWidth(void) {
+		return LCDWIDTH;
+	}
+	
 	uint8_t MICROVIEW::getFontWidth(void) {
 		return fontWidth;
 	}
@@ -431,11 +455,11 @@ size_t MICROVIEW::write(uint8_t c) {
 		return -1;
 
 		fontType=type;
-		fontWidth=pgm_read_byte(fontsPointer[fontType]+1);
-		fontHeight=pgm_read_byte(fontsPointer[fontType]+2);
-		fontStartChar=pgm_read_byte(fontsPointer[fontType]+3);
-		fontTotalChar=pgm_read_byte(fontsPointer[fontType]+4);
-		fontMapWidth=(pgm_read_byte(fontsPointer[fontType]+5)*100)+pgm_read_byte(fontsPointer[fontType]+6); // two bytes values into integer 16
+		fontWidth=pgm_read_byte(fontsPointer[fontType]+0);
+		fontHeight=pgm_read_byte(fontsPointer[fontType]+1);
+		fontStartChar=pgm_read_byte(fontsPointer[fontType]+2);
+		fontTotalChar=pgm_read_byte(fontsPointer[fontType]+3);
+		fontMapWidth=(pgm_read_byte(fontsPointer[fontType]+4)*100)+pgm_read_byte(fontsPointer[fontType]+5); // two bytes values into integer 16
 
 	}
 
@@ -452,14 +476,14 @@ size_t MICROVIEW::write(uint8_t c) {
 		uint8_t rowsToDraw,row, tempC;
 		uint8_t i,j,tempX;
 		uint16_t charPerBitmapRow,charColPositionOnBitmap,charRowPositionOnBitmap,charBitmapStartPosition;
-		// TODO - char must be able to be drawn anywhere, not limited by line
+		
 		// TODO - char must be able to XOR on background
 		
 		//if ((line >= LCDHEIGHT/fontHeight) || (x > (LCDWIDTH - fontWidth)))
 		//return;
 		
 		if ((c<fontStartChar) || (c>(fontStartChar+fontTotalChar-1)))		// no bitmap for the required c
-			return;
+		return;
 		
 		tempC=c-fontStartChar;
 		

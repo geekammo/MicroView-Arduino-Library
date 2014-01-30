@@ -9,8 +9,17 @@ Arduino library for MicroView.
 
 History
 -------
-v1.0b: 30th January 2014 by JP Liew
+v1.01b:	30th January 2014 by JP Liew
+	- fixed font draw XOR mode bug.
+	- added analog clock demo.
+	
+v1.00b:	30th January 2014 by JP Liew
 	- Initial commit.  Beta with minor bugs.
+
+Required Libraries
+------------------
+1. SPI.h
+
 
 Installation Instructions
 -------------------------

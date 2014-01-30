@@ -21,16 +21,13 @@
 
 #define LCDWIDTH			64
 #define LCDHEIGHT			48
-#define FONTHEADERSIZE		7
-
+#define FONTHEADERSIZE		6
 
 #define NORM				0
 #define XOR					1
 
 #define PAGE				0
 #define ALL					1
-
-
 
 #define SETCONTRAST 		0x81
 #define DISPLAYALLONRESUME 	0xA4
@@ -84,6 +81,7 @@ public:
 	
 	// LCD Draw functions	
 	void clear(uint8_t mode);
+	void clear(uint8_t mode, uint8_t c);
 	void invert(uint8_t i);
 	void display(void);
 	void setCursor(uint8_t x, uint8_t y);
@@ -97,6 +95,8 @@ public:
 	void circleFill(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color, uint8_t mode);
 	void drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t mode);
 	void drawBitmap(void);
+	uint8_t getLCDWidth(void);
+	uint8_t getLCDHeight(void);
 
 	// Font functions
 	uint8_t getFontWidth(void);
