@@ -5,8 +5,9 @@
 // Change to add fonts
 #include <font5x7.h>
 #include <font8x16.h>
-#define TOTALFONTS			2
-const unsigned char *MICROVIEW::fontsPointer[]={font5x7,font8x16};
+#include <fontlargenumber.h>
+#define TOTALFONTS			3
+const unsigned char *MICROVIEW::fontsPointer[]={font5x7,font8x16,fontlargenumber};
 // Change to add fonts
 
 
@@ -448,7 +449,7 @@ size_t MICROVIEW::write(uint8_t c) {
 
 	void  MICROVIEW::drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t mode) {
 		//void  MICROVIEW::drawChar(uint8_t x, uint8_t line, uint8_t c, uint8_t mode) {
-		uint8_t rowsToDraw,row;
+		uint8_t rowsToDraw,row, tempC;
 		uint8_t i,j,tempX;
 		uint16_t charPerBitmapRow,charColPositionOnBitmap,charRowPositionOnBitmap,charBitmapStartPosition;
 		// TODO - char must be able to be drawn anywhere, not limited by line
@@ -457,18 +458,23 @@ size_t MICROVIEW::write(uint8_t c) {
 		//if ((line >= LCDHEIGHT/fontHeight) || (x > (LCDWIDTH - fontWidth)))
 		//return;
 		
+		if ((c<fontStartChar) || (c>(fontStartChar+fontTotalChar-1)))		// no bitmap for the required c
+			return;
+		
+		tempC=c-fontStartChar;
+		
 		tempX=x;
 		// each row (in datasheet is call page) is 8 bits high, 16 bit high character will have 2 rows to be drawn
 		rowsToDraw=fontHeight/8;	// 8 is LCD's page size, see SSD1306 datasheet
 		if (rowsToDraw<=1) rowsToDraw=1;
 
-		// can draw anywhere on the screen, but SLOW pixel by pixel draw
+		// the following draw function can draw anywhere on the screen, but SLOW pixel by pixel draw
 		if (rowsToDraw==1) {
 			for  (i=0;i<fontWidth+1;i++) {
 				if (i==fontWidth) // this is done in a weird way because for 5x7 font, there is no margin, this code add a margin after col 5
 				tempX=0;
 				else
-				tempX=pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(c*fontWidth)+i);
+				tempX=pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(tempC*fontWidth)+i);
 				
 				for (j=0;j<8;j++) {			// 8 is the LCD's page height (see datasheet for explanation)
 					if (tempX & 0x1) {
@@ -484,12 +490,11 @@ size_t MICROVIEW::write(uint8_t c) {
 			return;
 		}
 
-
 		// font height over 8 bit
 		// take character "0" ASCII 48 as example
 		charPerBitmapRow=fontMapWidth/fontWidth;  // 256/8 =32 char per row
-		charColPositionOnBitmap=c % charPerBitmapRow;  // =16
-		charRowPositionOnBitmap=int(c/charPerBitmapRow); // =1
+		charColPositionOnBitmap=tempC % charPerBitmapRow;  // =16
+		charRowPositionOnBitmap=int(tempC/charPerBitmapRow); // =1
 		charBitmapStartPosition=(charRowPositionOnBitmap * fontMapWidth * (fontHeight/8)) + (charColPositionOnBitmap * fontWidth) ;
 
 		// each row on LCD is 8 bit height (see datasheet for explanation)
