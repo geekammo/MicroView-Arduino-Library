@@ -2,13 +2,19 @@
 #include <MicroView.h>
 #include <SPI.h>
 
-// Change to add fonts
+// Add header of the fonts here
 #include <font5x7.h>
 #include <font8x16.h>
 #include <fontlargenumber.h>
-#define TOTALFONTS			3
-const unsigned char *MICROVIEW::fontsPointer[]={font5x7,font8x16,fontlargenumber};
-// Change to add fonts
+#include <space01.h>
+#include <space02.h>
+#include <space03.h>
+
+// Change the total fonts included
+#define TOTALFONTS			6
+
+// Add the font name as declared in the header file.
+const unsigned char *MICROVIEW::fontsPointer[]={font5x7,font8x16,fontlargenumber, space01,space02,space03};
 
 
 /*

@@ -7,7 +7,7 @@
 
 MICROVIEW mv;
 
-uint8_t dly=5;		// This is the erase delay in milliseconds, if there is no delay, the draw/erase will be too fast to be seen.
+uint8_t onDelay=5;		// This is the erase delay in milliseconds, if there is no delay, the draw/erase will be too fast to be seen.
 
 void setup() {
 	mv.begin();		// Begin of MicroView
@@ -71,6 +71,87 @@ void loop() {
 	drawnFirst=false;
 	mv.clear(PAGE);
 
+	int maxX=40;
+	onDelay=30;
+	mv.setFontType(0);
+	mv.setCursor(0,40);
+	mv.print("  SPRITE  ");
+	for (int x=0; x<maxX;x+=2) {
+		mv.setFontType(3);    
+		mv.drawChar(x,0,48,WHITE, XOR);
+		mv.setFontType(4);
+		mv.drawChar(maxX-x,10,48,WHITE,XOR);
+
+		mv.setFontType(5);
+		mv.drawChar(x,32,48,WHITE,XOR);
+
+		mv.display();
+		delay(onDelay);
+		mv.setFontType(3);
+		mv.drawChar(x,0,48,WHITE, XOR);
+		mv.setFontType(4); 
+		mv.drawChar(maxX-x,10,48,WHITE,XOR);
+		mv.setFontType(5);
+		mv.drawChar(x,32,48,WHITE,XOR);
+
+		mv.display();
+		mv.setFontType(3);
+		mv.drawChar(x,0,49,WHITE, XOR);
+		mv.setFontType(4);
+		mv.drawChar(maxX-x,10,49,WHITE,XOR);
+		mv.setFontType(5);
+		mv.drawChar(x,32,49,WHITE,XOR);
+
+		mv.display();
+		delay(onDelay);
+		mv.setFontType(3);
+		mv.drawChar(x,0,49,WHITE, XOR);
+		mv.setFontType(4);
+		mv.drawChar(maxX-x,10,49,WHITE,XOR);
+		mv.setFontType(5);
+		mv.drawChar(x,32,49,WHITE,XOR);
+		mv.display();
+	}
+
+	for (int x=maxX; x>0;x-=2) {
+		mv.setFontType(3);
+		mv.drawChar(x,10,48,WHITE, XOR);
+		mv.setFontType(4);
+		mv.drawChar(40-x,0,48,WHITE,XOR);
+		mv.setFontType(5);
+		mv.drawChar(x,32,48,WHITE,XOR);
+
+		mv.display();
+		delay(onDelay);
+		mv.setFontType(3);
+		mv.drawChar(x,10,48,WHITE, XOR);
+		mv.setFontType(4);
+		mv.drawChar(40-x,0,48,WHITE,XOR);
+		mv.setFontType(5);
+		mv.drawChar(x,32,48,WHITE,XOR);
+
+		mv.display();
+		mv.setFontType(3);
+		mv.drawChar(x,10,49,WHITE, XOR);
+		mv.setFontType(4);
+		mv.drawChar(40-x,0,49,WHITE,XOR);
+		mv.setFontType(5);
+		mv.drawChar(x,32,49,WHITE,XOR);
+
+		mv.display();
+		delay(onDelay);
+		mv.setFontType(3);
+		mv.drawChar(x,10,49,WHITE, XOR);
+		mv.setFontType(4);
+		mv.drawChar(40-x,0,49,WHITE,XOR);
+		mv.setFontType(5);
+		mv.drawChar(x,32,49,WHITE,XOR);
+
+		mv.display();
+	}
+
+
+	onDelay=5;
 	mv.setFontType(0);
 	mv.setCursor(0,40);
 	mv.print("   LINE   ");    
@@ -85,7 +166,7 @@ void loop() {
 		
 		mv.line(x0,y0,x1,y1, WHITE, XOR);		// draw line from x0,y0 to x1,y1 using WHITE color and XOR draw mode
 		mv.display();
-		delay(dly);    
+		delay(onDelay);    
 		mv.line(x0,y0,x1,y1, WHITE,XOR);
 		mv.display();
 	}
@@ -101,7 +182,7 @@ void loop() {
 		if (y1>47) y1=47;
 		mv.rect(x0,y0,i,y1,WHITE,XOR);			// draw rectangle from x0,y0 with width of i and height of y1 using WHITE color and XOR draw mode
 		mv.display();
-		delay(dly);
+		delay(onDelay);
 		mv.rect(x0,y0,i,y1,WHITE,XOR);
 		mv.display();
 	}
@@ -115,10 +196,10 @@ void loop() {
 	for (i=0;i<32;i++) {
 		mv.circle(x0,y0,i,WHITE,XOR);			// draw circle at x0,y0 with radius of i using WHITE color and XOR draw mode
 		mv.display();
-		delay(dly);
+		delay(onDelay);
 		mv.circle(x0,y0,i,WHITE,XOR);
 		mv.display();
-		delay(dly);
+		delay(onDelay);
 		
 	}
 	delay(500);
@@ -133,7 +214,6 @@ void loop() {
 	mv.print("01234567890ABCDabcd01234567890ABCDabcd");
 	mv.display();
 	delay(1500);
-
 
 	mv.clear(PAGE);
 	mv.setCursor(0,40);
