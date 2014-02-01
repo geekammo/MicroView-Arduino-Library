@@ -1,7 +1,6 @@
 MicroView Arduino Library
 ================================
 Developed by [Geek Ammo Pty Ltd](http://www.geekammo.com) based on Arduino and other Open Source libraries.  
-Author : JP Liew
 
 Description
 -----------
@@ -9,20 +8,23 @@ Arduino library for MicroView.
 
 History
 -------
-**v1.02b: 31th January 2013 by JP Liew**  
-	* added sprite animation demo.  
+**v1.03b: 1st February 2014 by JP Liew**  
+* added 7 segment number only font.
+
+**v1.02b: 31th January 2014 by JP Liew**  
+* added sprite animation demo.  
 	
 **v1.01b:	30th January 2014 by JP Liew**  
-	* fixed font draw XOR mode bug.  
-	* added analog clock demo.
+* fixed font draw XOR mode bug.  
+* added analog clock demo.
 	
 **v1.00b:	30th January 2014 by JP Liew**  
-	* Initial commit.  Beta with minor bugs.
+* Initial commit.  Beta with minor bugs.
 
 Required Libraries
 ------------------
 1. SPI.h
-
+2. [Time.h](http://www.pjrc.com/teensy/td_libs_Time.html) NOTE: Only required when using clock/time functions.
 
 Installation Instructions
 -------------------------

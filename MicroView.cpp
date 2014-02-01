@@ -6,15 +6,16 @@
 #include <font5x7.h>
 #include <font8x16.h>
 #include <fontlargenumber.h>
+#include <7segment.h>
 #include <space01.h>
 #include <space02.h>
 #include <space03.h>
 
 // Change the total fonts included
-#define TOTALFONTS			6
+#define TOTALFONTS		7
 
 // Add the font name as declared in the header file.
-const unsigned char *MICROVIEW::fontsPointer[]={font5x7,font8x16,fontlargenumber, space01,space02,space03};
+const unsigned char *MICROVIEW::fontsPointer[]={font5x7,font8x16,sevensegment,fontlargenumber, space01,space02,space03};
 
 
 /*
@@ -479,21 +480,18 @@ size_t MICROVIEW::write(uint8_t c) {
 
 	void  MICROVIEW::drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t mode) {
 		//void  MICROVIEW::drawChar(uint8_t x, uint8_t line, uint8_t c, uint8_t mode) {
+		
+		// TODO - New routine to take font of any height, at the moment limited to font height in multiple of 8 pixels
+
 		uint8_t rowsToDraw,row, tempC;
-		uint8_t i,j,tempX;
+		uint8_t i,j,temp;
 		uint16_t charPerBitmapRow,charColPositionOnBitmap,charRowPositionOnBitmap,charBitmapStartPosition;
-		
-		// TODO - char must be able to XOR on background
-		
-		//if ((line >= LCDHEIGHT/fontHeight) || (x > (LCDWIDTH - fontWidth)))
-		//return;
-		
+	
 		if ((c<fontStartChar) || (c>(fontStartChar+fontTotalChar-1)))		// no bitmap for the required c
 		return;
 		
 		tempC=c-fontStartChar;
-		
-		tempX=x;
+
 		// each row (in datasheet is call page) is 8 bits high, 16 bit high character will have 2 rows to be drawn
 		rowsToDraw=fontHeight/8;	// 8 is LCD's page size, see SSD1306 datasheet
 		if (rowsToDraw<=1) rowsToDraw=1;
@@ -502,19 +500,19 @@ size_t MICROVIEW::write(uint8_t c) {
 		if (rowsToDraw==1) {
 			for  (i=0;i<fontWidth+1;i++) {
 				if (i==fontWidth) // this is done in a weird way because for 5x7 font, there is no margin, this code add a margin after col 5
-				tempX=0;
+				temp=0;
 				else
-				tempX=pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(tempC*fontWidth)+i);
+				temp=pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(tempC*fontWidth)+i);
 				
 				for (j=0;j<8;j++) {			// 8 is the LCD's page height (see datasheet for explanation)
-					if (tempX & 0x1) {
+					if (temp & 0x1) {
 						pixel(x+i, y+j, color,mode);
 					}
 					else {
 						pixel(x+i, y+j, !color,mode);
 					}
 					
-					tempX >>=1;
+					temp >>=1;
 				}
 			}
 			return;
@@ -530,29 +528,26 @@ size_t MICROVIEW::write(uint8_t c) {
 		// each row on LCD is 8 bit height (see datasheet for explanation)
 		for(row=0;row<rowsToDraw;row++) {
 			for (i=0; i<fontWidth;i++) {
-				tempX=pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(charBitmapStartPosition+i+(row*fontMapWidth)));
+				temp=pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(charBitmapStartPosition+i+(row*fontMapWidth)));
 				for (j=0;j<8;j++) {			// 8 is the LCD's page height (see datasheet for explanation)
-					if (tempX & 0x1) {
+					if (temp & 0x1) {
 						pixel(x+i,y+j+(row*8), color, mode);
 					}
 					else {
 						pixel(x+i,y+j+(row*8), !color, mode);
 					}
-					tempX >>=1;
+					temp >>=1;
 				}
 			}
 		}
-		
-
-
 
 		/*
 	fast direct memory draw but has a limitation to draw in ROWS
 	// only 1 row to draw for font with 8 bit height
 	if (rowsToDraw==1) {
 		for (i=0; i<fontWidth; i++ ) {
-			screenmemory[tempX + (line*LCDWIDTH) ] = pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(c*fontWidth)+i);
-			tempX++;
+			screenmemory[temp + (line*LCDWIDTH) ] = pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(c*fontWidth)+i);
+			temp++;
 		}
 		return;
 	}
@@ -565,13 +560,13 @@ size_t MICROVIEW::write(uint8_t c) {
 	charRowPositionOnBitmap=int(c/charPerBitmapRow); // =1
 	charBitmapStartPosition=(fontMapWidth * (fontHeight/8)) + (charColPositionOnBitmap * fontWidth);
 	
-	tempX=x;
+	temp=x;
 	for (row=0; row<rowsToDraw; row++) {
 		for (i=0; i<fontWidth; i++ ) {
-			screenmemory[tempX + (( (line*(fontHeight/8)) +row)*LCDWIDTH) ] = pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(charBitmapStartPosition+i+(row*fontMapWidth)));
-			tempX++;
+			screenmemory[temp + (( (line*(fontHeight/8)) +row)*LCDWIDTH) ] = pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(charBitmapStartPosition+i+(row*fontMapWidth)));
+			temp++;
 		}
-		tempX=x;
+		temp=x;
 	}
 */
 
