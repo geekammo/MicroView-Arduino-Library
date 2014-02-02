@@ -85,18 +85,29 @@ public:
 	void invert(uint8_t i);
 	void display(void);
 	void setCursor(uint8_t x, uint8_t y);
+	void pixel(uint8_t x, uint8_t y);
 	void pixel(uint8_t x, uint8_t y, uint8_t color, uint8_t mode);
+	void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 	void line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color, uint8_t mode);
+	void lineH(uint8_t x, uint8_t y, uint8_t width);
 	void lineH(uint8_t x, uint8_t y, uint8_t width, uint8_t color, uint8_t mode);
+	void lineV(uint8_t x, uint8_t y, uint8_t height);
 	void lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8_t mode);
+	void rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height);
 	void rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode);
+	void rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height);
 	void rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode);
+	void circle(uint8_t x, uint8_t y, uint8_t radius);
 	void circle(uint8_t x, uint8_t y, uint8_t radius, uint8_t color, uint8_t mode);
-	void circleFill(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color, uint8_t mode);
+	void circleFill(uint8_t x0, uint8_t y0, uint8_t radius);
+	void circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode);
+	void drawChar(uint8_t x, uint8_t y, uint8_t c);
 	void drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t mode);
 	void drawBitmap(void);
 	uint8_t getLCDWidth(void);
 	uint8_t getLCDHeight(void);
+	void setColor(uint8_t color);
+	void setDrawMode(uint8_t mode);
 
 	// Font functions
 	uint8_t getFontWidth(void);
@@ -106,12 +117,7 @@ public:
 	uint8_t setFontType(uint8_t type);
 	uint8_t getFontStartChar(void);
 	uint8_t getFontTotalChar(void);
-	
-	// applicable for PRINT function
-	void setFontColor(uint8_t color);
-	void setFontDrawMode(uint8_t mode);
-	
-	
+
 	// LCD Rotate Scroll functions	
 	void scrollRight(uint8_t start, uint8_t stop);
 	void scrollLeft(uint8_t start, uint8_t stop);
@@ -123,9 +129,11 @@ private:
 	//uint8_t cs;
 	volatile uint8_t *mosiport, *sckport, *csport, *dcport;	// use volatile because these are fixed location port address
 	uint8_t mosipinmask, sckpinmask, cspinmask, dcpinmask;
-	uint8_t fontColor,fontMode,fontWidth, fontHeight, fontType, fontStartChar, fontTotalChar, cursorX, cursorY;
+	uint8_t foreColor,drawMode,fontWidth, fontHeight, fontType, fontStartChar, fontTotalChar, cursorX, cursorY;
 	uint16_t fontMapWidth;
 	//unsigned char *fontsPointer[TOTALFONTS];
 	static const unsigned char *fontsPointer[];
 };
+
+extern MICROVIEW uView;
 #endif

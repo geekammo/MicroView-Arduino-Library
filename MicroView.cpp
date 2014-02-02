@@ -2,7 +2,7 @@
 #include <MicroView.h>
 #include <SPI.h>
 
-// Add header of the fonts here
+// Add header of the fonts here.  Remove as many as possible to get conserve FLASH memory.
 #include <font5x7.h>
 #include <font8x16.h>
 #include <fontlargenumber.h>
@@ -14,13 +14,12 @@
 // Change the total fonts included
 #define TOTALFONTS		7
 
-// Add the font name as declared in the header file.
+// Add the font name as declared in the header file.  Remove as many as possible to get conserve FLASH memory.
 const unsigned char *MICROVIEW::fontsPointer[]={font5x7,font8x16,sevensegment,fontlargenumber, space01,space02,space03};
 
-
 /*
-Screen memory buffer 64 x 48 divided by 8 = 384 bytes
-Screen memory buffer is required because in SPI mode, the host cannot read the SSD1306's GDRAM of the controller.  This buffer serves as a scratch RAM for graphical functions.
+Page buffer 64 x 48 divided by 8 = 384 bytes
+Page buffer is required because in SPI mode, the host cannot read the SSD1306's GDRAM of the controller.  This page buffer serves as a scratch RAM for graphical functions.  All drawing function will first be drawn on this page buffer, only upon calling display() function will transfer the page buffer to the actual LCD controller's memory.
 */
 static uint8_t screenmemory [] = {
 	// LCD Memory organised in 64 horizontal pixel and 6 rows of byte
@@ -65,15 +64,12 @@ static uint8_t screenmemory [] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-
 void MICROVIEW::begin() {
-	
 	// default 5x7 font
 	setFontType(0);
-	setFontColor(WHITE);
-	setFontDrawMode(NORM);
+	setColor(WHITE);
+	setDrawMode(NORM);
 	setCursor(0,0);
-
 
 	// Setting up SPI pins
 	pinMode(MOSI, OUTPUT);
@@ -144,6 +140,7 @@ void MICROVIEW::begin() {
 	command(0x40);
 
 	command(DISPLAYON);				//--turn on oled panel
+	clear(ALL);						// Erase hardware memory inside the OLED controller to avoid random data in memory.
 }
 
 void MICROVIEW::command(uint8_t c) {
@@ -175,7 +172,6 @@ void MICROVIEW::setColumnAddress(uint8_t add) {
 	command((0x0f&add));
 	return;
 }
-
 
 /* 
 	Clear GDRAM inside the LCD controller - mode = ALL
@@ -221,8 +217,7 @@ void MICROVIEW::clear(uint8_t mode, uint8_t c) {
 	}	
 }
 
-
-
+// This routine is to transfer the page buffer to the LCD controller's memory.
 void MICROVIEW::display(void) {
 	uint8_t i, j;
 	
@@ -244,9 +239,9 @@ size_t MICROVIEW::write(uint8_t c) {
 			cursorY += fontHeight;
 			cursorX  = 0;
 		} else if (c == '\r') {
-			// skip em
+			// skip 
 		} else {
-			drawChar(cursorX, cursorY, c, fontColor, fontMode);
+			drawChar(cursorX, cursorY, c, foreColor, drawMode);
 			cursorX += fontWidth+1;
 			if ((cursorX > (LCDWIDTH - fontWidth))) {
 				cursorY += fontHeight;
@@ -261,6 +256,10 @@ size_t MICROVIEW::write(uint8_t c) {
 	void MICROVIEW::setCursor(uint8_t x, uint8_t y) {
 		cursorX=x;
 		cursorY=y;
+	}
+
+	void MICROVIEW::pixel(uint8_t x, uint8_t y) {
+		pixel(x,y,foreColor,drawMode);
 	}
 
 	void MICROVIEW::pixel(uint8_t x, uint8_t y, uint8_t color, uint8_t mode) {
@@ -281,6 +280,12 @@ size_t MICROVIEW::write(uint8_t c) {
 		//display();
 	}
 
+	// Draw line using current fore color and current draw mode
+	void MICROVIEW::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) {
+		line(x0,y0,x1,y1,foreColor,drawMode);
+	}
+
+	// Draw line using color and mode
 	// bresenham's algorithm 
 	void MICROVIEW::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color, uint8_t mode) {
 		uint8_t steep = abs(y1 - y0) > abs(x1 - x0);
@@ -320,14 +325,32 @@ size_t MICROVIEW::write(uint8_t c) {
 		}	
 	}
 
+	//	Draw horizontal line using current fore color and current draw mode
+	void MICROVIEW::lineH(uint8_t x, uint8_t y, uint8_t width) {
+		line(x,y,x+width,y,foreColor,drawMode);
+	}
+
+	//	Draw horizontal line using color and draw mode
 	void MICROVIEW::lineH(uint8_t x, uint8_t y, uint8_t width, uint8_t color, uint8_t mode) {
 		line(x,y,x+width,y,color,mode);
 	}
 
+	//	Draw vertical line using current fore color and current draw mode
+	void MICROVIEW::lineV(uint8_t x, uint8_t y, uint8_t height) {
+		line(x,y,x,y+height,foreColor,drawMode);
+	}
+
+	//	Draw vertical line using color and draw mode
 	void MICROVIEW::lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8_t mode) {
 		line(x,y,x,y+height,color,mode);
 	}
 
+	// Draw rectangle using current fore color and current draw mode
+	void MICROVIEW::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
+		rect(x,y,width,height,foreColor,drawMode);
+	}
+
+	// Draw rectangle using color and draw mode
 	void MICROVIEW::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
 		uint8_t tempHeight;
 		
@@ -343,7 +366,14 @@ size_t MICROVIEW::write(uint8_t c) {
 		lineV(x,y+1, tempHeight, color, mode);
 		lineV(x+width-1, y+1, tempHeight, color, mode);
 	}
+	
 
+	// Draw filled rectangle using current fore color and current draw mode
+	void MICROVIEW::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
+		rectFill(x,y,width,height,foreColor,drawMode);
+	}
+	
+	// Draw filled rectangle using color and mode
 	void MICROVIEW::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
 		// TODO - need to optimise the memory map draw so that this function will not call pixel one by one
 		for (int i=x; i<x+width;i++) {
@@ -351,8 +381,13 @@ size_t MICROVIEW::write(uint8_t c) {
 		}
 	}
 
+	// Draw circle using current fore color and current draw mode
+	void MICROVIEW::circle(uint8_t x0, uint8_t y0, uint8_t radius) {
+		circle(x0,y0,radius,foreColor,drawMode);
+	}
+
+	// Draw circle using color and mode
 	void MICROVIEW::circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
-		
 		//TODO - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
 		int8_t f = 1 - radius;
 		int8_t ddF_x = 1;
@@ -389,18 +424,24 @@ size_t MICROVIEW::write(uint8_t c) {
 	}
 
 
-	void MICROVIEW::circleFill(uint8_t x0, uint8_t y0, uint8_t r, uint8_t color, uint8_t mode) {
+	// Draw filled circle using current fore color and current draw mode
+	void MICROVIEW::circleFill(uint8_t x0, uint8_t y0, uint8_t radius) {
+		circleFill(x0,y0,radius,foreColor,drawMode);
+	}
+
+	// Draw filled circle using color and mode
+	void MICROVIEW::circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
 		// TODO - - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
-		int8_t f = 1 - r;
+		int8_t f = 1 - radius;
 		int8_t ddF_x = 1;
-		int8_t ddF_y = -2 * r;
+		int8_t ddF_y = -2 * radius;
 		int8_t x = 0;
-		int8_t y = r;
+		int8_t y = radius;
 
 		// Temporary disable fill circle for XOR mode.
 		if (mode==XOR) return;
 		
-		for (uint8_t i=y0-r; i<=y0+r; i++) {
+		for (uint8_t i=y0-radius; i<=y0+radius; i++) {
 			pixel(x0, i, color, mode);
 		}
 
@@ -470,23 +511,27 @@ size_t MICROVIEW::write(uint8_t c) {
 
 	}
 
-	void MICROVIEW::setFontColor(uint8_t color) {
-		fontColor=color;
+	void MICROVIEW::setColor(uint8_t color) {
+		foreColor=color;
 	}
 
-	void MICROVIEW::setFontDrawMode(uint8_t mode) {
-		fontMode=mode;
+	void MICROVIEW::setDrawMode(uint8_t mode) {
+		drawMode=mode;
 	}
 
+	// Draw character using current fore color and current draw mode
+	void  MICROVIEW::drawChar(uint8_t x, uint8_t y, uint8_t c) {
+		drawChar(x,y,c,foreColor,drawMode);
+	}
+
+	// Draw character using color and mode
 	void  MICROVIEW::drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t mode) {
-		//void  MICROVIEW::drawChar(uint8_t x, uint8_t line, uint8_t c, uint8_t mode) {
-		
 		// TODO - New routine to take font of any height, at the moment limited to font height in multiple of 8 pixels
 
 		uint8_t rowsToDraw,row, tempC;
 		uint8_t i,j,temp;
 		uint16_t charPerBitmapRow,charColPositionOnBitmap,charRowPositionOnBitmap,charBitmapStartPosition;
-	
+		
 		if ((c<fontStartChar) || (c>(fontStartChar+fontTotalChar-1)))		// no bitmap for the required c
 		return;
 		
@@ -590,5 +635,6 @@ size_t MICROVIEW::write(uint8_t c) {
 		command(ACTIVATESCROLL);
 	}
 
+	MICROVIEW uView;
 
 
