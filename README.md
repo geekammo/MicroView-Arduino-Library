@@ -20,8 +20,8 @@ Arduino library for MicroView.
 ### Example
 
 <pre><code>
-#include <MicroView.h>
-#include <SPI.h>
+#include &lt;MicroView.h&gt;
+#include &lt;SPI.h&lt;
 
 void setup() {
 	uView.begin();
@@ -41,7 +41,7 @@ void loop() {
 
 ## History
 
-**v1.04b: 3rd February 2014 by JP Liew
+**v1.04b: 3rd February 2014 by JP Liew**
 * declared permanent uView variable.
 * cleaned code and added some remarks.
 * added drawing functions that make use of default color and draw mode.
