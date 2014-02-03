@@ -17,6 +17,9 @@
 // Add the font name as declared in the header file.  Remove as many as possible to get conserve FLASH memory.
 const unsigned char *MICROVIEW::fontsPointer[]={font5x7,font8x16,sevensegment,fontlargenumber, space01,space02,space03};
 
+// TODO - Need to be able to let user add custom fonts from outside of the library
+// TODO - getTotalFonts(), addFont() return font number, removeFont()
+
 /*
 Page buffer 64 x 48 divided by 8 = 384 bytes
 Page buffer is required because in SPI mode, the host cannot read the SSD1306's GDRAM of the controller.  This page buffer serves as a scratch RAM for graphical functions.  All drawing function will first be drawn on this page buffer, only upon calling display() function will transfer the page buffer to the actual LCD controller's memory.

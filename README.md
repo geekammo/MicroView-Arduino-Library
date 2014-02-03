@@ -21,7 +21,7 @@ Arduino library for MicroView.
 
 <pre><code>
 #include &lt;MicroView.h&gt;
-#include &lt;SPI.h&lt;
+#include &lt;SPI.h&gt;
 
 void setup() {
 	uView.begin();
