@@ -1,6 +1,10 @@
 #include <avr/pgmspace.h>
-#include <MicroView.h>
 #include <SPI.h>
+#include <MicroView.h>
+
+// This fixed ugly GCC warning "only initialized variables can be placed into program memory area"
+#undef PROGMEM
+#define PROGMEM __attribute__((section(".progmem.data")))
 
 // Add header of the fonts here.  Remove as many as possible to get conserve FLASH memory.
 #include <font5x7.h>
@@ -15,7 +19,16 @@
 #define TOTALFONTS		7
 
 // Add the font name as declared in the header file.  Remove as many as possible to get conserve FLASH memory.
-const unsigned char *MICROVIEW::fontsPointer[]={font5x7,font8x16,sevensegment,fontlargenumber, space01,space02,space03};
+const unsigned char *MicroView::fontsPointer[]={
+	font5x7
+	,font8x16
+	,sevensegment
+	,fontlargenumber
+	,space01
+	,space02
+	,space03
+	
+};
 
 // TODO - Need to be able to let user add custom fonts from outside of the library
 // TODO - getTotalFonts(), addFont() return font number, removeFont()
@@ -67,7 +80,7 @@ static uint8_t screenmemory [] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-void MICROVIEW::begin() {
+void MicroView::begin() {
 	// default 5x7 font
 	setFontType(0);
 	setColor(WHITE);
@@ -79,15 +92,15 @@ void MICROVIEW::begin() {
 	pinMode(SCK, OUTPUT);
 	pinMode(DC, OUTPUT);
 	pinMode(RESET, OUTPUT);
-	pinMode(CS, OUTPUT);
-	digitalWrite(CS, HIGH);
+	pinMode(SS, OUTPUT);
+	digitalWrite(SS, HIGH);
 	
 	sckport     = portOutputRegister(digitalPinToPort(SCK));
 	sckpinmask  = digitalPinToBitMask(SCK);
 	mosiport    = portOutputRegister(digitalPinToPort(MOSI));
 	mosipinmask = digitalPinToBitMask(MOSI);
-	csport      = portOutputRegister(digitalPinToPort(CS));
-	cspinmask   = digitalPinToBitMask(CS);
+	ssport      = portOutputRegister(digitalPinToPort(SS));
+	sspinmask   = digitalPinToBitMask(SS);
 	dcport      = portOutputRegister(digitalPinToPort(DC));
 	dcpinmask   = digitalPinToBitMask(DC);
 	
@@ -98,8 +111,8 @@ void MICROVIEW::begin() {
 	digitalWrite(RESET, LOW);
 	
 	// Setup SPI frequency
-	SPI.setClockDivider(SPI_CLOCK_DIV2); 
-	SPI.begin();
+	MVSPI.setClockDivider(SPI_CLOCK_DIV2); 
+	MVSPI.begin();
 	
 	// wait 10ms
 	delay(10);
@@ -146,31 +159,31 @@ void MICROVIEW::begin() {
 	clear(ALL);						// Erase hardware memory inside the OLED controller to avoid random data in memory.
 }
 
-void MICROVIEW::command(uint8_t c) {
+void MicroView::command(uint8_t c) {
 	// Hardware SPI
-	*csport |= cspinmask;	// CS HIGH
+	*ssport |= sspinmask;	// SS HIGH
 	*dcport &= ~dcpinmask;	// DC LOW
-	*csport &= ~cspinmask;	// CS LOW
-	SPI.transfer(c);
-	*csport |= cspinmask;	// CS HIGH
+	*ssport &= ~sspinmask;	// SS LOW
+	MVSPI.transfer(c);
+	*ssport |= sspinmask;	// SS HIGH
 }
 
-void MICROVIEW::data(uint8_t c) {
+void MicroView::data(uint8_t c) {
 	// Hardware SPI
-	*csport |= cspinmask;	// CS HIGH
+	*ssport |= sspinmask;	// SS HIGH
 	*dcport |= dcpinmask;	// DC HIGH
-	*csport &= ~cspinmask;	// CS LOW
-	SPI.transfer(c);
-	*csport |= cspinmask;	// CS HIGH
+	*ssport &= ~sspinmask;	// SS LOW
+	MVSPI.transfer(c);
+	*ssport |= sspinmask;	// SS HIGH
 }
 
-void MICROVIEW::setPageAddress(uint8_t add) {
+void MicroView::setPageAddress(uint8_t add) {
 	add=0xb0|add;
 	command(add);
 	return;
 }
 
-void MICROVIEW::setColumnAddress(uint8_t add) {
+void MicroView::setColumnAddress(uint8_t add) {
 	command((0x10|(add>>4))+0x02);
 	command((0x0f&add));
 	return;
@@ -180,8 +193,8 @@ void MICROVIEW::setColumnAddress(uint8_t add) {
 	Clear GDRAM inside the LCD controller - mode = ALL
 	Clear screen page buffer - mode = PAGE
 */
-void MICROVIEW::clear(uint8_t mode) {
-	uint8_t page=6, col=0x40;
+void MicroView::clear(uint8_t mode) {
+	//	uint8_t page=6, col=0x40;
 	if (mode==ALL) {
 		for (int i=0;i<8; i++) {
 			setPageAddress(i);
@@ -202,8 +215,8 @@ void MICROVIEW::clear(uint8_t mode) {
 	Clear GDRAM inside the LCD controller - mode = ALL with c character.
 	Clear screen page buffer - mode = PAGE with c character.
 */
-void MICROVIEW::clear(uint8_t mode, uint8_t c) {
-	uint8_t page=6, col=0x40;
+void MicroView::clear(uint8_t mode, uint8_t c) {
+	//uint8_t page=6, col=0x40;
 	if (mode==ALL) {
 		for (int i=0;i<8; i++) {
 			setPageAddress(i);
@@ -221,7 +234,7 @@ void MICROVIEW::clear(uint8_t mode, uint8_t c) {
 }
 
 // This routine is to transfer the page buffer to the LCD controller's memory.
-void MICROVIEW::display(void) {
+void MicroView::display(void) {
 	uint8_t i, j;
 	
 	for (i=0; i<6; i++) {
@@ -234,9 +247,9 @@ void MICROVIEW::display(void) {
 }
 
 #if ARDUINO >= 100
-size_t MICROVIEW::write(uint8_t c) {
+size_t MicroView::write(uint8_t c) {
 #else
-	void MICROVIEW::write(uint8_t c) {
+	void MicroView::write(uint8_t c) {
 #endif
 		if (c == '\n') {
 			cursorY += fontHeight;
@@ -256,16 +269,16 @@ size_t MICROVIEW::write(uint8_t c) {
 #endif
 	}
 
-	void MICROVIEW::setCursor(uint8_t x, uint8_t y) {
+	void MicroView::setCursor(uint8_t x, uint8_t y) {
 		cursorX=x;
 		cursorY=y;
 	}
 
-	void MICROVIEW::pixel(uint8_t x, uint8_t y) {
+	void MicroView::pixel(uint8_t x, uint8_t y) {
 		pixel(x,y,foreColor,drawMode);
 	}
 
-	void MICROVIEW::pixel(uint8_t x, uint8_t y, uint8_t color, uint8_t mode) {
+	void MicroView::pixel(uint8_t x, uint8_t y, uint8_t color, uint8_t mode) {
 		if ((x<0) ||  (x>=LCDWIDTH) || (y<0) || (y>=LCDHEIGHT))
 		return;
 		
@@ -284,13 +297,13 @@ size_t MICROVIEW::write(uint8_t c) {
 	}
 
 	// Draw line using current fore color and current draw mode
-	void MICROVIEW::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) {
+	void MicroView::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) {
 		line(x0,y0,x1,y1,foreColor,drawMode);
 	}
 
 	// Draw line using color and mode
 	// bresenham's algorithm 
-	void MICROVIEW::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color, uint8_t mode) {
+	void MicroView::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color, uint8_t mode) {
 		uint8_t steep = abs(y1 - y0) > abs(x1 - x0);
 		if (steep) {
 			swap(x0, y0);
@@ -329,32 +342,32 @@ size_t MICROVIEW::write(uint8_t c) {
 	}
 
 	//	Draw horizontal line using current fore color and current draw mode
-	void MICROVIEW::lineH(uint8_t x, uint8_t y, uint8_t width) {
+	void MicroView::lineH(uint8_t x, uint8_t y, uint8_t width) {
 		line(x,y,x+width,y,foreColor,drawMode);
 	}
 
 	//	Draw horizontal line using color and draw mode
-	void MICROVIEW::lineH(uint8_t x, uint8_t y, uint8_t width, uint8_t color, uint8_t mode) {
+	void MicroView::lineH(uint8_t x, uint8_t y, uint8_t width, uint8_t color, uint8_t mode) {
 		line(x,y,x+width,y,color,mode);
 	}
 
 	//	Draw vertical line using current fore color and current draw mode
-	void MICROVIEW::lineV(uint8_t x, uint8_t y, uint8_t height) {
+	void MicroView::lineV(uint8_t x, uint8_t y, uint8_t height) {
 		line(x,y,x,y+height,foreColor,drawMode);
 	}
 
 	//	Draw vertical line using color and draw mode
-	void MICROVIEW::lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8_t mode) {
+	void MicroView::lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8_t mode) {
 		line(x,y,x,y+height,color,mode);
 	}
 
 	// Draw rectangle using current fore color and current draw mode
-	void MICROVIEW::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
+	void MicroView::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
 		rect(x,y,width,height,foreColor,drawMode);
 	}
 
 	// Draw rectangle using color and draw mode
-	void MICROVIEW::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
+	void MicroView::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
 		uint8_t tempHeight;
 		
 		lineH(x,y, width, color, mode);
@@ -372,12 +385,12 @@ size_t MICROVIEW::write(uint8_t c) {
 	
 
 	// Draw filled rectangle using current fore color and current draw mode
-	void MICROVIEW::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
+	void MicroView::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
 		rectFill(x,y,width,height,foreColor,drawMode);
 	}
 	
 	// Draw filled rectangle using color and mode
-	void MICROVIEW::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
+	void MicroView::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
 		// TODO - need to optimise the memory map draw so that this function will not call pixel one by one
 		for (int i=x; i<x+width;i++) {
 			lineV(i,y, height, color, mode);
@@ -385,12 +398,12 @@ size_t MICROVIEW::write(uint8_t c) {
 	}
 
 	// Draw circle using current fore color and current draw mode
-	void MICROVIEW::circle(uint8_t x0, uint8_t y0, uint8_t radius) {
+	void MicroView::circle(uint8_t x0, uint8_t y0, uint8_t radius) {
 		circle(x0,y0,radius,foreColor,drawMode);
 	}
 
 	// Draw circle using color and mode
-	void MICROVIEW::circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
+	void MicroView::circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
 		//TODO - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
 		int8_t f = 1 - radius;
 		int8_t ddF_x = 1;
@@ -428,12 +441,12 @@ size_t MICROVIEW::write(uint8_t c) {
 
 
 	// Draw filled circle using current fore color and current draw mode
-	void MICROVIEW::circleFill(uint8_t x0, uint8_t y0, uint8_t radius) {
+	void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius) {
 		circleFill(x0,y0,radius,foreColor,drawMode);
 	}
 
 	// Draw filled circle using color and mode
-	void MICROVIEW::circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
+	void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
 		// TODO - - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
 		int8_t f = 1 - radius;
 		int8_t ddF_x = 1;
@@ -469,41 +482,41 @@ size_t MICROVIEW::write(uint8_t c) {
 		}
 	}
 
-	uint8_t MICROVIEW::getLCDHeight(void) {
+	uint8_t MicroView::getLCDHeight(void) {
 		return LCDHEIGHT;
 	}
 	
-	uint8_t MICROVIEW::getLCDWidth(void) {
+	uint8_t MicroView::getLCDWidth(void) {
 		return LCDWIDTH;
 	}
 	
-	uint8_t MICROVIEW::getFontWidth(void) {
+	uint8_t MicroView::getFontWidth(void) {
 		return fontWidth;
 	}
 
-	uint8_t MICROVIEW::getFontHeight(void) {
+	uint8_t MicroView::getFontHeight(void) {
 		return fontHeight;
 	}
 
-	uint8_t MICROVIEW::getFontStartChar(void) {
+	uint8_t MicroView::getFontStartChar(void) {
 		return fontStartChar;
 	}
 
-	uint8_t MICROVIEW::getFontTotalChar(void) {
+	uint8_t MicroView::getFontTotalChar(void) {
 		return fontTotalChar;
 	}
 
-	uint8_t MICROVIEW::getTotalFonts(void) {
+	uint8_t MicroView::getTotalFonts(void) {
 		return TOTALFONTS;
 	}
 
-	uint8_t MICROVIEW::getFontType(void) {
+	uint8_t MicroView::getFontType(void) {
 		return fontType;
 	}
 
-	uint8_t MICROVIEW::setFontType(uint8_t type) {
+	uint8_t MicroView::setFontType(uint8_t type) {
 		if ((type>=TOTALFONTS) || (type<0))
-		return -1;
+		return false;
 
 		fontType=type;
 		fontWidth=pgm_read_byte(fontsPointer[fontType]+0);
@@ -511,24 +524,24 @@ size_t MICROVIEW::write(uint8_t c) {
 		fontStartChar=pgm_read_byte(fontsPointer[fontType]+2);
 		fontTotalChar=pgm_read_byte(fontsPointer[fontType]+3);
 		fontMapWidth=(pgm_read_byte(fontsPointer[fontType]+4)*100)+pgm_read_byte(fontsPointer[fontType]+5); // two bytes values into integer 16
-
+		return true;
 	}
 
-	void MICROVIEW::setColor(uint8_t color) {
+	void MicroView::setColor(uint8_t color) {
 		foreColor=color;
 	}
 
-	void MICROVIEW::setDrawMode(uint8_t mode) {
+	void MicroView::setDrawMode(uint8_t mode) {
 		drawMode=mode;
 	}
 
 	// Draw character using current fore color and current draw mode
-	void  MICROVIEW::drawChar(uint8_t x, uint8_t y, uint8_t c) {
+	void  MicroView::drawChar(uint8_t x, uint8_t y, uint8_t c) {
 		drawChar(x,y,c,foreColor,drawMode);
 	}
 
 	// Draw character using color and mode
-	void  MICROVIEW::drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t mode) {
+	void  MicroView::drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t mode) {
 		// TODO - New routine to take font of any height, at the moment limited to font height in multiple of 8 pixels
 
 		uint8_t rowsToDraw,row, tempC;
@@ -620,11 +633,11 @@ size_t MICROVIEW::write(uint8_t c) {
 
 	}
 
-	void MICROVIEW::stopScroll(void){
+	void MicroView::stopScroll(void){
 		command(DEACTIVATESCROLL);
 	}
 
-	void MICROVIEW::scrollRight(uint8_t start, uint8_t stop){
+	void MicroView::scrollRight(uint8_t start, uint8_t stop){
 		if (stop<start)		// stop must be larger or equal to start
 		return;
 		stopScroll();		// need to disable scrolling before starting to avoid memory corrupt
@@ -638,6 +651,148 @@ size_t MICROVIEW::write(uint8_t c) {
 		command(ACTIVATESCROLL);
 	}
 
-	MICROVIEW uView;
+	MicroViewWidget::MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max) {
+		setX(newx);
+		setY(newy);
+		value=0;
+		if (min>max) {
+			setMinValue(max);
+			setMaxValue(min);
+		}
+		else {
+			setMinValue(min);
+			setMaxValue(max);
+		}
+		setValue(min);
+	}
+
+	uint8_t MicroViewWidget::getX() { return x; }
+	uint8_t MicroViewWidget::getY() { return y; }
+	void MicroViewWidget::setX(uint8_t newx) { x = newx; }
+	void MicroViewWidget::setY(uint8_t newy) { y = newy; }
+
+	int16_t MicroViewWidget::getMinValue() { return minValue; }
+	int16_t MicroViewWidget::getMaxValue() { return maxValue; }
+
+	int16_t MicroViewWidget::getValue() { return value; }
+
+	void MicroViewWidget::setMinValue(int16_t min) { minValue=min; }
+	void MicroViewWidget::setMaxValue(int16_t max) { maxValue=max; }
+	void MicroViewWidget::setValue(int16_t val) { 
+		if (val<=maxValue) { 
+			value=val; 
+			this->draw();
+		}
+	}
+
+	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
+		totalTicks=40;
+		needFirstDraw=true;
+		prevValue=getMinValue();
+	}
+
+	void MicroViewSlider::draw() {
+		uint8_t offsetX, offsetY;
+		uint8_t tickPosition=0;
+		char strBuffer[5];
+		
+		offsetX=getX();
+		offsetY=getY();
+
+		// Draw major tickers
+		for (uint8_t i=0; i<5;i++) {
+			uView.lineV(offsetX+1+(i*10), offsetY+3, 5);
+		}
+		// Draw minor tickers
+		for (uint8_t i=0; i<4;i++) {
+			uView.lineV(offsetX+3+(i*2), offsetY+5, 3);
+		}
+		for (uint8_t i=0; i<4;i++) {
+			uView.lineV(offsetX+13+(i*2), offsetY+5, 3);
+		}
+		for (uint8_t i=0; i<4;i++) {
+			uView.lineV(offsetX+23+(i*2), offsetY+5, 3);
+		}
+		for (uint8_t i=0; i<4;i++) {
+			uView.lineV(offsetX+33+(i*2), offsetY+5, 3);
+		}
+
+		if (needFirstDraw) {
+			uView.lineH(offsetX,offsetY, 3, WHITE,XOR);
+			uView.pixel(offsetX+1,offsetY+1, WHITE,XOR);
+			needFirstDraw=false;
+		}
+		else {
+			// Draw previous pointer in XOR mode to erase it
+			tickPosition= (((float)prevValue/(float)(getMaxValue()-getMinValue()))*totalTicks);
+			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+			// Draw current pointer
+			tickPosition= (((float)getValue()/(float)(getMaxValue()-getMinValue()))*totalTicks);
+			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+
+		}
+
+		// Draw value
+		uView.setCursor(offsetX+44,offsetY);
+		sprintf(strBuffer,"%3d", getValue());	// we need to force only 3 digit or it will go over the display.
+		uView.print(strBuffer);
+		prevValue=getValue();
+	}
+
+	void SPIClass::begin() {
+
+		// Set SS to high so a connected chip will be "deselected" by default
+		digitalWrite(SS, HIGH);
+
+		// When the SS pin is set as OUTPUT, it can be used as
+		// a general purpose output port (it doesn't influence
+		// SPI operations).
+		pinMode(SS, OUTPUT);
+
+		// Warning: if the SS pin ever becomes a LOW INPUT then SPI
+		// automatically switches to Slave, so the data direction of
+		// the SS pin MUST be kept as OUTPUT.
+		SPCR |= _BV(MSTR);
+		SPCR |= _BV(SPE);
+
+		// Set direction register for SCK and MOSI pin.
+		// MISO pin automatically overrides to INPUT.
+		// By doing this AFTER enabling SPI, we avoid accidentally
+		// clocking in a single bit since the lines go directly
+		// from "input" to SPI control.  
+		// http://code.google.com/p/arduino/issues/detail?id=888
+		pinMode(SCK, OUTPUT);
+		pinMode(MOSI, OUTPUT);
+	}
+
+
+	void SPIClass::end() {
+		SPCR &= ~_BV(SPE);
+	}
+
+	void SPIClass::setBitOrder(uint8_t bitOrder)
+	{
+		if(bitOrder == LSBFIRST) {
+			SPCR |= _BV(DORD);
+		} else {
+			SPCR &= ~(_BV(DORD));
+		}
+	}
+
+	void SPIClass::setDataMode(uint8_t mode)
+	{
+		SPCR = (SPCR & ~SPI_MODE_MASK) | mode;
+	}
+
+	void SPIClass::setClockDivider(uint8_t rate)
+	{
+		SPCR = (SPCR & ~SPI_CLOCK_MASK) | (rate & SPI_CLOCK_MASK);
+		SPSR = (SPSR & ~SPI_2XCLOCK_MASK) | ((rate >> 2) & SPI_2XCLOCK_MASK);
+	}
+
+	SPIClass MVSPI;
+	MicroView uView;
 
 

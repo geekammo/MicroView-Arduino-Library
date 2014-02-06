@@ -1,20 +1,17 @@
 #ifndef MICROVIEW_H
 #define MICROVIEW_H
 
-#if ARDUINO >= 100
-#include "Arduino.h"
-#include "Print.h"
-#else
-#include "WProgram.h"
-#endif
+#include <stdio.h>
+#include <Arduino.h>
+#include <avr/pgmspace.h>
 
 #define swap(a, b) { uint8_t t = a; a = b; b = t; }
 
 #define DC		8
-#define SCK		13
-#define MOSI	11
+//#define SCK		13
+//#define MOSI	11
 #define RESET	12
-#define CS 		10
+//#define CS 		10
 
 #define BLACK 0
 #define WHITE 1
@@ -62,9 +59,9 @@
 #define VERTICALRIGHTHORIZONTALSCROLL	0x29
 #define VERTICALLEFTHORIZONTALSCROLL	0x2A
 
-class MICROVIEW : public Print{
+class MicroView : public Print{
 public:
-	MICROVIEW(void) {};
+	MicroView(void) {};
 	void begin(void);
 
 #if ARDUINO >= 100
@@ -127,13 +124,100 @@ public:
 	
 private:
 	//uint8_t cs;
-	volatile uint8_t *mosiport, *sckport, *csport, *dcport;	// use volatile because these are fixed location port address
-	uint8_t mosipinmask, sckpinmask, cspinmask, dcpinmask;
+	volatile uint8_t *mosiport, *sckport, *ssport, *dcport;	// use volatile because these are fixed location port address
+	uint8_t mosipinmask, sckpinmask, sspinmask, dcpinmask;
 	uint8_t foreColor,drawMode,fontWidth, fontHeight, fontType, fontStartChar, fontTotalChar, cursorX, cursorY;
 	uint16_t fontMapWidth;
 	//unsigned char *fontsPointer[TOTALFONTS];
 	static const unsigned char *fontsPointer[];
 };
 
-extern MICROVIEW uView;
+class MicroViewWidget {
+public:
+	MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max);
+	uint8_t getX();
+	uint8_t getY();
+	void setX(uint8_t newx);
+	void setY(uint8_t newy);
+	
+	int16_t getMinValue();
+	int16_t getMaxValue();
+	int16_t getValue();
+	void setMaxValue(int16_t max);
+	void setMinValue(int16_t max);
+	void setValue(int16_t val);
+	virtual void draw(){};
+private:
+	uint8_t x;
+	uint8_t y;
+	int16_t maxValue;
+	int16_t minValue;
+	int16_t value;
+};
+
+class MicroViewSlider: public MicroViewWidget{
+public:
+	MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max);
+	void draw();
+private:
+	uint8_t totalTicks;
+	bool needFirstDraw;
+	int16_t prevValue;
+};
+
+
+#define SPI_CLOCK_DIV4 0x00
+#define SPI_CLOCK_DIV16 0x01
+#define SPI_CLOCK_DIV64 0x02
+#define SPI_CLOCK_DIV128 0x03
+#define SPI_CLOCK_DIV2 0x04
+#define SPI_CLOCK_DIV8 0x05
+#define SPI_CLOCK_DIV32 0x06
+//#define SPI_CLOCK_DIV64 0x07
+
+#define SPI_MODE0 0x00
+#define SPI_MODE1 0x04
+#define SPI_MODE2 0x08
+#define SPI_MODE3 0x0C
+
+#define SPI_MODE_MASK 0x0C  // CPOL = bit 3, CPHA = bit 2 on SPCR
+#define SPI_CLOCK_MASK 0x03  // SPR1 = bit 1, SPR0 = bit 0 on SPCR
+#define SPI_2XCLOCK_MASK 0x01  // SPI2X = bit 0 on SPSR
+
+class SPIClass {
+public:
+  inline static byte transfer(byte _data);
+
+  // SPI Configuration methods
+
+  inline static void attachInterrupt();
+  inline static void detachInterrupt(); // Default
+
+  static void begin(); // Default
+  static void end();
+
+  static void setBitOrder(uint8_t);
+  static void setDataMode(uint8_t);
+  static void setClockDivider(uint8_t);
+};
+
+extern SPIClass MVSPI;
+
+byte SPIClass::transfer(byte _data) {
+  SPDR = _data;
+  while (!(SPSR & _BV(SPIF)))
+    ;
+  return SPDR;
+}
+
+void SPIClass::attachInterrupt() {
+  SPCR |= _BV(SPIE);
+}
+
+void SPIClass::detachInterrupt() {
+  SPCR &= ~_BV(SPIE);
+}
+
+
+extern MicroView uView;
 #endif

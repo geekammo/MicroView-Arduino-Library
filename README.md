@@ -8,20 +8,17 @@ Arduino library for MicroView.
 
 ## Required Libraries
 
-1. SPI.h
-2. [Time.h](http://www.pjrc.com/teensy/td_libs_Time.html) NOTE: Only required when using clock/time functions.
+1. [Time.h](http://www.pjrc.com/teensy/td_libs_Time.html) NOTE: Only required when using clock/time functions.  For example the MicroViewDemo in the example folder.
 
-## Installation Instructions
+## Installation
 
 1. Extract / Check out to Arduino's libraries folder.
 2. Start Arduino IDE.
 3. MicroView example is located at, File--->Example--->MicroView--->MicroViewDemo
 
 ### Example
-
 <pre><code>
 #include &lt;MicroView.h&gt;
-#include &lt;SPI.h&gt;
 
 void setup() {
 	uView.begin();
@@ -40,6 +37,14 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.05b: 6th February by JP Liew**
+* changed MICROVIEW class name to MicroView
+* created MICROVIEWWIDGET class
+* added routines to draw widget
+* added slider widget
+* merged MicroViewWidget into MicroView
+* merged SPI.h into MicroView 
+
 
 **v1.04b: 3rd February 2014 by JP Liew**
 * declared permanent uView variable.
