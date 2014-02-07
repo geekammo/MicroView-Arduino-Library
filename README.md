@@ -26,7 +26,7 @@ void setup() {
 
 void loop() {
 	uView.print("HelloWorld");
-	uView.display();    // display current page buffer
+	uView.display();		// display current page buffer
 }
 </code></pre>
 
@@ -36,7 +36,7 @@ void loop() {
 
 void setup() {
 	uView.begin();
-	uView.clear(PAGE);  // clear the page buffer
+	uView.clear(PAGE);		// clear the page buffer
 }
 
 void loop() {
@@ -46,7 +46,26 @@ void loop() {
 	uView.pixel(50,5);
 	uView.setCursor(0,40);
 	uView.print(" MicroView");
-	uView.display();    // display current page buffer
+	uView.display();		// display current page buffer
+}
+</code></pre>
+
+### Example 3
+<pre><code>
+#include &lt;MicroView.h&gt;
+
+MicroViewWidget *widget;
+
+void setup() {
+	uView.begin();
+	widget = new MicroViewSlider(0,0,0,100);	// draw Slider widget at x=0,y=0,min=0, max=100
+}
+
+void loop() {
+	for(int i=0; i<=100;i++) {
+		widget->setValue(i);	// give a value to widget
+		uView.display();		// display current page buffer
+	}
 }
 </code></pre>
 
