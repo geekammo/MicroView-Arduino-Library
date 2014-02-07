@@ -62,7 +62,7 @@ void setup() {
 }
 
 void loop() {
-	for(int i=0; i<=100;i++) {
+	for(int i=0; i&lt=100;i++) {
 		widget->setValue(i);	// give a value to widget
 		uView.display();		// display current page buffer
 	}
