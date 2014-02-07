@@ -16,7 +16,21 @@ Arduino library for MicroView.
 2. Start Arduino IDE.
 3. MicroView example is located at, File--->Example--->MicroView--->MicroViewDemo
 
-### Example
+### Example 1
+<pre><code>
+#include &lt;MicroView.h&gt;
+
+void setup() {
+	uView.begin();
+}
+
+void loop() {
+	uView.print("HelloWorld");
+	uView.display();    // display current page buffer
+}
+</code></pre>
+
+### Example 2
 <pre><code>
 #include &lt;MicroView.h&gt;
 
@@ -37,6 +51,9 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.06b:  by JP Liew**
+* fixed Slider negative value not working
+
 **v1.05b: 6th February by JP Liew**
 * changed MICROVIEW class name to MicroView
 * created MICROVIEWWIDGET class
@@ -44,7 +61,6 @@ void loop() {
 * added slider widget
 * merged MicroViewWidget into MicroView
 * merged SPI.h into MicroView 
-
 
 **v1.04b: 3rd February 2014 by JP Liew**
 * declared permanent uView variable.
@@ -64,4 +80,3 @@ void loop() {
 
 **v1.00b:	30th January 2014 by JP Liew**  
 * Initial commit.  Beta with minor bugs.
-

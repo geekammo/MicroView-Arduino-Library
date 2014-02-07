@@ -8,10 +8,11 @@
 #define swap(a, b) { uint8_t t = a; a = b; b = t; }
 
 #define DC		8
+#define RESET	12
+// SS, SCK, MOSI already defined by original SPI.h
+//#define CS 		10
 //#define SCK		13
 //#define MOSI	11
-#define RESET	12
-//#define CS 		10
 
 #define BLACK 0
 #define WHITE 1
@@ -25,6 +26,10 @@
 
 #define PAGE				0
 #define ALL					1
+
+#define WIDGETSTYLE0			0
+#define WIDGETSTYLE1			1
+#define WIDGETSTYLE2			2
 
 #define SETCONTRAST 		0x81
 #define DISPLAYALLONRESUME 	0xA4
@@ -147,6 +152,8 @@ public:
 	void setMinValue(int16_t max);
 	void setValue(int16_t val);
 	virtual void draw(){};
+	virtual void drawFace(){};
+	
 private:
 	uint8_t x;
 	uint8_t y;
@@ -158,9 +165,11 @@ private:
 class MicroViewSlider: public MicroViewWidget{
 public:
 	MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max);
+	MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty);
 	void draw();
+	void drawFace();
 private:
-	uint8_t totalTicks;
+	uint8_t totalTicks, style;
 	bool needFirstDraw;
 	int16_t prevValue;
 };
@@ -184,7 +193,7 @@ private:
 #define SPI_CLOCK_MASK 0x03  // SPR1 = bit 1, SPR0 = bit 0 on SPCR
 #define SPI_2XCLOCK_MASK 0x01  // SPI2X = bit 0 on SPSR
 
-class SPIClass {
+class MVSPIClass {
 public:
   inline static byte transfer(byte _data);
 
@@ -201,20 +210,20 @@ public:
   static void setClockDivider(uint8_t);
 };
 
-extern SPIClass MVSPI;
+extern MVSPIClass MVSPI;
 
-byte SPIClass::transfer(byte _data) {
+byte MVSPIClass::transfer(byte _data) {
   SPDR = _data;
   while (!(SPSR & _BV(SPIF)))
     ;
   return SPDR;
 }
 
-void SPIClass::attachInterrupt() {
+void MVSPIClass::attachInterrupt() {
   SPCR |= _BV(SPIE);
 }
 
-void SPIClass::detachInterrupt() {
+void MVSPIClass::detachInterrupt() {
   SPCR &= ~_BV(SPIE);
 }
 

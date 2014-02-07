@@ -655,15 +655,16 @@ size_t MicroView::write(uint8_t c) {
 		setX(newx);
 		setY(newy);
 		value=0;
-		if (min>max) {
-			setMinValue(max);
-			setMaxValue(min);
-		}
-		else {
+//		if (min>max) {
+//			setMinValue(max);
+//			setMaxValue(min);
+//		}
+//		else {
 			setMinValue(min);
 			setMaxValue(max);
-		}
-		setValue(min);
+//		}
+		//drawFace();
+		//setValue(min);
 	}
 
 	uint8_t MicroViewWidget::getX() { return x; }
@@ -685,22 +686,46 @@ size_t MicroView::write(uint8_t c) {
 		}
 	}
 
+
 	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
-		totalTicks=40;
+		style=0;
+		totalTicks=30;
+
 		needFirstDraw=true;
 		prevValue=getMinValue();
+		drawFace();
+		draw();
 	}
 
-	void MicroViewSlider::draw() {
-		uint8_t offsetX, offsetY;
-		uint8_t tickPosition=0;
-		char strBuffer[5];
-		
+MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
+		if (sty==WIDGETSTYLE0) {
+			style=0;
+			totalTicks=30;
+		}
+		else {
+			style=1;
+			totalTicks=60;
+		}
+
+		needFirstDraw=true;
+		prevValue=getMinValue();
+		drawFace();
+		draw();
+	}
+
+
+	void MicroViewSlider::drawFace() {
+		uint8_t offsetX, offsetY, majorLine;
 		offsetX=getX();
 		offsetY=getY();
-
+		
+		if(style>0)
+			majorLine=7;
+		else
+			majorLine=4;
+			
 		// Draw major tickers
-		for (uint8_t i=0; i<5;i++) {
+		for (uint8_t i=0; i<majorLine;i++) {
 			uView.lineV(offsetX+1+(i*10), offsetY+3, 5);
 		}
 		// Draw minor tickers
@@ -713,36 +738,58 @@ size_t MicroView::write(uint8_t c) {
 		for (uint8_t i=0; i<4;i++) {
 			uView.lineV(offsetX+23+(i*2), offsetY+5, 3);
 		}
+		
+		if(style>0) {
 		for (uint8_t i=0; i<4;i++) {
 			uView.lineV(offsetX+33+(i*2), offsetY+5, 3);
 		}
+		if (style>0) {
+			for (uint8_t i=0; i<4;i++) {
+				uView.lineV(offsetX+43+(i*2), offsetY+5, 3);
+			}
+			for (uint8_t i=0; i<4;i++) {
+				uView.lineV(offsetX+53+(i*2), offsetY+5, 3);
+			}
+		}
+		}
+		
+	}
+
+	void MicroViewSlider::draw() {
+		uint8_t offsetX, offsetY;
+		uint8_t tickPosition=0;
+		char strBuffer[5];
+		offsetX=getX();
+		offsetY=getY();
 
 		if (needFirstDraw) {
-			uView.lineH(offsetX,offsetY, 3, WHITE,XOR);
-			uView.pixel(offsetX+1,offsetY+1, WHITE,XOR);
+			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+			sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
 			needFirstDraw=false;
 		}
 		else {
 			// Draw previous pointer in XOR mode to erase it
-			tickPosition= (((float)prevValue/(float)(getMaxValue()-getMinValue()))*totalTicks);
+			tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
 			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
 			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
 			// Draw current pointer
-			tickPosition= (((float)getValue()/(float)(getMaxValue()-getMinValue()))*totalTicks);
+			tickPosition= (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
 			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
 			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
-
+			sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
+			prevValue=getValue();
 		}
 
 		// Draw value
-		uView.setCursor(offsetX+44,offsetY);
-		sprintf(strBuffer,"%3d", getValue());	// we need to force only 3 digit or it will go over the display.
+		if(style>0) 
+		uView.setCursor(offsetX,offsetY+10);
+		else
+		uView.setCursor(offsetX+34,offsetY+1);
 		uView.print(strBuffer);
-		prevValue=getValue();
 	}
 
-	void SPIClass::begin() {
-
+	void MVSPIClass::begin() {
 		// Set SS to high so a connected chip will be "deselected" by default
 		digitalWrite(SS, HIGH);
 
@@ -768,11 +815,11 @@ size_t MicroView::write(uint8_t c) {
 	}
 
 
-	void SPIClass::end() {
+	void MVSPIClass::end() {
 		SPCR &= ~_BV(SPE);
 	}
 
-	void SPIClass::setBitOrder(uint8_t bitOrder)
+	void MVSPIClass::setBitOrder(uint8_t bitOrder)
 	{
 		if(bitOrder == LSBFIRST) {
 			SPCR |= _BV(DORD);
@@ -781,18 +828,18 @@ size_t MicroView::write(uint8_t c) {
 		}
 	}
 
-	void SPIClass::setDataMode(uint8_t mode)
+	void MVSPIClass::setDataMode(uint8_t mode)
 	{
 		SPCR = (SPCR & ~SPI_MODE_MASK) | mode;
 	}
 
-	void SPIClass::setClockDivider(uint8_t rate)
+	void MVSPIClass::setClockDivider(uint8_t rate)
 	{
 		SPCR = (SPCR & ~SPI_CLOCK_MASK) | (rate & SPI_CLOCK_MASK);
 		SPSR = (SPSR & ~SPI_2XCLOCK_MASK) | ((rate >> 2) & SPI_2XCLOCK_MASK);
 	}
 
-	SPIClass MVSPI;
+	MVSPIClass MVSPI;
 	MicroView uView;
 
 
