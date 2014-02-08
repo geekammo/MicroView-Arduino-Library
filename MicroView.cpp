@@ -655,14 +655,14 @@ size_t MicroView::write(uint8_t c) {
 		setX(newx);
 		setY(newy);
 		value=0;
-//		if (min>max) {
-//			setMinValue(max);
-//			setMaxValue(min);
-//		}
-//		else {
-			setMinValue(min);
-			setMaxValue(max);
-//		}
+		//		if (min>max) {
+		//			setMinValue(max);
+		//			setMaxValue(min);
+		//		}
+		//		else {
+		setMinValue(min);
+		setMaxValue(max);
+		//		}
 		//drawFace();
 		//setValue(min);
 	}
@@ -686,18 +686,20 @@ size_t MicroView::write(uint8_t c) {
 		}
 	}
 
+	// -------------------------------------------------------------------------------------
+	// Slider Widget - start
+	// -------------------------------------------------------------------------------------
 
 	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
 		style=0;
 		totalTicks=30;
-
 		needFirstDraw=true;
 		prevValue=getMinValue();
 		drawFace();
 		draw();
 	}
 
-MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
+	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
 		if (sty==WIDGETSTYLE0) {
 			style=0;
 			totalTicks=30;
@@ -720,10 +722,10 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 		offsetY=getY();
 		
 		if(style>0)
-			majorLine=7;
+		majorLine=7;
 		else
-			majorLine=4;
-			
+		majorLine=4;
+		
 		// Draw major tickers
 		for (uint8_t i=0; i<majorLine;i++) {
 			uView.lineV(offsetX+1+(i*10), offsetY+3, 5);
@@ -740,17 +742,17 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 		}
 		
 		if(style>0) {
-		for (uint8_t i=0; i<4;i++) {
-			uView.lineV(offsetX+33+(i*2), offsetY+5, 3);
-		}
-		if (style>0) {
 			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+43+(i*2), offsetY+5, 3);
+				uView.lineV(offsetX+33+(i*2), offsetY+5, 3);
 			}
-			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+53+(i*2), offsetY+5, 3);
+			if (style>0) {
+				for (uint8_t i=0; i<4;i++) {
+					uView.lineV(offsetX+43+(i*2), offsetY+5, 3);
+				}
+				for (uint8_t i=0; i<4;i++) {
+					uView.lineV(offsetX+53+(i*2), offsetY+5, 3);
+				}
 			}
-		}
 		}
 		
 	}
@@ -788,6 +790,118 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 		uView.setCursor(offsetX+34,offsetY+1);
 		uView.print(strBuffer);
 	}
+
+	// -------------------------------------------------------------------------------------
+	// Slider Widget - end
+	// -------------------------------------------------------------------------------------
+
+	// -------------------------------------------------------------------------------------
+	// Gauge Widget - start
+	// -------------------------------------------------------------------------------------
+
+	MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
+		style=0;
+		radius=15;
+		needFirstDraw=true;
+		prevValue=getMinValue();
+		drawFace();
+		draw();
+	}
+
+	MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
+		if (sty==WIDGETSTYLE0) {
+			style=0;
+			radius=15;
+		}
+		else {
+			style=1;
+			radius=23;
+		}
+		needFirstDraw=true;
+		prevValue=getMinValue();
+		drawFace();
+		draw();
+	}
+
+
+	void MicroViewGauge::drawFace() {
+		uint8_t offsetX, offsetY, majorLine;
+		float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
+		offsetX=getX();
+		offsetY=getY();
+
+		uView.circle(offsetX,offsetY,radius);
+		
+		for (int i=150;i<=390;i+=30) {	// Major tick from 150 degree to 390 degree
+			degreeSec=i*(PI/180);
+			fromSecX = cos(degreeSec) * (radius / 1.5);
+			fromSecY = sin(degreeSec) * (radius / 1.5);
+			toSecX = cos(degreeSec) * (radius / 1);
+			toSecY = sin(degreeSec) * (radius / 1);
+			uView.line(1+offsetX+fromSecX,1+offsetY+fromSecY,1+offsetX+toSecX,1+offsetY+toSecY);
+		}
+		
+		if(radius>15) {
+			for (int i=150;i<=390;i+=15) {	// Minor tick from 150 degree to 390 degree
+				degreeSec=i*(PI/180);
+				fromSecX = cos(degreeSec) * (radius / 1.3);
+				fromSecY = sin(degreeSec) * (radius / 1.3);
+				toSecX = cos(degreeSec) * (radius / 1);
+				toSecY = sin(degreeSec) * (radius / 1);
+				uView.line(1+offsetX+fromSecX,1+offsetY+fromSecY,1+offsetX+toSecX,1+offsetY+toSecY);
+			}
+		}
+	}
+
+	void MicroViewGauge::draw() {
+		uint8_t offsetX, offsetY;
+		uint8_t tickPosition=0;
+		float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
+
+		char strBuffer[5];
+		offsetX=getX();
+		offsetY=getY();
+
+		if (needFirstDraw) {
+			degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
+			degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
+			toSecX = cos(degreeSec) * (radius / 1.2);
+			toSecY = sin(degreeSec) * (radius / 1.2);
+			uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
+			sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
+			needFirstDraw=false;
+		}
+		else {
+			// Draw previous pointer in XOR mode to erase it
+			degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
+			degreeSec = (degreeSec+150) * (PI/180);
+			toSecX = cos(degreeSec) * (radius / 1.2);
+			toSecY = sin(degreeSec) * (radius / 1.2);
+			uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
+
+			degreeSec = (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
+			degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
+			toSecX = cos(degreeSec) * (radius / 1.2);
+			toSecY = sin(degreeSec) * (radius / 1.2);
+			uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
+
+			sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
+			prevValue=getValue();
+		}
+
+		// Draw value
+		if(style>0) 
+		uView.setCursor(offsetX-10,offsetY+10);
+		else
+		uView.setCursor(offsetX-11,offsetY+11);
+		
+		uView.print(strBuffer);
+	}
+
+	// -------------------------------------------------------------------------------------
+	// Slider Widget - end
+	// -------------------------------------------------------------------------------------
+
 
 	void MVSPIClass::begin() {
 		// Set SS to high so a connected chip will be "deselected" by default

@@ -54,16 +54,19 @@ void loop() {
 <pre><code>
 #include &lt;MicroView.h&gt;
 
-MicroViewWidget *widget;
+MicroViewWidget *widget,*widget2;
 
 void setup() {
 	uView.begin();
-	widget = new MicroViewSlider(0,0,0,100);	// draw Slider widget at x=0,y=0,min=0, max=100
+	uView.clear(PAGE);
+	widget= new MicroViewGauge(32,30,0,100);  // draw Gauge widget at x=32,y=30,min=0, max=100
+	widget2= new MicroViewSlider(0,0,0,100);  // draw Slider widget at x=0,y=0,min=0, max=100
 }
 
 void loop() {
 	for(int i=0; i&lt;=100;i++) {
 		widget->setValue(i);	// give a value to widget
+		widget2->setValue(i);
 		uView.display();		// display current page buffer
 	}
 }
@@ -72,6 +75,8 @@ void loop() {
 ## History
 **v1.06b:  by JP Liew**
 * fixed Slider negative value not working
+* added round Gauge widget
+* changed Example 3 to show round Gauge
 
 **v1.05b: 6th February by JP Liew**
 * changed MICROVIEW class name to MicroView

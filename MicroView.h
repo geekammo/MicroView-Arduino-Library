@@ -174,6 +174,17 @@ private:
 	int16_t prevValue;
 };
 
+class MicroViewGauge: public MicroViewWidget{
+public:
+	MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max);
+	MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty);
+	void draw();
+	void drawFace();
+private:
+	uint8_t radius, style;
+	bool needFirstDraw;
+	int16_t prevValue;
+};
 
 #define SPI_CLOCK_DIV4 0x00
 #define SPI_CLOCK_DIV16 0x01
