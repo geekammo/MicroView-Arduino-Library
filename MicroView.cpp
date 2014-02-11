@@ -233,6 +233,18 @@ void MicroView::clear(uint8_t mode, uint8_t c) {
 	}	
 }
 
+void MicroView::invert(boolean inv) {
+	if (inv)
+	command(INVERTDISPLAY);
+	else
+	command(NORMALDISPLAY);
+}
+
+void MicroView::contrast(uint8_t contrast) {
+	command(SETCONTRAST);			// 0x81
+	command(contrast);
+}
+
 // This routine is to transfer the page buffer to the LCD controller's memory.
 void MicroView::display(void) {
 	uint8_t i, j;
@@ -633,14 +645,14 @@ size_t MicroView::write(uint8_t c) {
 
 	}
 
-	void MicroView::stopScroll(void){
+	void MicroView::scrollStop(void){
 		command(DEACTIVATESCROLL);
 	}
 
 	void MicroView::scrollRight(uint8_t start, uint8_t stop){
 		if (stop<start)		// stop must be larger or equal to start
 		return;
-		stopScroll();		// need to disable scrolling before starting to avoid memory corrupt
+		scrollStop();		// need to disable scrolling before starting to avoid memory corrupt
 		command(RIGHTHORIZONTALSCROLL);
 		command(0x00);
 		command(start);
@@ -679,8 +691,9 @@ size_t MicroView::write(uint8_t c) {
 
 	void MicroViewWidget::setMinValue(int16_t min) { minValue=min; }
 	void MicroViewWidget::setMaxValue(int16_t max) { maxValue=max; }
+
 	void MicroViewWidget::setValue(int16_t val) { 
-		if (val<=maxValue) { 
+		if ((val<=maxValue) && (val>=minValue)){ 
 			value=val; 
 			this->draw();
 		}

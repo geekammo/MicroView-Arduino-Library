@@ -16,7 +16,7 @@ Arduino library for MicroView.
 2. Start Arduino IDE.
 3. MicroView example is located at, File--->Example--->MicroView--->MicroViewDemo
 
-### Example 1
+### Example 1 - Hello World!
 <pre><code>
 #include &lt;MicroView.h&gt;
 
@@ -30,7 +30,7 @@ void loop() {
 }
 </code></pre>
 
-### Example 2
+### Example 2 - Basic Drawing
 <pre><code>
 #include &lt;MicroView.h&gt;
 
@@ -50,7 +50,7 @@ void loop() {
 }
 </code></pre>
 
-### Example 3
+### Example 3 - Widgets
 <pre><code>
 #include &lt;MicroView.h&gt;
 
@@ -73,7 +73,13 @@ void loop() {
 </code></pre>
 
 ## History
-**v1.06b:  by JP Liew**
+**v1.07b: 10th February by JP Liew**
+* changed function name stopScroll to scrollStop for consistency
+* added contrast function
+* added invert function
+* added KEYWORD to keywords.txt
+
+**v1.06b: 9th February by JP Liew**
 * fixed Slider negative value not working
 * added round Gauge widget
 * changed Example 3 to show round Gauge

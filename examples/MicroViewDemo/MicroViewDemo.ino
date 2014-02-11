@@ -1,18 +1,17 @@
 #include <MicroView.h>
 #include <Time.h>
 
-//#define PI 3.141592654
 #define clocksize 24
 
-uint8_t onDelay=5;		// This is the on delay in milliseconds, if there is no on delay, the erase will be too fast to clean up the screen.
+uint8_t onDelay=5;		// this is the on delay in milliseconds, if there is no on delay, the erase will be too fast to clean up the screen.
 
 void setup() {
-	uView.begin();		// Begin of MicroView
-	uView.clear(ALL);	// Erase hardware memory inside the OLED controller
-	uView.display();	// Display the content in the buffer memory, by default it is the MicroView logo
+	uView.begin();		// begin of MicroView
+	uView.clear(ALL);	// erase hardware memory inside the OLED controller
+	uView.display();	// display the content in the buffer memory, by default it is the MicroView logo
 	setTime(10,10,01,17,1,2014);
 	delay(500);
-	uView.clear(PAGE);	// Erase the memory buffer, when next uView.display() is called, the OLED will be cleared.
+	uView.clear(PAGE);	// erase the memory buffer, when next uView.display() is called, the OLED will be cleared.
 }
 
 void loop() {
@@ -261,8 +260,6 @@ void loop() {
 		}
 	}
 	uView.clear(PAGE);
-	
-	
 }
 
 

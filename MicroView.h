@@ -64,6 +64,10 @@
 #define VERTICALRIGHTHORIZONTALSCROLL	0x29
 #define VERTICALLEFTHORIZONTALSCROLL	0x2A
 
+typedef enum CMD {CMD_CLEAR,CMD_INVERT,CMD_CONTRAST,CMD_DISPLAY,CMD_SETCURSOR,CMD_PIXEL,CMD_LINE,
+CMD_LINEH,CMD_LINEV,CMD_RECT, CMD_RECTFILL, CMD_CIRCLE,CMD_CIRCLEFILL, CMD_DRAWCHAR, CMD_DRAWBITMAP,
+CMD_GETLCDWIDTH, CMD_GETLCDHEIGHT,CMD_SETCOLOR, CMD_SETDRAWMODE} commCommand_t;
+
 class MicroView : public Print{
 public:
 	MicroView(void) {};
@@ -84,7 +88,8 @@ public:
 	// LCD Draw functions	
 	void clear(uint8_t mode);
 	void clear(uint8_t mode, uint8_t c);
-	void invert(uint8_t i);
+	void invert(boolean inv);
+	void contrast(uint8_t contrast);
 	void display(void);
 	void setCursor(uint8_t x, uint8_t y);
 	void pixel(uint8_t x, uint8_t y);
@@ -125,7 +130,7 @@ public:
 	void scrollLeft(uint8_t start, uint8_t stop);
 	void scrollVertRight(uint8_t start, uint8_t stop);
 	void scrollVertLeft(uint8_t start, uint8_t stop);
-	void stopScroll(void);
+	void scrollStop(void);
 	
 private:
 	//uint8_t cs;
