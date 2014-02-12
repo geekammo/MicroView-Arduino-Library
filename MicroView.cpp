@@ -17,6 +17,9 @@
 
 // Change the total fonts included
 #define TOTALFONTS		7
+#define recvLEN			100
+char serInStr[recvLEN];		// TODO - need to fix a value so that this will not take up too much memory.
+uint8_t serCmd[recvLEN];
 
 // Add the font name as declared in the header file.  Remove as many as possible to get conserve FLASH memory.
 const unsigned char *MicroView::fontsPointer[]={
@@ -157,6 +160,7 @@ void MicroView::begin() {
 
 	command(DISPLAYON);				//--turn on oled panel
 	clear(ALL);						// Erase hardware memory inside the OLED controller to avoid random data in memory.
+	Serial.begin(115200);
 }
 
 void MicroView::command(uint8_t c) {
@@ -662,21 +666,272 @@ size_t MicroView::write(uint8_t c) {
 		command(0xFF);
 		command(ACTIVATESCROLL);
 	}
+	
+	void MicroView::doCmd(uint8_t cmdCount) {
+		// decode command
+		switch (serCmd[0]) {
+		case CMD_CLEAR: {
+			Serial.println("clear");
+			if (cmdCount==1) {
+				clear(serCmd[1]);
+			} else if (cmdCount==2) {
+				clear(serCmd[1], serCmd[2]);
+			}
+			break;
+		}
+		
+		case CMD_INVERT: {
+			Serial.println("invert");
+			if (cmdCount==1) {
+				invert(serCmd[1]);
+			}
+			break;
+		}
+		
+		case CMD_CONTRAST: {
+			Serial.println("contrast");
+			if (cmdCount==1) {
+				contrast(serCmd[1]);
+			}
+			break;
+		}
+		
+		case CMD_DISPLAY: {
+			Serial.println("display");
+			if (cmdCount==0) {
+				display();
+			}
+			break;
+		}
+		
+		case CMD_SETCURSOR: {
+			Serial.println("setCursor");
+			if (cmdCount==2) {
+				setCursor(serCmd[1], serCmd[2]);
+			}
+			break;
+		}
+		
+		case CMD_PIXEL: {
+			Serial.println("pixel");
+			if (cmdCount==2) {
+				pixel(serCmd[1],serCmd[2]);
+				display();
+			} else if (cmdCount=4) {
+				pixel(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
+			}
+			break;
+		}
+		
+		case CMD_LINE: {
+			Serial.println("line");
+			if (cmdCount==4) {
+				line(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
+				display();
+			} else if (cmdCount==6) {
+				line(serCmd[1],serCmd[2],serCmd[3],serCmd[4],serCmd[5],serCmd[6]);
+				display();
+			}
+			break;
+		}
 
+		case CMD_LINEH: {
+			Serial.println("lineH");
+			if (cmdCount==3) {
+				lineH(serCmd[1], serCmd[2], serCmd[3]);
+				display();
+			} else if (cmdCount==5) {
+				lineH(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+				display();
+			}
+			break;
+		}
+		
+		case CMD_LINEV: {
+			Serial.println("lineV");
+			if (cmdCount==3) {
+				lineV(serCmd[1], serCmd[2], serCmd[3]);
+				display();
+			} else if (cmdCount==5) {
+				lineV(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+				display();
+			}
+			break;
+		}
+		
+		case CMD_RECT: {
+			Serial.println("rect");
+			if (cmdCount==4) {
+				rect(serCmd[1], serCmd[2], serCmd[3], serCmd[4]);
+				display();
+			} else if (cmdCount==6) {
+				rect(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5], serCmd[6]);
+				display();
+			}
+			break;
+		}
+
+		case CMD_RECTFILL: {
+			Serial.println("rectFill");
+			if (cmdCount==4) {
+				rectFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4]);
+				display();
+			} else if (cmdCount==6) {
+				rectFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5], serCmd[6]);
+				display();
+			}
+			break;
+			
+		}
+		
+		case CMD_CIRCLE: {
+			Serial.println("circle");
+			if (cmdCount==3) {
+				circle(serCmd[1], serCmd[2], serCmd[3]);
+				display();
+			} else if (cmdCount==5) {
+				circle(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+				display();
+			}
+			break;
+		}
+
+		case CMD_CIRCLEFILL: {
+			Serial.println("circleFill");
+
+			if (cmdCount==3) {
+				circleFill(serCmd[1], serCmd[2], serCmd[3]);
+				display();
+			} else if (cmdCount==5) {
+				circleFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+				display();
+			}
+			break;
+		}
+
+		case CMD_DRAWCHAR: {
+			Serial.println("drawChar");
+			if (cmdCount==3) {
+				drawChar(serCmd[1], serCmd[2], serCmd[3]);
+				display();
+			} else if (cmdCount==5) {
+				drawChar(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+				display();
+			}
+			break;
+		}
+
+		case CMD_DRAWBITMAP: {
+			// TODO
+			
+			break;
+		}
+		
+		case CMD_GETLCDWIDTH: {
+			Serial.println("getLCDWidth");
+			
+			if (cmdCount==0) {
+				Serial.println(getLCDWidth());
+			}
+			break;
+		}
+		
+		case CMD_GETLCDHEIGHT: {
+			Serial.println("getLCDHeight");
+			if (cmdCount==0) {
+				Serial.println(getLCDHeight());
+			}
+			break;
+		}
+		
+		case CMD_SETCOLOR: {
+			Serial.println("setColor");
+			if (cmdCount==1) {
+				setColor(serCmd[1]);
+			}
+			break;
+		}
+		
+		case CMD_SETDRAWMODE: {
+			Serial.println("drawMode");
+			if (cmdCount==1) {
+				setDrawMode(serCmd[1]);
+			}
+			break;
+			
+		}
+		default:
+			break;
+		}
+	}
+	
+	void MicroView::checkComm(void) {
+		int count = readSerial();
+		char *result;
+		uint8_t index=0;
+		int temp;
+		
+		if (count>0) {
+			// process Serial data
+			result=strtok(serInStr,",");
+			if (result !=NULL) {
+				temp=atoi(result);
+				serCmd[index]=(uint8_t)temp & 0xff;		// we only need 8 bit number
+				index++;
+				for (uint8_t i;i<recvLEN;i++) {
+					result=strtok(NULL,",");
+					if (result != NULL) {
+						
+						temp=atoi(result);
+						serCmd[index]=(uint8_t)temp & 0xff;		// we only need 8 bit number
+						index++;
+					}
+					else {
+						break;
+					}
+				}
+/*
+				// debug output
+				Serial.print("command received=");
+				Serial.println(index);
+				for (uint8_t i=0;i<index;i++) {
+					Serial.println(serCmd[i]);
+				}
+*/
+			}
+			doCmd(index-1);	// index-1 is the total parameters count of a command
+		}
+	}
+
+	int MicroView::readSerial(void)
+	{
+		int i=0;
+		if(!Serial.available())
+		return -1;
+
+		while (Serial.available()>0)
+		{
+			if( i < recvLEN)
+			{
+				serInStr[i++] = Serial.read();
+				delay(2);
+			}
+			else
+			break;	
+		}
+		serInStr[i]='\0';
+		return i;
+	}
+
+	// -------------------------------------------------------------------------------------
+	// MicroViewWidget Class - start
+	// -------------------------------------------------------------------------------------
 	MicroViewWidget::MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max) {
 		setX(newx);
 		setY(newy);
 		value=0;
-		//		if (min>max) {
-		//			setMinValue(max);
-		//			setMaxValue(min);
-		//		}
-		//		else {
 		setMinValue(min);
 		setMaxValue(max);
-		//		}
-		//drawFace();
-		//setValue(min);
 	}
 
 	uint8_t MicroViewWidget::getX() { return x; }
@@ -698,6 +953,10 @@ size_t MicroView::write(uint8_t c) {
 			this->draw();
 		}
 	}
+	
+	// -------------------------------------------------------------------------------------
+	// MicroViewWidget Class - end
+	// -------------------------------------------------------------------------------------
 
 	// -------------------------------------------------------------------------------------
 	// Slider Widget - start
@@ -835,7 +1094,6 @@ size_t MicroView::write(uint8_t c) {
 		drawFace();
 		draw();
 	}
-
 
 	void MicroViewGauge::drawFace() {
 		uint8_t offsetX, offsetY, majorLine;

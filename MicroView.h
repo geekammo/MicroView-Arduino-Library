@@ -64,9 +64,27 @@
 #define VERTICALRIGHTHORIZONTALSCROLL	0x29
 #define VERTICALLEFTHORIZONTALSCROLL	0x2A
 
-typedef enum CMD {CMD_CLEAR,CMD_INVERT,CMD_CONTRAST,CMD_DISPLAY,CMD_SETCURSOR,CMD_PIXEL,CMD_LINE,
-CMD_LINEH,CMD_LINEV,CMD_RECT, CMD_RECTFILL, CMD_CIRCLE,CMD_CIRCLEFILL, CMD_DRAWCHAR, CMD_DRAWBITMAP,
-CMD_GETLCDWIDTH, CMD_GETLCDHEIGHT,CMD_SETCOLOR, CMD_SETDRAWMODE} commCommand_t;
+typedef enum CMD {
+	CMD_CLEAR,
+	CMD_INVERT,
+	CMD_CONTRAST,
+	CMD_DISPLAY,
+	CMD_SETCURSOR,
+	CMD_PIXEL,
+	CMD_LINE,
+	CMD_LINEH,
+	CMD_LINEV,
+	CMD_RECT,
+	CMD_RECTFILL,
+	CMD_CIRCLE,
+	CMD_CIRCLEFILL,
+	CMD_DRAWCHAR,
+	CMD_DRAWBITMAP,
+	CMD_GETLCDWIDTH,
+	CMD_GETLCDHEIGHT,
+	CMD_SETCOLOR,
+	CMD_SETDRAWMODE
+} commCommand_t;
 
 class MicroView : public Print{
 public:
@@ -132,6 +150,10 @@ public:
 	void scrollVertLeft(uint8_t start, uint8_t stop);
 	void scrollStop(void);
 	
+	// Communication
+	void checkComm(void);
+	void doCmd(uint8_t index);
+	
 private:
 	//uint8_t cs;
 	volatile uint8_t *mosiport, *sckport, *ssport, *dcport;	// use volatile because these are fixed location port address
@@ -140,6 +162,8 @@ private:
 	uint16_t fontMapWidth;
 	//unsigned char *fontsPointer[TOTALFONTS];
 	static const unsigned char *fontsPointer[];
+	
+	int readSerial(void);
 };
 
 class MicroViewWidget {
