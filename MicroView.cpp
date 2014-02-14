@@ -719,6 +719,7 @@ size_t MicroView::write(uint8_t c) {
 				display();
 			} else if (cmdCount=4) {
 				pixel(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
+				display();
 			}
 			break;
 		}

@@ -60,6 +60,7 @@ setMinValue	KEYWORD2
 setValue	KEYWORD2
 draw	KEYWORD2
 drawFace	KEYWORD2
+checkComm	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

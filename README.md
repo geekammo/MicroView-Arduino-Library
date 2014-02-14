@@ -72,12 +72,27 @@ void loop() {
 }
 </code></pre>
 
+### Example 4 - Communication
+<pre><code>
+#include &lt;MicroView.h&gt;
+
+void setup() {
+  uView.begin();
+  uView.clear(PAGE);
+}
+
+void loop() {
+  uView.checkComm();
+}
+</code></pre>
+
 ## History
-**v1.07b: 10th February by JP Liew**
+**v1.07b: 15th February by JP Liew**
 * changed function name stopScroll to scrollStop for consistency
 * added contrast function
 * added invert function
 * added KEYWORD to keywords.txt
+* added checkComm() function to communicate with host PC
 
 **v1.06b: 9th February by JP Liew**
 * fixed Slider negative value not working
