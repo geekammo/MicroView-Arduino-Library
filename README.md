@@ -87,19 +87,23 @@ void loop() {
 </code></pre>
 
 ## History
-**v1.07b: 15th February by JP Liew**
+**v1.08b: 18th February 2014 by JP Liew**
+* added verticalFlip(), horizontalFlip()
+
+
+**v1.07b: 15th February 2014 by JP Liew**
 * changed function name stopScroll to scrollStop for consistency
 * added contrast function
 * added invert function
 * added KEYWORD to keywords.txt
 * added checkComm() function to communicate with host PC
 
-**v1.06b: 9th February by JP Liew**
+**v1.06b: 9th February 2014 by JP Liew**
 * fixed Slider negative value not working
 * added round Gauge widget
 * changed Example 3 to show round Gauge
 
-**v1.05b: 6th February by JP Liew**
+**v1.05b: 6th February 2014 by JP Liew**
 * changed MICROVIEW class name to MicroView
 * created MICROVIEWWIDGET class
 * added routines to draw widget

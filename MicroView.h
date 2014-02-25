@@ -149,6 +149,8 @@ public:
 	void scrollVertRight(uint8_t start, uint8_t stop);
 	void scrollVertLeft(uint8_t start, uint8_t stop);
 	void scrollStop(void);
+	void flipVertical(boolean flip);
+	void flipHorizontal(boolean flip);
 	
 	// Communication
 	void checkComm(void);

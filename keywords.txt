@@ -48,6 +48,8 @@ scrollLeft	KEYWORD2
 scrollVertRight	KEYWORD2
 scrollVertLeft	KEYWORD2
 scrollStop	KEYWORD2
+flipVertical	KEYWORD2
+flipHorizontal	KEYWORD2
 
 getX	KEYWORD2
 getY	KEYWORD2
