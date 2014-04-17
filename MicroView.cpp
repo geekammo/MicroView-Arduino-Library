@@ -6,7 +6,7 @@
 #undef PROGMEM
 #define PROGMEM __attribute__((section(".progmem.data")))
 
-// Add header of the fonts here.  Remove as many as possible to get conserve FLASH memory.
+// Add header of the fonts here.  Remove as many as possible to conserve FLASH memory.
 #include <font5x7.h>
 #include <font8x16.h>
 #include <fontlargenumber.h>
@@ -14,6 +14,8 @@
 #include <space01.h>
 #include <space02.h>
 #include <space03.h>
+
+
 
 // Change the total fonts included
 #define TOTALFONTS		7
@@ -688,53 +690,80 @@ void MicroView::doCmd(uint8_t cmdCount) {
 	// decode command
 	switch (serCmd[0]) {
 	case CMD_CLEAR: {
-			Serial.println("clear");
 			if (cmdCount==1) {
+				Serial.print("clear ");
+				Serial.println(serCmd[1]);
 				clear(serCmd[1]);
 			} else if (cmdCount==2) {
+				Serial.print("clear ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.println(serCmd[2]);
 				clear(serCmd[1], serCmd[2]);
 			}
 			break;
 		}
 		
 	case CMD_INVERT: {
-			Serial.println("invert");
+			
 			if (cmdCount==1) {
+				Serial.print("invert ");
+				Serial.println(serCmd[1]);
 				invert(serCmd[1]);
 			}
 			break;
 		}
 		
 	case CMD_CONTRAST: {
-			Serial.println("contrast");
+			
 			if (cmdCount==1) {
+				Serial.print("contrast ");
+				Serial.println(serCmd[1]);
 				contrast(serCmd[1]);
 			}
 			break;
 		}
 		
 	case CMD_DISPLAY: {
-			Serial.println("display");
+			
 			if (cmdCount==0) {
+				Serial.println("display");
 				display();
 			}
 			break;
 		}
 		
 	case CMD_SETCURSOR: {
-			Serial.println("setCursor");
+			
 			if (cmdCount==2) {
+				Serial.print("setCursor ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.println(serCmd[2]);
 				setCursor(serCmd[1], serCmd[2]);
 			}
 			break;
 		}
 		
 	case CMD_PIXEL: {
-			Serial.println("pixel");
+			
 			if (cmdCount==2) {
+				Serial.print("pixel ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.println(serCmd[2]);
 				pixel(serCmd[1],serCmd[2]);
 				display();
 			} else if (cmdCount=4) {
+				Serial.print("pixel ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.println(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.println(serCmd[4]);
+				
 				pixel(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
 				display();
 			}
@@ -742,11 +771,32 @@ void MicroView::doCmd(uint8_t cmdCount) {
 		}
 		
 	case CMD_LINE: {
-			Serial.println("line");
 			if (cmdCount==4) {
+				Serial.print("line ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.println(serCmd[4]);
+								
 				line(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
 				display();
 			} else if (cmdCount==6) {
+				Serial.print("line ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.print(serCmd[5]);
+				Serial.print(" ");
+				Serial.println(serCmd[6]);
+				
 				line(serCmd[1],serCmd[2],serCmd[3],serCmd[4],serCmd[5],serCmd[6]);
 				display();
 			}
@@ -754,11 +804,28 @@ void MicroView::doCmd(uint8_t cmdCount) {
 		}
 
 	case CMD_LINEH: {
-			Serial.println("lineH");
 			if (cmdCount==3) {
+				Serial.print("lineH ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.println(serCmd[3]);
+
 				lineH(serCmd[1], serCmd[2], serCmd[3]);
 				display();
 			} else if (cmdCount==5) {
+				Serial.print("lineH ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.println(serCmd[5]);
+
 				lineH(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
 				display();
 			}
@@ -766,11 +833,27 @@ void MicroView::doCmd(uint8_t cmdCount) {
 		}
 		
 	case CMD_LINEV: {
-			Serial.println("lineV");
 			if (cmdCount==3) {
+				Serial.print("lineH ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.println(serCmd[3]);
+
 				lineV(serCmd[1], serCmd[2], serCmd[3]);
 				display();
 			} else if (cmdCount==5) {
+				Serial.print("lineH ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.println(serCmd[5]);
 				lineV(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
 				display();
 			}
@@ -778,11 +861,30 @@ void MicroView::doCmd(uint8_t cmdCount) {
 		}
 		
 	case CMD_RECT: {
-			Serial.println("rect");
 			if (cmdCount==4) {
+				Serial.print("rect ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.println(serCmd[4]);
 				rect(serCmd[1], serCmd[2], serCmd[3], serCmd[4]);
 				display();
 			} else if (cmdCount==6) {
+				Serial.print("rect ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.print(serCmd[5]);
+				Serial.print(" ");
+				Serial.println(serCmd[6]);
 				rect(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5], serCmd[6]);
 				display();
 			}
@@ -790,11 +892,30 @@ void MicroView::doCmd(uint8_t cmdCount) {
 		}
 
 	case CMD_RECTFILL: {
-			Serial.println("rectFill");
 			if (cmdCount==4) {
+				Serial.print("rectFill ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.println(serCmd[4]);
 				rectFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4]);
 				display();
 			} else if (cmdCount==6) {
+				Serial.print("rectFill ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.print(serCmd[5]);
+				Serial.print(" ");
+				Serial.println(serCmd[6]);
 				rectFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5], serCmd[6]);
 				display();
 			}
@@ -803,11 +924,26 @@ void MicroView::doCmd(uint8_t cmdCount) {
 		}
 		
 	case CMD_CIRCLE: {
-			Serial.println("circle");
 			if (cmdCount==3) {
+				Serial.print("circle ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.println(serCmd[3]);
 				circle(serCmd[1], serCmd[2], serCmd[3]);
 				display();
 			} else if (cmdCount==5) {
+				Serial.print("circle ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.println(serCmd[5]);
 				circle(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
 				display();
 			}
@@ -815,12 +951,27 @@ void MicroView::doCmd(uint8_t cmdCount) {
 		}
 
 	case CMD_CIRCLEFILL: {
-			Serial.println("circleFill");
 
 			if (cmdCount==3) {
+				Serial.print("circle ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.println(serCmd[3]);
 				circleFill(serCmd[1], serCmd[2], serCmd[3]);
 				display();
 			} else if (cmdCount==5) {
+				Serial.print("circle ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.println(serCmd[5]);
 				circleFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
 				display();
 			}
@@ -828,11 +979,26 @@ void MicroView::doCmd(uint8_t cmdCount) {
 		}
 
 	case CMD_DRAWCHAR: {
-			Serial.println("drawChar");
 			if (cmdCount==3) {
+				Serial.print("drawChar ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.println(serCmd[3]);
 				drawChar(serCmd[1], serCmd[2], serCmd[3]);
 				display();
 			} else if (cmdCount==5) {
+				Serial.print("drawChar ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.println(serCmd[5]);
 				drawChar(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
 				display();
 			}
@@ -846,33 +1012,35 @@ void MicroView::doCmd(uint8_t cmdCount) {
 		}
 		
 	case CMD_GETLCDWIDTH: {
-			Serial.println("getLCDWidth");
 			
 			if (cmdCount==0) {
+				Serial.print("LCDWidth=");
 				Serial.println(getLCDWidth());
 			}
 			break;
 		}
 		
 	case CMD_GETLCDHEIGHT: {
-			Serial.println("getLCDHeight");
 			if (cmdCount==0) {
+				Serial.print("LCDHeight=");
 				Serial.println(getLCDHeight());
 			}
 			break;
 		}
 		
 	case CMD_SETCOLOR: {
-			Serial.println("setColor");
 			if (cmdCount==1) {
+				Serial.print("setColor ");
+				Serial.println(serCmd[1]);
 				setColor(serCmd[1]);
 			}
 			break;
 		}
 		
 	case CMD_SETDRAWMODE: {
-			Serial.println("drawMode");
 			if (cmdCount==1) {
+				Serial.print("drawMode ");
+				Serial.println(serCmd[1]);
 				setDrawMode(serCmd[1]);
 			}
 			break;

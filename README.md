@@ -87,9 +87,12 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.09b: 17th April 2014 by JP Liew**
+* changed verticalFlip() to flipVertical() and horizontalFlip() to flipHorizontal() for consistency
+* added debug messages for doCmd()
+
 **v1.08b: 18th February 2014 by JP Liew**
 * added verticalFlip(), horizontalFlip()
-
 
 **v1.07b: 15th February 2014 by JP Liew**
 * changed function name stopScroll to scrollStop for consistency
