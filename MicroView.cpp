@@ -1,5 +1,5 @@
 #include <avr/pgmspace.h>
-#include <SPI.h>
+//#include <SPI.h>
 #include <MicroView.h>
 
 // This fixed ugly GCC warning "only initialized variables can be placed into program memory area"
@@ -95,19 +95,19 @@ void MicroView::begin() {
 	// Setting up SPI pins
 	pinMode(MOSI, OUTPUT);
 	pinMode(SCK, OUTPUT);
-	pinMode(DC, OUTPUT);
+	
+	//pinMode(DC, OUTPUT);
 	pinMode(RESET, OUTPUT);
-	pinMode(SS, OUTPUT);
+	pinMode(SS, INPUT);
 	digitalWrite(SS, HIGH);
 	
-	sckport     = portOutputRegister(digitalPinToPort(SCK));
-	sckpinmask  = digitalPinToBitMask(SCK);
-	mosiport    = portOutputRegister(digitalPinToPort(MOSI));
-	mosipinmask = digitalPinToBitMask(MOSI);
-	ssport      = portOutputRegister(digitalPinToPort(SS));
-	sspinmask   = digitalPinToBitMask(SS);
-	dcport      = portOutputRegister(digitalPinToPort(DC));
-	dcpinmask   = digitalPinToBitMask(DC);
+	ssport		= portOutputRegister(digitalPinToPort(SS));
+	sspinmask	= digitalPinToBitMask(SS);
+	ssreg		= portModeRegister(digitalPinToPort(SS));
+	
+	dcport		= portOutputRegister(digitalPinToPort(DC));
+	dcpinmask	= digitalPinToBitMask(DC);
+	dcreg		= portModeRegister(digitalPinToPort(DC));
 	
 	digitalWrite(RESET, HIGH);
 	// VDD (3.3V) goes high at start, lets just chill for 5 ms
@@ -122,7 +122,8 @@ void MicroView::begin() {
 	// wait 10ms
 	delay(10);
 	// bring out of reset
-	digitalWrite(RESET, HIGH);
+	pinMode(RESET,INPUT_PULLUP);
+	//digitalWrite(RESET, HIGH);
 
 	// Init sequence for 64x48 OLED module
 	command(DISPLAYOFF);			// 0xAE
@@ -166,20 +167,33 @@ void MicroView::begin() {
 
 void MicroView::command(uint8_t c) {
 	// Hardware SPI
-	*ssport |= sspinmask;	// SS HIGH
-	*dcport &= ~dcpinmask;	// DC LOW
-	*ssport &= ~sspinmask;	// SS LOW
+	*dcreg |= dcpinmask;		// Set DC pin to OUTPUT
+	*dcport &= ~dcpinmask;		// DC pin LOW
+	
+	*ssreg |= sspinmask;		// Set SS pin to OUTPUT
+	*ssport &= ~sspinmask;		// SS LOW
+
 	MVSPI.transfer(c);
+
 	*ssport |= sspinmask;	// SS HIGH
+	*ssreg &= ~sspinmask;	// Set SS pin to INPUT
+	
+	*dcreg &= ~dcpinmask;	// Set DC to INPUT to avoid high voltage over driving the OLED logic
 }
 
 void MicroView::data(uint8_t c) {
 	// Hardware SPI
-	*ssport |= sspinmask;	// SS HIGH
 	*dcport |= dcpinmask;	// DC HIGH
+
+	*ssreg |= sspinmask;		// Set SS pin to OUTPUT
 	*ssport &= ~sspinmask;	// SS LOW
+
 	MVSPI.transfer(c);
+
 	*ssport |= sspinmask;	// SS HIGH
+	*ssreg &= ~sspinmask;	// Set SS pin to INPUT
+
+	*dcreg &= ~dcpinmask;	// Set DC to INPUT to avoid high voltage over driving the OLED logic
 }
 
 void MicroView::setPageAddress(uint8_t add) {

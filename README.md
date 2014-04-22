@@ -12,9 +12,13 @@ Arduino library for MicroView.
 
 ## Installation
 
-1. Extract / Check out to Arduino's libraries folder.
-2. Start Arduino IDE.
-3. MicroView example is located at, File--->Example--->MicroView--->MicroViewDemo
+1. Change directory to Arduino's main directory
+2. cd libraries
+3. mkdir MicroView
+4. cd MicroView
+5. git clone git@github.com:geekammo/microview.git .
+6. Start Arduino IDE.
+7. MicroView example is located at, File--->Example--->MicroView--->MicroViewDemo
 
 ### Example 1 - Hello World!
 <pre><code>
@@ -87,6 +91,9 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.10b: 22th April 2014 by JP Liew**
+* changed SS, RESET, DC pins to use weak internal pull-up resistors
+
 **v1.09b: 17th April 2014 by JP Liew**
 * changed verticalFlip() to flipVertical() and horizontalFlip() to flipHorizontal() for consistency
 * added debug messages for doCmd()

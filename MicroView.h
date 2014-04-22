@@ -9,7 +9,8 @@
 
 #define DC		8
 #define RESET	12
-// SS, SCK, MOSI already defined by original SPI.h
+
+// SS, SCK, MOSI already defined by original pins_arduino.h
 //#define CS 		10
 //#define SCK		13
 //#define MOSI	11
@@ -158,7 +159,8 @@ public:
 	
 private:
 	//uint8_t cs;
-	volatile uint8_t *mosiport, *sckport, *ssport, *dcport;	// use volatile because these are fixed location port address
+	//volatile uint8_t *mosiport, *sckport;
+	volatile uint8_t *ssport, *dcport, *ssreg, *dcreg;	// use volatile because these are fixed location port address
 	uint8_t mosipinmask, sckpinmask, sspinmask, dcpinmask;
 	uint8_t foreColor,drawMode,fontWidth, fontHeight, fontType, fontStartChar, fontTotalChar, cursorX, cursorY;
 	uint16_t fontMapWidth;
