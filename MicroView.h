@@ -25,7 +25,8 @@
 #define swap(a, b) { uint8_t t = a; a = b; b = t; }
 
 #define DC		8
-#define RESET	12
+#define RESET	7
+#define OLEDPWR	4
 
 // SS, SCK, MOSI already defined by original pins_arduino.h
 //#define CS 		10

@@ -91,6 +91,10 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.11b: 9th June 2014 by JP Liew**
+* added simple tutorials for production sketch
+* modified OLED RESET pin to 7
+
 **v1.10b: 22th April 2014 by JP Liew**
 * changed SS, RESET, DC pins to use weak internal pull-up resistors
 

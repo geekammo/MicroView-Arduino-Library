@@ -108,7 +108,9 @@ void MicroView::begin() {
 	setColor(WHITE);
 	setDrawMode(NORM);
 	setCursor(0,0);
-
+	
+	pinMode(OLEDPWR, OUTPUT);
+	digitalWrite(OLEDPWR,HIGH);
 	// Setting up SPI pins
 	pinMode(MOSI, OUTPUT);
 	pinMode(SCK, OUTPUT);
@@ -243,7 +245,7 @@ void MicroView::clear(uint8_t mode) {
 	else
 	{
 		memset(screenmemory,0,384);			// (64 x 48) / 8 = 384
-		display();
+		//display();
 	}
 }
 
