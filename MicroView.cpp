@@ -1,19 +1,19 @@
 /*
-    MicroView Arduino Library
-    Copyright (C) 2014 GeekAmmo
+	MicroView Arduino Library
+	Copyright (C) 2014 GeekAmmo
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <avr/pgmspace.h>
 //#include <SPI.h>
@@ -76,29 +76,30 @@ static uint8_t screenmemory [] = {
 	// D6 D6.............D6       /
 	// D7 D7.............D7  ----
 	
+	//SparkFun Electronics LOGO 
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x80, 0xC0, 0xC0,
-	0xC0, 0xC0, 0xC0, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xE0, 0xF8, 0xFC, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0x0F, 0x07, 0x07, 0x06, 0x06, 0x00, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x80, 0xC0, 0xC0,
-	0xE0, 0xE0, 0xF0, 0xF0, 0x78, 0x38, 0xDC, 0xDC, 0xFE, 0xFE, 0x6F, 0x6F, 0xE7, 0xE7, 0x63, 0x61,
-	0xC1, 0xC1, 0xC3, 0x87, 0x87, 0x0F, 0x0F, 0x1E, 0x1E, 0x3C, 0x3C, 0x78, 0x78, 0xF0, 0xF0, 0xE0,
-	0xE0, 0xC0, 0xC0, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFC, 0xFE, 0xFE, 0x3F, 0x7F, 0x77, 0xF3, 0xE3,
-	0xE1, 0xC1, 0xC0, 0x80, 0x80, 0x07, 0x0F, 0x1F, 0x38, 0x30, 0x36, 0x76, 0x61, 0x61, 0x60, 0x68,
-	0x69, 0x66, 0x60, 0x61, 0xB1, 0xBF, 0xDE, 0xC0, 0xE0, 0xF0, 0xF0, 0xF8, 0xF8, 0xFC, 0xBC, 0xBF,
-	0xFF, 0xFF, 0xFF, 0xFF, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x07, 0x07, 0x0F, 0xFF, 0xFE, 0xFE, 0x3C,
-	0x3D, 0x79, 0x7B, 0xF3, 0xF7, 0xE7, 0xCF, 0xCE, 0x9E, 0x9C, 0x3C, 0xF8, 0xF8, 0xF8, 0x7C, 0xFC,
-	0xFE, 0xCE, 0xEF, 0xFF, 0xFF, 0xFB, 0xFB, 0x7F, 0xFF, 0xFE, 0xFE, 0x1F, 0x0F, 0xFF, 0xFF, 0xFF,
-	0x01, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x03, 0x03, 0x07, 0x07, 0x0F, 0x0F, 0x0F, 0x0F, 0xFF,
-	0xFF, 0xFF, 0x03, 0x01, 0x7F, 0xFF, 0x7F, 0x00, 0x1F, 0x3F, 0x1F, 0x00, 0x00, 0x07, 0x0F, 0x07,
-	0x00, 0x01, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03,
-	0x03, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x81, 0x07, 0x0F, 0x3F, 0x3F, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFE, 0xFE, 0xFC, 0xFC, 0xFC, 0xFE, 0xFF, 0xFF, 0xFF, 0xFC, 0xF8, 0xE0,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFC,
+	0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xF1, 0xE0, 0xE0, 0xE0, 0xE0, 0xE0, 0xF0, 0xFD, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0x3F, 0x1F, 0x07, 0x01,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0x3F, 0x1F, 0x1F, 0x0F, 0x0F, 0x0F, 0x0F,
+	0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07, 0x07, 0x03, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF,
+	0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
@@ -719,397 +720,397 @@ size_t MicroView::write(uint8_t c) {
 		}
 	}
 
-void MicroView::doCmd(uint8_t cmdCount) {
-	// decode command
-	switch (serCmd[0]) {
-	case CMD_CLEAR: {
-			if (cmdCount==1) {
-				Serial.print("clear ");
-				Serial.println(serCmd[1]);
-				clear(serCmd[1]);
-			} else if (cmdCount==2) {
-				Serial.print("clear ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.println(serCmd[2]);
-				clear(serCmd[1], serCmd[2]);
+	void MicroView::doCmd(uint8_t cmdCount) {
+		// decode command
+		switch (serCmd[0]) {
+		case CMD_CLEAR: {
+				if (cmdCount==1) {
+					Serial.print("clear ");
+					Serial.println(serCmd[1]);
+					clear(serCmd[1]);
+				} else if (cmdCount==2) {
+					Serial.print("clear ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.println(serCmd[2]);
+					clear(serCmd[1], serCmd[2]);
+				}
+				break;
 			}
-			break;
-		}
-		
-	case CMD_INVERT: {
 			
-			if (cmdCount==1) {
-				Serial.print("invert ");
-				Serial.println(serCmd[1]);
-				invert(serCmd[1]);
-			}
-			break;
-		}
-		
-	case CMD_CONTRAST: {
-			
-			if (cmdCount==1) {
-				Serial.print("contrast ");
-				Serial.println(serCmd[1]);
-				contrast(serCmd[1]);
-			}
-			break;
-		}
-		
-	case CMD_DISPLAY: {
-			
-			if (cmdCount==0) {
-				Serial.println("display");
-				display();
-			}
-			break;
-		}
-		
-	case CMD_SETCURSOR: {
-			
-			if (cmdCount==2) {
-				Serial.print("setCursor ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.println(serCmd[2]);
-				setCursor(serCmd[1], serCmd[2]);
-			}
-			break;
-		}
-		
-	case CMD_PIXEL: {
-			
-			if (cmdCount==2) {
-				Serial.print("pixel ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.println(serCmd[2]);
-				pixel(serCmd[1],serCmd[2]);
-				display();
-			} else if (cmdCount=4) {
-				Serial.print("pixel ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.println(serCmd[2]);
-				Serial.print(" ");
-				Serial.print(serCmd[3]);
-				Serial.print(" ");
-				Serial.println(serCmd[4]);
+		case CMD_INVERT: {
 				
-				pixel(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
-				display();
+				if (cmdCount==1) {
+					Serial.print("invert ");
+					Serial.println(serCmd[1]);
+					invert(serCmd[1]);
+				}
+				break;
 			}
-			break;
-		}
-		
-	case CMD_LINE: {
-			if (cmdCount==4) {
-				Serial.print("line ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.print(serCmd[3]);
-				Serial.print(" ");
-				Serial.println(serCmd[4]);
-								
-				line(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
-				display();
-			} else if (cmdCount==6) {
-				Serial.print("line ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.print(serCmd[3]);
-				Serial.print(" ");
-				Serial.print(serCmd[4]);
-				Serial.print(" ");
-				Serial.print(serCmd[5]);
-				Serial.print(" ");
-				Serial.println(serCmd[6]);
+			
+		case CMD_CONTRAST: {
 				
-				line(serCmd[1],serCmd[2],serCmd[3],serCmd[4],serCmd[5],serCmd[6]);
-				display();
+				if (cmdCount==1) {
+					Serial.print("contrast ");
+					Serial.println(serCmd[1]);
+					contrast(serCmd[1]);
+				}
+				break;
 			}
-			break;
-		}
-
-	case CMD_LINEH: {
-			if (cmdCount==3) {
-				Serial.print("lineH ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.println(serCmd[3]);
-
-				lineH(serCmd[1], serCmd[2], serCmd[3]);
-				display();
-			} else if (cmdCount==5) {
-				Serial.print("lineH ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.print(serCmd[3]);
-				Serial.print(" ");
-				Serial.print(serCmd[4]);
-				Serial.print(" ");
-				Serial.println(serCmd[5]);
-
-				lineH(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
-				display();
-			}
-			break;
-		}
-		
-	case CMD_LINEV: {
-			if (cmdCount==3) {
-				Serial.print("lineH ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.println(serCmd[3]);
-
-				lineV(serCmd[1], serCmd[2], serCmd[3]);
-				display();
-			} else if (cmdCount==5) {
-				Serial.print("lineH ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.print(serCmd[3]);
-				Serial.print(" ");
-				Serial.print(serCmd[4]);
-				Serial.print(" ");
-				Serial.println(serCmd[5]);
-				lineV(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
-				display();
-			}
-			break;
-		}
-		
-	case CMD_RECT: {
-			if (cmdCount==4) {
-				Serial.print("rect ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.print(serCmd[3]);
-				Serial.print(" ");
-				Serial.println(serCmd[4]);
-				rect(serCmd[1], serCmd[2], serCmd[3], serCmd[4]);
-				display();
-			} else if (cmdCount==6) {
-				Serial.print("rect ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.print(serCmd[3]);
-				Serial.print(" ");
-				Serial.print(serCmd[4]);
-				Serial.print(" ");
-				Serial.print(serCmd[5]);
-				Serial.print(" ");
-				Serial.println(serCmd[6]);
-				rect(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5], serCmd[6]);
-				display();
-			}
-			break;
-		}
-
-	case CMD_RECTFILL: {
-			if (cmdCount==4) {
-				Serial.print("rectFill ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.print(serCmd[3]);
-				Serial.print(" ");
-				Serial.println(serCmd[4]);
-				rectFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4]);
-				display();
-			} else if (cmdCount==6) {
-				Serial.print("rectFill ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.print(serCmd[3]);
-				Serial.print(" ");
-				Serial.print(serCmd[4]);
-				Serial.print(" ");
-				Serial.print(serCmd[5]);
-				Serial.print(" ");
-				Serial.println(serCmd[6]);
-				rectFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5], serCmd[6]);
-				display();
-			}
-			break;
 			
-		}
-		
-	case CMD_CIRCLE: {
-			if (cmdCount==3) {
-				Serial.print("circle ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.println(serCmd[3]);
-				circle(serCmd[1], serCmd[2], serCmd[3]);
-				display();
-			} else if (cmdCount==5) {
-				Serial.print("circle ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.print(serCmd[3]);
-				Serial.print(" ");
-				Serial.print(serCmd[4]);
-				Serial.print(" ");
-				Serial.println(serCmd[5]);
-				circle(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
-				display();
+		case CMD_DISPLAY: {
+				
+				if (cmdCount==0) {
+					Serial.println("display");
+					display();
+				}
+				break;
 			}
-			break;
-		}
-
-	case CMD_CIRCLEFILL: {
-
-			if (cmdCount==3) {
-				Serial.print("circle ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.println(serCmd[3]);
-				circleFill(serCmd[1], serCmd[2], serCmd[3]);
-				display();
-			} else if (cmdCount==5) {
-				Serial.print("circle ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.print(serCmd[3]);
-				Serial.print(" ");
-				Serial.print(serCmd[4]);
-				Serial.print(" ");
-				Serial.println(serCmd[5]);
-				circleFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
-				display();
-			}
-			break;
-		}
-
-	case CMD_DRAWCHAR: {
-			if (cmdCount==3) {
-				Serial.print("drawChar ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.println(serCmd[3]);
-				drawChar(serCmd[1], serCmd[2], serCmd[3]);
-				display();
-			} else if (cmdCount==5) {
-				Serial.print("drawChar ");
-				Serial.print(serCmd[1]);
-				Serial.print(" ");
-				Serial.print(serCmd[2]);
-				Serial.print(" ");
-				Serial.print(serCmd[3]);
-				Serial.print(" ");
-				Serial.print(serCmd[4]);
-				Serial.print(" ");
-				Serial.println(serCmd[5]);
-				drawChar(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
-				display();
-			}
-			break;
-		}
-
-	case CMD_DRAWBITMAP: {
-			// TODO
 			
-			break;
-		}
-		
-	case CMD_GETLCDWIDTH: {
+		case CMD_SETCURSOR: {
+				
+				if (cmdCount==2) {
+					Serial.print("setCursor ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.println(serCmd[2]);
+					setCursor(serCmd[1], serCmd[2]);
+				}
+				break;
+			}
 			
-			if (cmdCount==0) {
-				Serial.print("LCDWidth=");
-				Serial.println(getLCDWidth());
-			}
-			break;
-		}
-		
-	case CMD_GETLCDHEIGHT: {
-			if (cmdCount==0) {
-				Serial.print("LCDHeight=");
-				Serial.println(getLCDHeight());
-			}
-			break;
-		}
-		
-	case CMD_SETCOLOR: {
-			if (cmdCount==1) {
-				Serial.print("setColor ");
-				Serial.println(serCmd[1]);
-				setColor(serCmd[1]);
-			}
-			break;
-		}
-		
-	case CMD_SETDRAWMODE: {
-			if (cmdCount==1) {
-				Serial.print("drawMode ");
-				Serial.println(serCmd[1]);
-				setDrawMode(serCmd[1]);
-			}
-			break;
-			
-		}
-	default:
-		break;
-	}
-}
-
-void MicroView::checkComm(void) {
-	int count = readSerial();
-	char *result;
-	uint8_t index=0;
-	int temp;
-	
-	if (count>0) {
-		// process Serial data
-		result=strtok(serInStr,",");
-		if (result !=NULL) {
-			temp=atoi(result);
-			serCmd[index]=(uint8_t)temp & 0xff;		// we only need 8 bit number
-			index++;
-			for (uint8_t i;i<recvLEN;i++) {
-				result=strtok(NULL,",");
-				if (result != NULL) {
+		case CMD_PIXEL: {
+				
+				if (cmdCount==2) {
+					Serial.print("pixel ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.println(serCmd[2]);
+					pixel(serCmd[1],serCmd[2]);
+					display();
+				} else if (cmdCount=4) {
+					Serial.print("pixel ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.println(serCmd[2]);
+					Serial.print(" ");
+					Serial.print(serCmd[3]);
+					Serial.print(" ");
+					Serial.println(serCmd[4]);
 					
-					temp=atoi(result);
-					serCmd[index]=(uint8_t)temp & 0xff;		// we only need 8 bit number
-					index++;
+					pixel(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
+					display();
 				}
-				else {
-					break;
-				}
+				break;
 			}
-			/*
+			
+		case CMD_LINE: {
+				if (cmdCount==4) {
+					Serial.print("line ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.print(serCmd[3]);
+					Serial.print(" ");
+					Serial.println(serCmd[4]);
+					
+					line(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
+					display();
+				} else if (cmdCount==6) {
+					Serial.print("line ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.print(serCmd[3]);
+					Serial.print(" ");
+					Serial.print(serCmd[4]);
+					Serial.print(" ");
+					Serial.print(serCmd[5]);
+					Serial.print(" ");
+					Serial.println(serCmd[6]);
+					
+					line(serCmd[1],serCmd[2],serCmd[3],serCmd[4],serCmd[5],serCmd[6]);
+					display();
+				}
+				break;
+			}
+
+		case CMD_LINEH: {
+				if (cmdCount==3) {
+					Serial.print("lineH ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.println(serCmd[3]);
+
+					lineH(serCmd[1], serCmd[2], serCmd[3]);
+					display();
+				} else if (cmdCount==5) {
+					Serial.print("lineH ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.print(serCmd[3]);
+					Serial.print(" ");
+					Serial.print(serCmd[4]);
+					Serial.print(" ");
+					Serial.println(serCmd[5]);
+
+					lineH(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+					display();
+				}
+				break;
+			}
+			
+		case CMD_LINEV: {
+				if (cmdCount==3) {
+					Serial.print("lineH ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.println(serCmd[3]);
+
+					lineV(serCmd[1], serCmd[2], serCmd[3]);
+					display();
+				} else if (cmdCount==5) {
+					Serial.print("lineH ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.print(serCmd[3]);
+					Serial.print(" ");
+					Serial.print(serCmd[4]);
+					Serial.print(" ");
+					Serial.println(serCmd[5]);
+					lineV(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+					display();
+				}
+				break;
+			}
+			
+		case CMD_RECT: {
+				if (cmdCount==4) {
+					Serial.print("rect ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.print(serCmd[3]);
+					Serial.print(" ");
+					Serial.println(serCmd[4]);
+					rect(serCmd[1], serCmd[2], serCmd[3], serCmd[4]);
+					display();
+				} else if (cmdCount==6) {
+					Serial.print("rect ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.print(serCmd[3]);
+					Serial.print(" ");
+					Serial.print(serCmd[4]);
+					Serial.print(" ");
+					Serial.print(serCmd[5]);
+					Serial.print(" ");
+					Serial.println(serCmd[6]);
+					rect(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5], serCmd[6]);
+					display();
+				}
+				break;
+			}
+
+		case CMD_RECTFILL: {
+				if (cmdCount==4) {
+					Serial.print("rectFill ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.print(serCmd[3]);
+					Serial.print(" ");
+					Serial.println(serCmd[4]);
+					rectFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4]);
+					display();
+				} else if (cmdCount==6) {
+					Serial.print("rectFill ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.print(serCmd[3]);
+					Serial.print(" ");
+					Serial.print(serCmd[4]);
+					Serial.print(" ");
+					Serial.print(serCmd[5]);
+					Serial.print(" ");
+					Serial.println(serCmd[6]);
+					rectFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5], serCmd[6]);
+					display();
+				}
+				break;
+				
+			}
+			
+		case CMD_CIRCLE: {
+				if (cmdCount==3) {
+					Serial.print("circle ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.println(serCmd[3]);
+					circle(serCmd[1], serCmd[2], serCmd[3]);
+					display();
+				} else if (cmdCount==5) {
+					Serial.print("circle ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.print(serCmd[3]);
+					Serial.print(" ");
+					Serial.print(serCmd[4]);
+					Serial.print(" ");
+					Serial.println(serCmd[5]);
+					circle(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+					display();
+				}
+				break;
+			}
+
+		case CMD_CIRCLEFILL: {
+
+				if (cmdCount==3) {
+					Serial.print("circle ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.println(serCmd[3]);
+					circleFill(serCmd[1], serCmd[2], serCmd[3]);
+					display();
+				} else if (cmdCount==5) {
+					Serial.print("circle ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.print(serCmd[3]);
+					Serial.print(" ");
+					Serial.print(serCmd[4]);
+					Serial.print(" ");
+					Serial.println(serCmd[5]);
+					circleFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+					display();
+				}
+				break;
+			}
+
+		case CMD_DRAWCHAR: {
+				if (cmdCount==3) {
+					Serial.print("drawChar ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.println(serCmd[3]);
+					drawChar(serCmd[1], serCmd[2], serCmd[3]);
+					display();
+				} else if (cmdCount==5) {
+					Serial.print("drawChar ");
+					Serial.print(serCmd[1]);
+					Serial.print(" ");
+					Serial.print(serCmd[2]);
+					Serial.print(" ");
+					Serial.print(serCmd[3]);
+					Serial.print(" ");
+					Serial.print(serCmd[4]);
+					Serial.print(" ");
+					Serial.println(serCmd[5]);
+					drawChar(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+					display();
+				}
+				break;
+			}
+
+		case CMD_DRAWBITMAP: {
+				// TODO
+				
+				break;
+			}
+			
+		case CMD_GETLCDWIDTH: {
+				
+				if (cmdCount==0) {
+					Serial.print("LCDWidth=");
+					Serial.println(getLCDWidth());
+				}
+				break;
+			}
+			
+		case CMD_GETLCDHEIGHT: {
+				if (cmdCount==0) {
+					Serial.print("LCDHeight=");
+					Serial.println(getLCDHeight());
+				}
+				break;
+			}
+			
+		case CMD_SETCOLOR: {
+				if (cmdCount==1) {
+					Serial.print("setColor ");
+					Serial.println(serCmd[1]);
+					setColor(serCmd[1]);
+				}
+				break;
+			}
+			
+		case CMD_SETDRAWMODE: {
+				if (cmdCount==1) {
+					Serial.print("drawMode ");
+					Serial.println(serCmd[1]);
+					setDrawMode(serCmd[1]);
+				}
+				break;
+				
+			}
+		default:
+			break;
+		}
+	}
+
+	void MicroView::checkComm(void) {
+		int count = readSerial();
+		char *result;
+		uint8_t index=0;
+		int temp;
+		
+		if (count>0) {
+			// process Serial data
+			result=strtok(serInStr,",");
+			if (result !=NULL) {
+				temp=atoi(result);
+				serCmd[index]=(uint8_t)temp & 0xff;		// we only need 8 bit number
+				index++;
+				for (uint8_t i;i<recvLEN;i++) {
+					result=strtok(NULL,",");
+					if (result != NULL) {
+						
+						temp=atoi(result);
+						serCmd[index]=(uint8_t)temp & 0xff;		// we only need 8 bit number
+						index++;
+					}
+					else {
+						break;
+					}
+				}
+				/*
 				// debug output
 				Serial.print("command received=");
 				Serial.println(index);
@@ -1117,333 +1118,333 @@ void MicroView::checkComm(void) {
 					Serial.println(serCmd[i]);
 				}
 */
+			}
+			doCmd(index-1);	// index-1 is the total parameters count of a command
 		}
-		doCmd(index-1);	// index-1 is the total parameters count of a command
 	}
-}
 
-int MicroView::readSerial(void)
-{
-	int i=0;
-	if(!Serial.available())
-	return -1;
-
-	while (Serial.available()>0)
+	int MicroView::readSerial(void)
 	{
-		if( i < recvLEN)
+		int i=0;
+		if(!Serial.available())
+		return -1;
+
+		while (Serial.available()>0)
 		{
-			serInStr[i++] = Serial.read();
-			delay(2);
+			if( i < recvLEN)
+			{
+				serInStr[i++] = Serial.read();
+				delay(2);
+			}
+			else
+			break;	
 		}
-		else
-		break;	
+		serInStr[i]='\0';
+		return i;
 	}
-	serInStr[i]='\0';
-	return i;
-}
 
-// -------------------------------------------------------------------------------------
-// MicroViewWidget Class - start
-// -------------------------------------------------------------------------------------
-MicroViewWidget::MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max) {
-	setX(newx);
-	setY(newy);
-	value=0;
-	setMinValue(min);
-	setMaxValue(max);
-}
-
-uint8_t MicroViewWidget::getX() { return x; }
-uint8_t MicroViewWidget::getY() { return y; }
-void MicroViewWidget::setX(uint8_t newx) { x = newx; }
-void MicroViewWidget::setY(uint8_t newy) { y = newy; }
-
-int16_t MicroViewWidget::getMinValue() { return minValue; }
-int16_t MicroViewWidget::getMaxValue() { return maxValue; }
-
-int16_t MicroViewWidget::getValue() { return value; }
-
-void MicroViewWidget::setMinValue(int16_t min) { minValue=min; }
-void MicroViewWidget::setMaxValue(int16_t max) { maxValue=max; }
-
-void MicroViewWidget::setValue(int16_t val) { 
-	if ((val<=maxValue) && (val>=minValue)){ 
-		value=val; 
-		this->draw();
+	// -------------------------------------------------------------------------------------
+	// MicroViewWidget Class - start
+	// -------------------------------------------------------------------------------------
+	MicroViewWidget::MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max) {
+		setX(newx);
+		setY(newy);
+		value=0;
+		setMinValue(min);
+		setMaxValue(max);
 	}
-}
 
-// -------------------------------------------------------------------------------------
-// MicroViewWidget Class - end
-// -------------------------------------------------------------------------------------
+	uint8_t MicroViewWidget::getX() { return x; }
+	uint8_t MicroViewWidget::getY() { return y; }
+	void MicroViewWidget::setX(uint8_t newx) { x = newx; }
+	void MicroViewWidget::setY(uint8_t newy) { y = newy; }
 
-// -------------------------------------------------------------------------------------
-// Slider Widget - start
-// -------------------------------------------------------------------------------------
+	int16_t MicroViewWidget::getMinValue() { return minValue; }
+	int16_t MicroViewWidget::getMaxValue() { return maxValue; }
 
-MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
-	style=0;
-	totalTicks=30;
-	needFirstDraw=true;
-	prevValue=getMinValue();
-	drawFace();
-	draw();
-}
+	int16_t MicroViewWidget::getValue() { return value; }
 
-MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
-	if (sty==WIDGETSTYLE0) {
+	void MicroViewWidget::setMinValue(int16_t min) { minValue=min; }
+	void MicroViewWidget::setMaxValue(int16_t max) { maxValue=max; }
+
+	void MicroViewWidget::setValue(int16_t val) { 
+		if ((val<=maxValue) && (val>=minValue)){ 
+			value=val; 
+			this->draw();
+		}
+	}
+
+	// -------------------------------------------------------------------------------------
+	// MicroViewWidget Class - end
+	// -------------------------------------------------------------------------------------
+
+	// -------------------------------------------------------------------------------------
+	// Slider Widget - start
+	// -------------------------------------------------------------------------------------
+
+	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
 		style=0;
 		totalTicks=30;
-	}
-	else {
-		style=1;
-		totalTicks=60;
+		needFirstDraw=true;
+		prevValue=getMinValue();
+		drawFace();
+		draw();
 	}
 
-	needFirstDraw=true;
-	prevValue=getMinValue();
-	drawFace();
-	draw();
-}
+	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
+		if (sty==WIDGETSTYLE0) {
+			style=0;
+			totalTicks=30;
+		}
+		else {
+			style=1;
+			totalTicks=60;
+		}
+
+		needFirstDraw=true;
+		prevValue=getMinValue();
+		drawFace();
+		draw();
+	}
 
 
-void MicroViewSlider::drawFace() {
-	uint8_t offsetX, offsetY, majorLine;
-	offsetX=getX();
-	offsetY=getY();
-	
-	if(style>0)
-	majorLine=7;
-	else
-	majorLine=4;
-	
-	// Draw major tickers
-	for (uint8_t i=0; i<majorLine;i++) {
-		uView.lineV(offsetX+1+(i*10), offsetY+3, 5);
-	}
-	// Draw minor tickers
-	for (uint8_t i=0; i<4;i++) {
-		uView.lineV(offsetX+3+(i*2), offsetY+5, 3);
-	}
-	for (uint8_t i=0; i<4;i++) {
-		uView.lineV(offsetX+13+(i*2), offsetY+5, 3);
-	}
-	for (uint8_t i=0; i<4;i++) {
-		uView.lineV(offsetX+23+(i*2), offsetY+5, 3);
-	}
-	
-	if(style>0) {
+	void MicroViewSlider::drawFace() {
+		uint8_t offsetX, offsetY, majorLine;
+		offsetX=getX();
+		offsetY=getY();
+		
+		if(style>0)
+		majorLine=7;
+		else
+		majorLine=4;
+		
+		// Draw major tickers
+		for (uint8_t i=0; i<majorLine;i++) {
+			uView.lineV(offsetX+1+(i*10), offsetY+3, 5);
+		}
+		// Draw minor tickers
 		for (uint8_t i=0; i<4;i++) {
-			uView.lineV(offsetX+33+(i*2), offsetY+5, 3);
+			uView.lineV(offsetX+3+(i*2), offsetY+5, 3);
 		}
-		if (style>0) {
+		for (uint8_t i=0; i<4;i++) {
+			uView.lineV(offsetX+13+(i*2), offsetY+5, 3);
+		}
+		for (uint8_t i=0; i<4;i++) {
+			uView.lineV(offsetX+23+(i*2), offsetY+5, 3);
+		}
+		
+		if(style>0) {
 			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+43+(i*2), offsetY+5, 3);
+				uView.lineV(offsetX+33+(i*2), offsetY+5, 3);
 			}
-			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+53+(i*2), offsetY+5, 3);
+			if (style>0) {
+				for (uint8_t i=0; i<4;i++) {
+					uView.lineV(offsetX+43+(i*2), offsetY+5, 3);
+				}
+				for (uint8_t i=0; i<4;i++) {
+					uView.lineV(offsetX+53+(i*2), offsetY+5, 3);
+				}
 			}
 		}
-	}
-	
-}
-
-void MicroViewSlider::draw() {
-	uint8_t offsetX, offsetY;
-	uint8_t tickPosition=0;
-	char strBuffer[5];
-	offsetX=getX();
-	offsetY=getY();
-
-	if (needFirstDraw) {
-		uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
-		uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
-		sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
-		needFirstDraw=false;
-	}
-	else {
-		// Draw previous pointer in XOR mode to erase it
-		tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
-		uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
-		uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
-		// Draw current pointer
-		tickPosition= (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
-		uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
-		uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
-		sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
-		prevValue=getValue();
+		
 	}
 
-	// Draw value
-	if(style>0) 
-	uView.setCursor(offsetX,offsetY+10);
-	else
-	uView.setCursor(offsetX+34,offsetY+1);
-	uView.print(strBuffer);
-}
+	void MicroViewSlider::draw() {
+		uint8_t offsetX, offsetY;
+		uint8_t tickPosition=0;
+		char strBuffer[5];
+		offsetX=getX();
+		offsetY=getY();
 
-// -------------------------------------------------------------------------------------
-// Slider Widget - end
-// -------------------------------------------------------------------------------------
+		if (needFirstDraw) {
+			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+			sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
+			needFirstDraw=false;
+		}
+		else {
+			// Draw previous pointer in XOR mode to erase it
+			tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
+			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+			// Draw current pointer
+			tickPosition= (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
+			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+			sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
+			prevValue=getValue();
+		}
 
-// -------------------------------------------------------------------------------------
-// Gauge Widget - start
-// -------------------------------------------------------------------------------------
+		// Draw value
+		if(style>0) 
+		uView.setCursor(offsetX,offsetY+10);
+		else
+		uView.setCursor(offsetX+34,offsetY+1);
+		uView.print(strBuffer);
+	}
 
-MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
-	style=0;
-	radius=15;
-	needFirstDraw=true;
-	prevValue=getMinValue();
-	drawFace();
-	draw();
-}
+	// -------------------------------------------------------------------------------------
+	// Slider Widget - end
+	// -------------------------------------------------------------------------------------
 
-MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
-	if (sty==WIDGETSTYLE0) {
+	// -------------------------------------------------------------------------------------
+	// Gauge Widget - start
+	// -------------------------------------------------------------------------------------
+
+	MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
 		style=0;
 		radius=15;
+		needFirstDraw=true;
+		prevValue=getMinValue();
+		drawFace();
+		draw();
 	}
-	else {
-		style=1;
-		radius=23;
-	}
-	needFirstDraw=true;
-	prevValue=getMinValue();
-	drawFace();
-	draw();
-}
 
-void MicroViewGauge::drawFace() {
-	uint8_t offsetX, offsetY, majorLine;
-	float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
-	offsetX=getX();
-	offsetY=getY();
-
-	uView.circle(offsetX,offsetY,radius);
-	
-	for (int i=150;i<=390;i+=30) {	// Major tick from 150 degree to 390 degree
-		degreeSec=i*(PI/180);
-		fromSecX = cos(degreeSec) * (radius / 1.5);
-		fromSecY = sin(degreeSec) * (radius / 1.5);
-		toSecX = cos(degreeSec) * (radius / 1);
-		toSecY = sin(degreeSec) * (radius / 1);
-		uView.line(1+offsetX+fromSecX,1+offsetY+fromSecY,1+offsetX+toSecX,1+offsetY+toSecY);
+	MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
+		if (sty==WIDGETSTYLE0) {
+			style=0;
+			radius=15;
+		}
+		else {
+			style=1;
+			radius=23;
+		}
+		needFirstDraw=true;
+		prevValue=getMinValue();
+		drawFace();
+		draw();
 	}
-	
-	if(radius>15) {
-		for (int i=150;i<=390;i+=15) {	// Minor tick from 150 degree to 390 degree
+
+	void MicroViewGauge::drawFace() {
+		uint8_t offsetX, offsetY, majorLine;
+		float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
+		offsetX=getX();
+		offsetY=getY();
+
+		uView.circle(offsetX,offsetY,radius);
+		
+		for (int i=150;i<=390;i+=30) {	// Major tick from 150 degree to 390 degree
 			degreeSec=i*(PI/180);
-			fromSecX = cos(degreeSec) * (radius / 1.3);
-			fromSecY = sin(degreeSec) * (radius / 1.3);
+			fromSecX = cos(degreeSec) * (radius / 1.5);
+			fromSecY = sin(degreeSec) * (radius / 1.5);
 			toSecX = cos(degreeSec) * (radius / 1);
 			toSecY = sin(degreeSec) * (radius / 1);
 			uView.line(1+offsetX+fromSecX,1+offsetY+fromSecY,1+offsetX+toSecX,1+offsetY+toSecY);
 		}
-	}
-}
-
-void MicroViewGauge::draw() {
-	uint8_t offsetX, offsetY;
-	uint8_t tickPosition=0;
-	float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
-
-	char strBuffer[5];
-	offsetX=getX();
-	offsetY=getY();
-
-	if (needFirstDraw) {
-		degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
-		degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
-		toSecX = cos(degreeSec) * (radius / 1.2);
-		toSecY = sin(degreeSec) * (radius / 1.2);
-		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
-		sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
-		needFirstDraw=false;
-	}
-	else {
-		// Draw previous pointer in XOR mode to erase it
-		degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
-		degreeSec = (degreeSec+150) * (PI/180);
-		toSecX = cos(degreeSec) * (radius / 1.2);
-		toSecY = sin(degreeSec) * (radius / 1.2);
-		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
-
-		degreeSec = (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
-		degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
-		toSecX = cos(degreeSec) * (radius / 1.2);
-		toSecY = sin(degreeSec) * (radius / 1.2);
-		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
-
-		sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
-		prevValue=getValue();
+		
+		if(radius>15) {
+			for (int i=150;i<=390;i+=15) {	// Minor tick from 150 degree to 390 degree
+				degreeSec=i*(PI/180);
+				fromSecX = cos(degreeSec) * (radius / 1.3);
+				fromSecY = sin(degreeSec) * (radius / 1.3);
+				toSecX = cos(degreeSec) * (radius / 1);
+				toSecY = sin(degreeSec) * (radius / 1);
+				uView.line(1+offsetX+fromSecX,1+offsetY+fromSecY,1+offsetX+toSecX,1+offsetY+toSecY);
+			}
+		}
 	}
 
-	// Draw value
-	if(style>0) 
-	uView.setCursor(offsetX-10,offsetY+10);
-	else
-	uView.setCursor(offsetX-11,offsetY+11);
-	
-	uView.print(strBuffer);
-}
+	void MicroViewGauge::draw() {
+		uint8_t offsetX, offsetY;
+		uint8_t tickPosition=0;
+		float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
 
-// -------------------------------------------------------------------------------------
-// Slider Widget - end
-// -------------------------------------------------------------------------------------
+		char strBuffer[5];
+		offsetX=getX();
+		offsetY=getY();
 
+		if (needFirstDraw) {
+			degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
+			degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
+			toSecX = cos(degreeSec) * (radius / 1.2);
+			toSecY = sin(degreeSec) * (radius / 1.2);
+			uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
+			sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
+			needFirstDraw=false;
+		}
+		else {
+			// Draw previous pointer in XOR mode to erase it
+			degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
+			degreeSec = (degreeSec+150) * (PI/180);
+			toSecX = cos(degreeSec) * (radius / 1.2);
+			toSecY = sin(degreeSec) * (radius / 1.2);
+			uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
 
-void MVSPIClass::begin() {
-	// Set SS to high so a connected chip will be "deselected" by default
-	digitalWrite(SS, HIGH);
+			degreeSec = (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
+			degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
+			toSecX = cos(degreeSec) * (radius / 1.2);
+			toSecY = sin(degreeSec) * (radius / 1.2);
+			uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
 
-	// When the SS pin is set as OUTPUT, it can be used as
-	// a general purpose output port (it doesn't influence
-	// SPI operations).
-	pinMode(SS, OUTPUT);
+			sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
+			prevValue=getValue();
+		}
 
-	// Warning: if the SS pin ever becomes a LOW INPUT then SPI
-	// automatically switches to Slave, so the data direction of
-	// the SS pin MUST be kept as OUTPUT.
-	SPCR |= _BV(MSTR);
-	SPCR |= _BV(SPE);
-
-	// Set direction register for SCK and MOSI pin.
-	// MISO pin automatically overrides to INPUT.
-	// By doing this AFTER enabling SPI, we avoid accidentally
-	// clocking in a single bit since the lines go directly
-	// from "input" to SPI control.  
-	// http://code.google.com/p/arduino/issues/detail?id=888
-	pinMode(SCK, OUTPUT);
-	pinMode(MOSI, OUTPUT);
-}
-
-
-void MVSPIClass::end() {
-	SPCR &= ~_BV(SPE);
-}
-
-void MVSPIClass::setBitOrder(uint8_t bitOrder)
-{
-	if(bitOrder == LSBFIRST) {
-		SPCR |= _BV(DORD);
-	} else {
-		SPCR &= ~(_BV(DORD));
+		// Draw value
+		if(style>0) 
+		uView.setCursor(offsetX-10,offsetY+10);
+		else
+		uView.setCursor(offsetX-11,offsetY+11);
+		
+		uView.print(strBuffer);
 	}
-}
 
-void MVSPIClass::setDataMode(uint8_t mode)
-{
-	SPCR = (SPCR & ~SPI_MODE_MASK) | mode;
-}
+	// -------------------------------------------------------------------------------------
+	// Slider Widget - end
+	// -------------------------------------------------------------------------------------
 
-void MVSPIClass::setClockDivider(uint8_t rate)
-{
-	SPCR = (SPCR & ~SPI_CLOCK_MASK) | (rate & SPI_CLOCK_MASK);
-	SPSR = (SPSR & ~SPI_2XCLOCK_MASK) | ((rate >> 2) & SPI_2XCLOCK_MASK);
-}
 
-MVSPIClass MVSPI;
-MicroView uView;
+	void MVSPIClass::begin() {
+		// Set SS to high so a connected chip will be "deselected" by default
+		digitalWrite(SS, HIGH);
+
+		// When the SS pin is set as OUTPUT, it can be used as
+		// a general purpose output port (it doesn't influence
+		// SPI operations).
+		pinMode(SS, OUTPUT);
+
+		// Warning: if the SS pin ever becomes a LOW INPUT then SPI
+		// automatically switches to Slave, so the data direction of
+		// the SS pin MUST be kept as OUTPUT.
+		SPCR |= _BV(MSTR);
+		SPCR |= _BV(SPE);
+
+		// Set direction register for SCK and MOSI pin.
+		// MISO pin automatically overrides to INPUT.
+		// By doing this AFTER enabling SPI, we avoid accidentally
+		// clocking in a single bit since the lines go directly
+		// from "input" to SPI control.  
+		// http://code.google.com/p/arduino/issues/detail?id=888
+		pinMode(SCK, OUTPUT);
+		pinMode(MOSI, OUTPUT);
+	}
+
+
+	void MVSPIClass::end() {
+		SPCR &= ~_BV(SPE);
+	}
+
+	void MVSPIClass::setBitOrder(uint8_t bitOrder)
+	{
+		if(bitOrder == LSBFIRST) {
+			SPCR |= _BV(DORD);
+		} else {
+			SPCR &= ~(_BV(DORD));
+		}
+	}
+
+	void MVSPIClass::setDataMode(uint8_t mode)
+	{
+		SPCR = (SPCR & ~SPI_MODE_MASK) | mode;
+	}
+
+	void MVSPIClass::setClockDivider(uint8_t rate)
+	{
+		SPCR = (SPCR & ~SPI_CLOCK_MASK) | (rate & SPI_CLOCK_MASK);
+		SPSR = (SPSR & ~SPI_2XCLOCK_MASK) | ((rate >> 2) & SPI_2XCLOCK_MASK);
+	}
+
+	MVSPIClass MVSPI;
+	MicroView uView;
 
 
