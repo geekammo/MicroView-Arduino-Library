@@ -16,7 +16,7 @@ Arduino library for MicroView.
 2. cd libraries
 3. mkdir MicroView
 4. cd MicroView
-5. git clone git@github.com:geekammo/microview.git .
+5. git clone https://github.com/geekammo/MicroView-Arduino-Library.git .
 6. Start Arduino IDE.
 7. MicroView example is located at, File--->Example--->MicroView--->MicroViewDemo
 
@@ -91,6 +91,11 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.12b: 11th June 2014 by JP Liew**
+* added comments for SparkFun Logo
+* added Rotating Cube example by Jim Lindblom @ SparkFun Electronics
+* changed git clone instruction to use https
+
 **v1.11b: 9th June 2014 by JP Liew**
 * added simple tutorials for production sketch
 * modified OLED RESET pin to 7
