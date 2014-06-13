@@ -91,6 +91,10 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.13b: 13th June 2014 by JP Liew**
+* added Sine Wave Example
+* inserted license to example code
+
 **v1.12b: 11th June 2014 by JP Liew**
 * added comments for SparkFun Logo
 * added Rotating Cube example by Jim Lindblom @ SparkFun Electronics
