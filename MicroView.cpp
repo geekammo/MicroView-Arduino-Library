@@ -32,8 +32,6 @@
 #include <space02.h>
 #include <space03.h>
 
-
-
 // Change the total fonts included
 #define TOTALFONTS		7
 #define recvLEN			100
@@ -49,17 +47,17 @@ const unsigned char *MicroView::fontsPointer[]={
 	,space01
 	,space02
 	,space03
-	
 };
 
 // TODO - Need to be able to let user add custom fonts from outside of the library
 // TODO - getTotalFonts(), addFont() return font number, removeFont()
 
-/*
+/** \brief MicroView screen buffer.
+
 Page buffer 64 x 48 divided by 8 = 384 bytes
 Page buffer is required because in SPI mode, the host cannot read the SSD1306's GDRAM of the controller.  This page buffer serves as a scratch RAM for graphical functions.  All drawing function will first be drawn on this page buffer, only upon calling display() function will transfer the page buffer to the actual LCD controller's memory.
 */
-static uint8_t screenmemory [] = {
+static uint8_t screenmemory [] = { 
 	// LCD Memory organised in 64 horizontal pixel and 6 rows of byte
 	// B  B .............B  -----
 	// y  y .............y        \        
@@ -115,6 +113,10 @@ static uint8_t screenmemory [] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+/** \brief Initialisation of MicroView Library.
+
+    Setup IO pins for SPI port then send initialisation commands to the SSD1306 controller inside the OLED. 
+*/
 void MicroView::begin() {
 	// default 5x7 font
 	setFontType(0);
@@ -197,6 +199,10 @@ void MicroView::begin() {
 	Serial.begin(115200);
 }
 
+/** \brief SPI command.
+    
+    Setup DC and SS pins, then send command via SPI to SSD1306 controller.
+*/
 void MicroView::command(uint8_t c) {
 	// Hardware SPI
 	*dcreg |= dcpinmask;		// Set DC pin to OUTPUT
@@ -213,6 +219,10 @@ void MicroView::command(uint8_t c) {
 	*dcreg &= ~dcpinmask;	// Set DC to INPUT to avoid high voltage over driving the OLED logic
 }
 
+/** \brief SPI data.
+
+    Setup DC and SS pins, then send data via SPI to SSD1306 controller.
+*/
 void MicroView::data(uint8_t c) {
 	// Hardware SPI
 	*dcport |= dcpinmask;	// DC HIGH
@@ -228,21 +238,30 @@ void MicroView::data(uint8_t c) {
 	*dcreg &= ~dcpinmask;	// Set DC to INPUT to avoid high voltage over driving the OLED logic
 }
 
+/** \brief Set SSD1306 page address.
+
+    Set SSD1306 page address.
+*/
 void MicroView::setPageAddress(uint8_t add) {
 	add=0xb0|add;
 	command(add);
 	return;
 }
 
+/** \brief Set SSD1306 column address.
+
+    Set SSD1306 column address.
+*/
 void MicroView::setColumnAddress(uint8_t add) {
 	command((0x10|(add>>4))+0x02);
 	command((0x0f&add));
 	return;
 }
 
-/* 
-	Clear GDRAM inside the LCD controller - mode = ALL
-	Clear screen page buffer - mode = PAGE
+/** \brief Clear screen buffer or SSD1306's memory.
+ 
+	Clear GDRAM inside the LCD controller, mode = ALL
+	Clear screen page buffer, mode = PAGE
 */
 void MicroView::clear(uint8_t mode) {
 	//	uint8_t page=6, col=0x40;
@@ -262,9 +281,10 @@ void MicroView::clear(uint8_t mode) {
 	}
 }
 
-/*	
-	Clear GDRAM inside the LCD controller - mode = ALL with c character.
-	Clear screen page buffer - mode = PAGE with c character.
+/** \brief Clear or replace screen buffer or SSD1306's memory with a character.	
+
+	Clear GDRAM inside the LCD controller, mode = ALL with c character.
+	Clear screen page buffer, mode = PAGE with c character.
 */
 void MicroView::clear(uint8_t mode, uint8_t c) {
 	//uint8_t page=6, col=0x40;
@@ -284,6 +304,10 @@ void MicroView::clear(uint8_t mode, uint8_t c) {
 	}	
 }
 
+/** \brief Invert display.
+
+    Invert the color of the display.
+*/
 void MicroView::invert(boolean inv) {
 	if (inv)
 	command(INVERTDISPLAY);
@@ -291,12 +315,19 @@ void MicroView::invert(boolean inv) {
 	command(NORMALDISPLAY);
 }
 
+/** \brief Set contrast.
+
+    Set OLED contract from 0 to 255. Note: Contrast level is not very obvious.
+*/
 void MicroView::contrast(uint8_t contrast) {
 	command(SETCONTRAST);			// 0x81
 	command(contrast);
 }
 
-// This routine is to transfer the page buffer to the LCD controller's memory.
+/** \brief Transfer display memory.
+
+    Transfer the screen buffer to the SSD1306 controller's memory to allow images/graphics drawn on the screen buffer displayed on the OLED.
+*/
 void MicroView::display(void) {
 	uint8_t i, j;
 	
@@ -309,11 +340,16 @@ void MicroView::display(void) {
 	}
 }
 
-#if ARDUINO >= 100
+//#if ARDUINO >= 100
+/** \brief Override Arduino's Print.
+
+    Overriding Arduino's print so that we can use uView.print().
+*/
 size_t MicroView::write(uint8_t c) {
-#else
-	void MicroView::write(uint8_t c) {
-#endif
+
+//#else
+//	void MicroView::write(uint8_t c) {
+//#endif
 		if (c == '\n') {
 			cursorY += fontHeight;
 			cursorX  = 0;
@@ -327,20 +363,32 @@ size_t MicroView::write(uint8_t c) {
 				cursorX = 0;
 			}
 		}
-#if ARDUINO >= 100
+//#if ARDUINO >= 100
 		return 1;
-#endif
+//#endif
 	}
 
-	void MicroView::setCursor(uint8_t x, uint8_t y) {
+/** \brief Set cursor position.
+
+    Set MicroView's cursor position to x,y.
+*/
+    void MicroView::setCursor(uint8_t x, uint8_t y) {
 		cursorX=x;
 		cursorY=y;
 	}
 
+/** \brief Draw pixel.
+
+    Draw pixel using the current fore color and current draw mode in the screen buffer's x,y position.
+*/
 	void MicroView::pixel(uint8_t x, uint8_t y) {
 		pixel(x,y,foreColor,drawMode);
 	}
 
+/** \brief Draw pixel with color and mode.
+
+    Draw color pixel in the screen buffer's x,y position with NORM or XOR draw mode.
+*/
 	void MicroView::pixel(uint8_t x, uint8_t y, uint8_t color, uint8_t mode) {
 		if ((x<0) ||  (x>=LCDWIDTH) || (y<0) || (y>=LCDHEIGHT))
 		return;
@@ -359,13 +407,18 @@ size_t MicroView::write(uint8_t c) {
 		//display();
 	}
 
-	// Draw line using current fore color and current draw mode
+/** \brief Draw line.
+
+    Draw line using current fore color and current draw mode from x0,y0 to x1,y1 of the screen buffer.
+*/
 	void MicroView::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) {
 		line(x0,y0,x1,y1,foreColor,drawMode);
 	}
 
-	// Draw line using color and mode
-	// bresenham's algorithm 
+/** \brief Draw line with color and mode.
+
+    Draw line using color and mode from x0,y0 to x1,y1 of the screen buffer.
+*/
 	void MicroView::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color, uint8_t mode) {
 		uint8_t steep = abs(y1 - y0) > abs(x1 - x0);
 		if (steep) {
@@ -404,32 +457,50 @@ size_t MicroView::write(uint8_t c) {
 		}	
 	}
 
-	//	Draw horizontal line using current fore color and current draw mode
+/** \brief Draw horizontal line.
+
+    Draw horizontal line using current fore color and current draw mode from x,y to x+width,y of the screen buffer.
+*/
 	void MicroView::lineH(uint8_t x, uint8_t y, uint8_t width) {
 		line(x,y,x+width,y,foreColor,drawMode);
 	}
 
-	//	Draw horizontal line using color and draw mode
+/** \brief Draw horizontal line with color and mode.
+
+    Draw horizontal line using color and mode from x,y to x+width,y of the screen buffer.
+*/
 	void MicroView::lineH(uint8_t x, uint8_t y, uint8_t width, uint8_t color, uint8_t mode) {
 		line(x,y,x+width,y,color,mode);
 	}
 
-	//	Draw vertical line using current fore color and current draw mode
+/** \brief Draw vertical line.
+
+    Draw vertical line using current fore color and current draw mode from x,y to x,y+height of the screen buffer.
+*/
 	void MicroView::lineV(uint8_t x, uint8_t y, uint8_t height) {
 		line(x,y,x,y+height,foreColor,drawMode);
 	}
 
-	//	Draw vertical line using color and draw mode
+/** \brief Draw vertical line with color and mode.
+
+    Draw vertical line using color and mode from x,y to x,y+height of the screen buffer.
+*/
 	void MicroView::lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8_t mode) {
 		line(x,y,x,y+height,color,mode);
 	}
 
-	// Draw rectangle using current fore color and current draw mode
+/** \brief Draw rectangle.
+
+    Draw rectangle using current fore color and current draw mode from x,y to x+width,y+height of the screen buffer.
+*/
 	void MicroView::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
 		rect(x,y,width,height,foreColor,drawMode);
 	}
 
-	// Draw rectangle using color and draw mode
+/** \brief Draw rectangle with color and mode.
+
+    Draw rectangle using color and mode from x,y to x+width,y+height of the screen buffer.
+*/
 	void MicroView::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
 		uint8_t tempHeight;
 		
@@ -446,13 +517,18 @@ size_t MicroView::write(uint8_t c) {
 		lineV(x+width-1, y+1, tempHeight, color, mode);
 	}
 	
+/** \brief Draw filled rectangle.
 
-	// Draw filled rectangle using current fore color and current draw mode
+    Draw filled rectangle using current fore color and current draw mode from x,y to x+width,y+height of the screen buffer.
+*/
 	void MicroView::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
 		rectFill(x,y,width,height,foreColor,drawMode);
 	}
-	
-	// Draw filled rectangle using color and mode
+
+/** \brief Draw filled rectangle with color and mode.
+
+    Draw filled rectangle using color and mode from x,y to x+width,y+height of the screen buffer.
+*/	
 	void MicroView::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
 		// TODO - need to optimise the memory map draw so that this function will not call pixel one by one
 		for (int i=x; i<x+width;i++) {
@@ -460,12 +536,18 @@ size_t MicroView::write(uint8_t c) {
 		}
 	}
 
-	// Draw circle using current fore color and current draw mode
+/** \brief Draw circle.
+
+    Draw circle with radius using current fore color and current draw mode at x,y of the screen buffer.
+*/
 	void MicroView::circle(uint8_t x0, uint8_t y0, uint8_t radius) {
 		circle(x0,y0,radius,foreColor,drawMode);
 	}
 
-	// Draw circle using color and mode
+/** \brief Draw circle with color and mode.
+
+    Draw circle with radius using color and mode at x,y of the screen buffer.
+*/
 	void MicroView::circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
 		//TODO - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
 		int8_t f = 1 - radius;
@@ -502,13 +584,18 @@ size_t MicroView::write(uint8_t c) {
 		}
 	}
 
+/** \brief Draw filled circle.
 
-	// Draw filled circle using current fore color and current draw mode
+    Draw filled circle with radius using current fore color and current draw mode at x,y of the screen buffer.
+*/
 	void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius) {
 		circleFill(x0,y0,radius,foreColor,drawMode);
 	}
 
-	// Draw filled circle using color and mode
+/** \brief Draw filled circle with color and mode.
+
+    Draw filled circle with radius using color and mode at x,y of the screen buffer.
+*/
 	void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
 		// TODO - - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
 		int8_t f = 1 - radius;
@@ -545,38 +632,74 @@ size_t MicroView::write(uint8_t c) {
 		}
 	}
 
+/** \brief Get LCD height.
+
+    Get the height of the LCD.
+*/
 	uint8_t MicroView::getLCDHeight(void) {
 		return LCDHEIGHT;
 	}
-	
+
+/** \brief Get LCD width.
+
+    Get the widht of the LCD.
+*/	
 	uint8_t MicroView::getLCDWidth(void) {
 		return LCDWIDTH;
 	}
-	
+
+/** \brief Get font width.
+
+    Get the current font's width.
+*/	
 	uint8_t MicroView::getFontWidth(void) {
 		return fontWidth;
 	}
 
+/** \brief Get font height.
+
+    Get the current font's height.
+*/
 	uint8_t MicroView::getFontHeight(void) {
 		return fontHeight;
 	}
 
+/** \brief Get font starting character.
+
+    Get the starting ASCII character of the currnet font, not all fonts start with ASCII character 0. Custom fonts can start from any ASCII character.
+*/
 	uint8_t MicroView::getFontStartChar(void) {
 		return fontStartChar;
 	}
 
+/** \brief Get font total characters.
+
+    Get the total characters of the current font.
+*/
 	uint8_t MicroView::getFontTotalChar(void) {
 		return fontTotalChar;
 	}
 
+/** \brief Get total fonts.
+
+    Get the total number of fonts loaded into the MicroView's flash memory.
+*/
 	uint8_t MicroView::getTotalFonts(void) {
 		return TOTALFONTS;
 	}
 
+/** \brief Get font type.
+
+    Get the font type number of the current font.
+*/
 	uint8_t MicroView::getFontType(void) {
 		return fontType;
 	}
 
+/** \brief Set font type.
+
+    Set the current font type number, ie changing to different fonts base on the type provided.
+*/
 	uint8_t MicroView::setFontType(uint8_t type) {
 		if ((type>=TOTALFONTS) || (type<0))
 		return false;
@@ -590,20 +713,34 @@ size_t MicroView::write(uint8_t c) {
 		return true;
 	}
 
+/** \brief Set color.
+
+    Set the current draw's color. Only WHITE and BLACK available.
+*/
 	void MicroView::setColor(uint8_t color) {
 		foreColor=color;
 	}
 
+/** \brief Set draw mode.
+
+    Set current draw mode. NORM or XOR.
+*/
 	void MicroView::setDrawMode(uint8_t mode) {
 		drawMode=mode;
 	}
 
-	// Draw character using current fore color and current draw mode
+/** \brief Draw character.
+
+    Draw character c using current color and current draw mode at x,y.
+*/
 	void  MicroView::drawChar(uint8_t x, uint8_t y, uint8_t c) {
 		drawChar(x,y,c,foreColor,drawMode);
 	}
 
-	// Draw character using color and mode
+/** \brief Draw character with color and mode.
+
+    Draw character c using color and draw mode at x,y.
+*/
 	void  MicroView::drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t mode) {
 		// TODO - New routine to take font of any height, at the moment limited to font height in multiple of 8 pixels
 
@@ -696,10 +833,18 @@ size_t MicroView::write(uint8_t c) {
 
 	}
 
+/** \brief Stop scrolling.
+
+    Stop the scrolling of graphics on the OLED.
+*/
 	void MicroView::scrollStop(void){
 		command(DEACTIVATESCROLL);
 	}
 
+/** \brief Right scrolling.
+
+    Set row start to row stop on the OLED to scroll right. Refer to http://learn.microview.io/intro/general-overview-of-microview.html for explanation of the rows.
+*/
 	void MicroView::scrollRight(uint8_t start, uint8_t stop){
 		if (stop<start)		// stop must be larger or equal to start
 		return;
@@ -714,6 +859,10 @@ size_t MicroView::write(uint8_t c) {
 		command(ACTIVATESCROLL);
 	}
 	
+/** \brief Vertical flip.
+
+    Flip the graphics on the OLED vertically.
+*/
 	void MicroView::flipVertical(boolean flip) {
 		if (flip) {
 			command(COMSCANINC);
@@ -722,7 +871,11 @@ size_t MicroView::write(uint8_t c) {
 			command(COMSCANDEC);
 		}
 	}
-	
+
+/** \brief Horizontal flip.
+
+    Flip the graphics on the OLED horizontally.
+*/	
 	void MicroView::flipHorizontal(boolean flip) {
 		if (flip) {
 			command(SEGREMAP | 0x0);
@@ -732,6 +885,10 @@ size_t MicroView::write(uint8_t c) {
 		}
 	}
 
+/** \brief Parse command.
+
+    Parse command stored in serCmd array. All draw functions are supported.
+*/
 	void MicroView::doCmd(uint8_t cmdCount) {
 		// decode command
 		switch (serCmd[0]) {
@@ -1097,6 +1254,10 @@ size_t MicroView::write(uint8_t c) {
 		}
 	}
 
+/** \brief Listen for serial command.
+
+    Instruct the MicroView to check for serial command from the UART.
+*/
 	void MicroView::checkComm(void) {
 		int count = readSerial();
 		char *result;
@@ -1129,12 +1290,17 @@ size_t MicroView::write(uint8_t c) {
 				for (uint8_t i=0;i<index;i++) {
 					Serial.println(serCmd[i]);
 				}
-*/
+                */
 			}
 			doCmd(index-1);	// index-1 is the total parameters count of a command
 		}
 	}
 
+
+/** \brief Read serial port.
+
+    Read data from the serial port (UART)
+*/
 	int MicroView::readSerial(void)
 	{
 		int i=0;
@@ -1158,6 +1324,11 @@ size_t MicroView::write(uint8_t c) {
 	// -------------------------------------------------------------------------------------
 	// MicroViewWidget Class - start
 	// -------------------------------------------------------------------------------------
+
+/** \brief MicroView widget parent class.
+
+    The MicroViewWidget class is the parent class for child widget like MicroViewSlider and MicroViewGauge.
+*/
 	MicroViewWidget::MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max) {
 		setX(newx);
 		setY(newy);
@@ -1166,19 +1337,52 @@ size_t MicroView::write(uint8_t c) {
 		setMaxValue(max);
 	}
 
+/** \brief Get widget x position. */
 	uint8_t MicroViewWidget::getX() { return x; }
+
+/** \brief Get widget y position. */
 	uint8_t MicroViewWidget::getY() { return y; }
+
+/** \brief Set widget x position. */
 	void MicroViewWidget::setX(uint8_t newx) { x = newx; }
+
+/** \brief Set widget y position. */
 	void MicroViewWidget::setY(uint8_t newy) { y = newy; }
 
+/** \brief Get minimum value.
+
+    Get the minimum value of the widget.
+*/
 	int16_t MicroViewWidget::getMinValue() { return minValue; }
+
+/** \brief Get maximum value.
+
+    Get the maximum value of the widget.
+*/
 	int16_t MicroViewWidget::getMaxValue() { return maxValue; }
 
+/** \brief Get current value.
+
+    Get the current value of the widget.
+*/
 	int16_t MicroViewWidget::getValue() { return value; }
 
+/** \brief Set minimum value.
+
+    Set the minimum value of the widget.
+*/
 	void MicroViewWidget::setMinValue(int16_t min) { minValue=min; }
+
+/** \brief Set maximum value.
+
+    Set the maximum value of the widget.
+*/
 	void MicroViewWidget::setMaxValue(int16_t max) { maxValue=max; }
 
+/** \brief Set current value.
+
+    Set the current value of the widget.
+*/
 	void MicroViewWidget::setValue(int16_t val) { 
 		if ((val<=maxValue) && (val>=minValue)){ 
 			value=val; 
@@ -1194,6 +1398,10 @@ size_t MicroView::write(uint8_t c) {
 	// Slider Widget - start
 	// -------------------------------------------------------------------------------------
 
+/** \brief MicroViewSlider class initilisation. 
+
+    Initialise MicroViewSlider widget with default style.
+*/
 	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
 		style=0;
 		totalTicks=30;
@@ -1203,6 +1411,10 @@ size_t MicroView::write(uint8_t c) {
 		draw();
 	}
 
+/** \brief MicroViewSlider class initialisation with style. 
+
+    Initialise MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1.
+*/
 	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
 		if (sty==WIDGETSTYLE0) {
 			style=0;
@@ -1219,7 +1431,10 @@ size_t MicroView::write(uint8_t c) {
 		draw();
 	}
 
+/** \brief Draw widget face.
 
+    Draw image/diagram of the widget's face.
+*/
 	void MicroViewSlider::drawFace() {
 		uint8_t offsetX, offsetY, majorLine;
 		offsetX=getX();
@@ -1261,6 +1476,10 @@ size_t MicroView::write(uint8_t c) {
 		
 	}
 
+/** \brief Draw widget value.
+
+    Convert the current value of the widget and draw the ticker representing the value.
+*/
 	void MicroViewSlider::draw() {
 		uint8_t offsetX, offsetY;
 		uint8_t tickPosition=0;
@@ -1303,6 +1522,10 @@ size_t MicroView::write(uint8_t c) {
 	// Gauge Widget - start
 	// -------------------------------------------------------------------------------------
 
+/** \brief MicroViewGauge class initilisation.
+
+    Initialise MicroViewGauge widget with default style.
+*/
 	MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
 		style=0;
 		radius=15;

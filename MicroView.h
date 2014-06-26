@@ -110,11 +110,13 @@ public:
 	MicroView(void) {};
 	void begin(void);
 
-#if ARDUINO >= 100
+//#if ARDUINO >= 100
+
 	virtual size_t write(uint8_t);
-#else
-	virtual void   write(uint8_t);
-#endif
+
+//#else
+//	virtual void   write(uint8_t);
+//#endif
 
 	// RAW LCD functions
 	void command(uint8_t c);
