@@ -25,12 +25,12 @@ Arduino library for MicroView.
 #include &lt;MicroView.h&gt;
 
 void setup() {
-	uView.begin();
+    uView.begin();
 }
 
 void loop() {
-	uView.print("HelloWorld");
-	uView.display();		// display current page buffer
+    uView.print("HelloWorld");
+    uView.display();		// display current page buffer
 }
 </code></pre>
 
@@ -39,18 +39,18 @@ void loop() {
 #include &lt;MicroView.h&gt;
 
 void setup() {
-	uView.begin();
-	uView.clear(PAGE);		// clear the page buffer
+    uView.begin();
+    uView.clear(PAGE);		// clear the page buffer
 }
 
 void loop() {
-	uView.line(0,0,64,48);
-	uView.circle(32,24,10);
-	uView.rect(10,10,20,20);
-	uView.pixel(50,5);
-	uView.setCursor(0,40);
-	uView.print(" MicroView");
-	uView.display();		// display current page buffer
+    uView.line(0,0,64,48);
+    uView.circle(32,24,10);
+    uView.rect(10,10,20,20);
+    uView.pixel(50,5);
+    uView.setCursor(0,40);
+    uView.print(" MicroView");
+    uView.display();		// display current page buffer
 }
 </code></pre>
 
@@ -61,18 +61,18 @@ void loop() {
 MicroViewWidget *widget,*widget2;
 
 void setup() {
-	uView.begin();
-	uView.clear(PAGE);
-	widget= new MicroViewGauge(32,30,0,100);  // draw Gauge widget at x=32,y=30,min=0, max=100
-	widget2= new MicroViewSlider(0,0,0,100);  // draw Slider widget at x=0,y=0,min=0, max=100
+    uView.begin();
+    uView.clear(PAGE);
+    widget= new MicroViewGauge(32,30,0,100);  // draw Gauge widget at x=32,y=30,min=0, max=100
+    widget2= new MicroViewSlider(0,0,0,100);  // draw Slider widget at x=0,y=0,min=0, max=100
 }
 
 void loop() {
-	for(int i=0; i&lt;=100;i++) {
-		widget->setValue(i);	// give a value to widget
-		widget2->setValue(i);
-		uView.display();		// display current page buffer
-	}
+    for(int i=0; i&lt;=100;i++) {
+        widget->setValue(i);	// give a value to widget
+        widget2->setValue(i);
+        uView.display();		// display current page buffer
+    }
 }
 </code></pre>
 
@@ -81,12 +81,12 @@ void loop() {
 #include &lt;MicroView.h&gt;
 
 void setup() {
-  uView.begin();
-  uView.clear(PAGE);
+    uView.begin();
+    uView.clear(PAGE);
 }
 
 void loop() {
-  uView.checkComm();
+    uView.checkComm();
 }
 </code></pre>
 
