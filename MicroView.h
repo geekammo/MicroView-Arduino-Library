@@ -204,7 +204,9 @@ public:
 	void setMaxValue(int16_t max);
 	void setMinValue(int16_t max);
 	void setValue(int16_t val);
-	virtual void draw(){};
+	/** \brief Draw widget value overridden by child class. */
+    virtual void draw(){};
+    /** \brief Draw widget face overridden by child class. */
 	virtual void drawFace(){};
 	
 private:
@@ -259,6 +261,7 @@ private:
 
 class MVSPIClass {
 public:
+/** \brief Transfer data byte via SPI port. */
   inline static byte transfer(byte _data);
 
   // SPI Configuration methods

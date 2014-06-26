@@ -240,7 +240,7 @@ void MicroView::data(uint8_t c) {
 
 /** \brief Set SSD1306 page address.
 
-    Set SSD1306 page address.
+    Send page address command and address to the SSD1306 OLED controller.
 */
 void MicroView::setPageAddress(uint8_t add) {
 	add=0xb0|add;
@@ -250,7 +250,7 @@ void MicroView::setPageAddress(uint8_t add) {
 
 /** \brief Set SSD1306 column address.
 
-    Set SSD1306 column address.
+    Send column address command and address to the SSD1306 OLED controller.
 */
 void MicroView::setColumnAddress(uint8_t add) {
 	command((0x10|(add>>4))+0x02);
@@ -260,8 +260,7 @@ void MicroView::setColumnAddress(uint8_t add) {
 
 /** \brief Clear screen buffer or SSD1306's memory.
  
-	Clear GDRAM inside the LCD controller, mode = ALL
-	Clear screen page buffer, mode = PAGE
+    To clear GDRAM inside the LCD controller, pass in the variable mode = ALL and to clear screen page buffer pass in the variable mode = PAGE.
 */
 void MicroView::clear(uint8_t mode) {
 	//	uint8_t page=6, col=0x40;
@@ -283,8 +282,7 @@ void MicroView::clear(uint8_t mode) {
 
 /** \brief Clear or replace screen buffer or SSD1306's memory with a character.	
 
-	Clear GDRAM inside the LCD controller, mode = ALL with c character.
-	Clear screen page buffer, mode = PAGE with c character.
+	To clear GDRAM inside the LCD controller, pass in the variable mode = ALL with c character and to clear screen page buffer, pass in the variable mode = PAGE with c character.
 */
 void MicroView::clear(uint8_t mode, uint8_t c) {
 	//uint8_t page=6, col=0x40;
@@ -306,7 +304,7 @@ void MicroView::clear(uint8_t mode, uint8_t c) {
 
 /** \brief Invert display.
 
-    Invert the color of the display.
+    The WHITE color of the display will turn to BLACK and the BLACK will turn to WHITE.
 */
 void MicroView::invert(boolean inv) {
 	if (inv)
@@ -317,7 +315,7 @@ void MicroView::invert(boolean inv) {
 
 /** \brief Set contrast.
 
-    Set OLED contract from 0 to 255. Note: Contrast level is not very obvious.
+    OLED contract value from 0 to 255. Note: Contrast level is not very obvious.
 */
 void MicroView::contrast(uint8_t contrast) {
 	command(SETCONTRAST);			// 0x81
@@ -326,7 +324,7 @@ void MicroView::contrast(uint8_t contrast) {
 
 /** \brief Transfer display memory.
 
-    Transfer the screen buffer to the SSD1306 controller's memory to allow images/graphics drawn on the screen buffer displayed on the OLED.
+    Bulk move the screen buffer to the SSD1306 controller's memory so that images/graphics drawn on the screen buffer will be displayed on the OLED.
 */
 void MicroView::display(void) {
 	uint8_t i, j;
@@ -343,7 +341,7 @@ void MicroView::display(void) {
 //#if ARDUINO >= 100
 /** \brief Override Arduino's Print.
 
-    Overriding Arduino's print so that we can use uView.print().
+    Arduino's print overridden so that we can use uView.print().
 */
 size_t MicroView::write(uint8_t c) {
 
@@ -370,7 +368,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Set cursor position.
 
-    Set MicroView's cursor position to x,y.
+    MicroView's cursor position to x,y.
 */
     void MicroView::setCursor(uint8_t x, uint8_t y) {
 		cursorX=x;
@@ -634,7 +632,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Get LCD height.
 
-    Get the height of the LCD.
+    The height of the LCD return as byte.
 */
 	uint8_t MicroView::getLCDHeight(void) {
 		return LCDHEIGHT;
@@ -642,7 +640,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Get LCD width.
 
-    Get the widht of the LCD.
+    The width of the LCD return as byte.
 */	
 	uint8_t MicroView::getLCDWidth(void) {
 		return LCDWIDTH;
@@ -650,7 +648,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Get font width.
 
-    Get the current font's width.
+    The cucrrent font's width return as byte.
 */	
 	uint8_t MicroView::getFontWidth(void) {
 		return fontWidth;
@@ -658,7 +656,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Get font height.
 
-    Get the current font's height.
+    The current font's height return as byte.
 */
 	uint8_t MicroView::getFontHeight(void) {
 		return fontHeight;
@@ -666,7 +664,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Get font starting character.
 
-    Get the starting ASCII character of the currnet font, not all fonts start with ASCII character 0. Custom fonts can start from any ASCII character.
+    Return the starting ASCII character of the currnet font, not all fonts start with ASCII character 0. Custom fonts can start from any ASCII character.
 */
 	uint8_t MicroView::getFontStartChar(void) {
 		return fontStartChar;
@@ -674,7 +672,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Get font total characters.
 
-    Get the total characters of the current font.
+    Return the total characters of the current font.
 */
 	uint8_t MicroView::getFontTotalChar(void) {
 		return fontTotalChar;
@@ -682,7 +680,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Get total fonts.
 
-    Get the total number of fonts loaded into the MicroView's flash memory.
+    Return the total number of fonts loaded into the MicroView's flash memory.
 */
 	uint8_t MicroView::getTotalFonts(void) {
 		return TOTALFONTS;
@@ -690,7 +688,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Get font type.
 
-    Get the font type number of the current font.
+    Return the font type number of the current font.
 */
 	uint8_t MicroView::getFontType(void) {
 		return fontType;
@@ -723,7 +721,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Set draw mode.
 
-    Set current draw mode. NORM or XOR.
+    Set current draw mode with NORM or XOR.
 */
 	void MicroView::setDrawMode(uint8_t mode) {
 		drawMode=mode;
@@ -887,7 +885,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Parse command.
 
-    Parse command stored in serCmd array. All draw functions are supported.
+    Command stored in serCmd array will be parsed to performed draw functions.
 */
 	void MicroView::doCmd(uint8_t cmdCount) {
 		// decode command
@@ -1299,7 +1297,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Read serial port.
 
-    Read data from the serial port (UART)
+    Check for data from the serial port (UART) and store to serInStr array.
 */
 	int MicroView::readSerial(void)
 	{
@@ -1351,37 +1349,37 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Get minimum value.
 
-    Get the minimum value of the widget.
+    Return the minimum value of the widget.
 */
 	int16_t MicroViewWidget::getMinValue() { return minValue; }
 
 /** \brief Get maximum value.
 
-    Get the maximum value of the widget.
+    Return the maximum value of the widget.
 */
 	int16_t MicroViewWidget::getMaxValue() { return maxValue; }
 
 /** \brief Get current value.
 
-    Get the current value of the widget.
+    Return the current value of the widget.
 */
 	int16_t MicroViewWidget::getValue() { return value; }
 
 /** \brief Set minimum value.
 
-    Set the minimum value of the widget.
+    The minimum value of the widget is set to the variable passed in.
 */
 	void MicroViewWidget::setMinValue(int16_t min) { minValue=min; }
 
 /** \brief Set maximum value.
 
-    Set the maximum value of the widget.
+    The maximum value of the widget is set to the variable passed in.
 */
 	void MicroViewWidget::setMaxValue(int16_t max) { maxValue=max; }
 
 /** \brief Set current value.
 
-    Set the current value of the widget.
+    The current value of the widget is set to the variable passed in.
 */
 	void MicroViewWidget::setValue(int16_t val) { 
 		if ((val<=maxValue) && (val>=minValue)){ 
@@ -1400,7 +1398,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief MicroViewSlider class initilisation. 
 
-    Initialise MicroViewSlider widget with default style.
+    Initialise the MicroViewSlider widget with default style.
 */
 	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
 		style=0;
@@ -1413,7 +1411,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief MicroViewSlider class initialisation with style. 
 
-    Initialise MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1.
+    Initialise the MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1.
 */
 	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
 		if (sty==WIDGETSTYLE0) {
@@ -1433,7 +1431,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Draw widget face.
 
-    Draw image/diagram of the widget's face.
+    Draw image/diagram representing the widget's face.
 */
 	void MicroViewSlider::drawFace() {
 		uint8_t offsetX, offsetY, majorLine;
@@ -1524,7 +1522,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief MicroViewGauge class initilisation.
 
-    Initialise MicroViewGauge widget with default style.
+    Initialise the MicroViewGauge widget with default style.
 */
 	MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
 		style=0;
@@ -1535,6 +1533,10 @@ size_t MicroView::write(uint8_t c) {
 		draw();
 	}
 
+/** \brief MicroViewGauge class initialisation with style.
+
+    Initialise the MicroViewGauge widget with style WIDGETSTYLE0 or WIDGETSTYLE1.
+*/
 	MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
 		if (sty==WIDGETSTYLE0) {
 			style=0;
@@ -1550,6 +1552,10 @@ size_t MicroView::write(uint8_t c) {
 		draw();
 	}
 
+/** \brief Draw widget face.
+
+    Draw image/diagram represengint the widget's face.
+*/
 	void MicroViewGauge::drawFace() {
 		uint8_t offsetX, offsetY, majorLine;
 		float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
@@ -1579,6 +1585,10 @@ size_t MicroView::write(uint8_t c) {
 		}
 	}
 
+/** \brief Draw widget value.
+
+    Convert the current value of the widget and draw the ticker representing the value.
+*/
 	void MicroViewGauge::draw() {
 		uint8_t offsetX, offsetY;
 		uint8_t tickPosition=0;
@@ -1628,7 +1638,10 @@ size_t MicroView::write(uint8_t c) {
 	// Slider Widget - end
 	// -------------------------------------------------------------------------------------
 
+/** \brief SPI Initialisation.
 
+    Setup SCK, MOSI pins for SPI transmission.
+*/
 	void MVSPIClass::begin() {
 		// Set SS to high so a connected chip will be "deselected" by default
 		digitalWrite(SS, HIGH);
@@ -1654,11 +1667,15 @@ size_t MicroView::write(uint8_t c) {
 		pinMode(MOSI, OUTPUT);
 	}
 
-
+/** \brief End SPI. */
 	void MVSPIClass::end() {
 		SPCR &= ~_BV(SPE);
 	}
 
+/** \brief Set SPI bit order. 
+
+    Set SPI port bit order with LSBFIRST or MSBFIRST.
+*/
 	void MVSPIClass::setBitOrder(uint8_t bitOrder)
 	{
 		if(bitOrder == LSBFIRST) {
@@ -1668,11 +1685,27 @@ size_t MicroView::write(uint8_t c) {
 		}
 	}
 
+/** \brief Set SPI data mode.
+
+    Set the SPI daa mode: clock polarity and phase.  mode - SPI_MODE0, SPI_MODE1, SPI_MODE2, SPI_MODE3.
+*/
 	void MVSPIClass::setDataMode(uint8_t mode)
 	{
 		SPCR = (SPCR & ~SPI_MODE_MASK) | mode;
 	}
 
+/** \brief Set clock divider.
+
+    Set the clocl divider of the SPI, default is 4Mhz.
+
+    rate:   SPI_CLOCK_DIV2
+            SPI_CLOCK_DIV4
+            SPI_CLOCK_DIV8
+            SPI_CLOCK_DIV16
+            SPI_CLOCK_DIV32
+            SPI_CLOCK_DIV64
+            SPI_CLOCK_DIV128 
+*/
 	void MVSPIClass::setClockDivider(uint8_t rate)
 	{
 		SPCR = (SPCR & ~SPI_CLOCK_MASK) | (rate & SPI_CLOCK_MASK);
