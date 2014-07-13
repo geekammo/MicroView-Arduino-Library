@@ -1411,16 +1411,28 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief MicroViewSlider class initialisation with style. 
 
-    Initialise the MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1.
+    Initialise the MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) or WIDGETSTYLE3 (like 1, but vertical). If this list gets any longer, it might be better as a switch/case statement.
 */
 	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
 		if (sty==WIDGETSTYLE0) {
 			style=0;
 			totalTicks=30;
 		}
-		else {
+		else if (sty==WIDGETSTYLE1) {
 			style=1;
 			totalTicks=60;
+		}
+		else if (sty==WIDGETSTYLE2) {
+			style=2;
+			totalTicks=30;
+		}
+		else if (sty==WIDGETSTYLE3) {
+			style=3;
+			totalTicks=60;
+		}
+		else {		//unrecognized style, so use default
+			style=0;
+			totalTicks=30;
 		}
 
 		needFirstDraw=true;
@@ -1438,31 +1450,33 @@ size_t MicroView::write(uint8_t c) {
 		offsetX=getX();
 		offsetY=getY();
 		
-		if(style>0)
-		majorLine=7;
-		else
-		majorLine=4;
+		if(style%2==1)	//style 1 or 3
+			majorLine=7;
+		else			//style 0 or 2
+			majorLine=4;
 		
-		// Draw major tickers
-		for (uint8_t i=0; i<majorLine;i++) {
-			uView.lineV(offsetX+1+(i*10), offsetY+3, 5);
-		}
-		// Draw minor tickers
-		for (uint8_t i=0; i<4;i++) {
-			uView.lineV(offsetX+3+(i*2), offsetY+5, 3);
-		}
-		for (uint8_t i=0; i<4;i++) {
-			uView.lineV(offsetX+13+(i*2), offsetY+5, 3);
-		}
-		for (uint8_t i=0; i<4;i++) {
-			uView.lineV(offsetX+23+(i*2), offsetY+5, 3);
-		}
-		
-		if(style>0) {
-			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+33+(i*2), offsetY+5, 3);
+//Horizontal styles, style 0 or 1
+
+		if (style1==0 || style==1) {
+			// Draw major tickers
+			for (uint8_t i=0; i<majorLine;i++) {
+				uView.lineV(offsetX+1+(i*10), offsetY+3, 5);
 			}
-			if (style>0) {
+			// Draw minor tickers
+			for (uint8_t i=0; i<4;i++) {
+				uView.lineV(offsetX+3+(i*2), offsetY+5, 3);
+			}
+			for (uint8_t i=0; i<4;i++) {
+				uView.lineV(offsetX+13+(i*2), offsetY+5, 3);
+			}
+			for (uint8_t i=0; i<4;i++) {
+				uView.lineV(offsetX+23+(i*2), offsetY+5, 3);
+			}
+		
+			if(style==1) {			//Explicit test for style
+				for (uint8_t i=0; i<4;i++) {
+					uView.lineV(offsetX+33+(i*2), offsetY+5, 3);
+				}
 				for (uint8_t i=0; i<4;i++) {
 					uView.lineV(offsetX+43+(i*2), offsetY+5, 3);
 				}
@@ -1471,6 +1485,36 @@ size_t MicroView::write(uint8_t c) {
 				}
 			}
 		}
+//Vertical styles, style 2 or 3
+		else {
+			// Draw major tickers
+			for (uint8_t i=0; i<majorLine;i++) {
+				uView.lineH(offsetX+3, offsetY+1+(i*10), 5);
+			}
+			// Draw minor tickers
+			for (uint8_t i=0; i<4;i++) {
+				uView.lineH(offsetX+5, offsetY+3+(i*2), 3);
+			}
+			for (uint8_t i=0; i<4;i++) {
+				uView.lineV(offsetX+5, offsetY+13+(i*2), 3);
+			}
+			for (uint8_t i=0; i<4;i++) {
+				uView.lineV(offsetX+5, offsetY+23+(i*2), 3);
+			}
+		
+			if(style==3) {			//Explicit test for style
+				for (uint8_t i=0; i<4;i++) {
+					uView.lineV(offsetX+5, offsetY+33+(i*2), 3);
+				}
+				for (uint8_t i=0; i<4;i++) {
+					uView.lineV(offsetX+5, offsetY+43+(i*2), 3);
+				}
+				for (uint8_t i=0; i<4;i++) {
+					uView.lineV(offsetX+5, offsetY+53+(i*2), 3);
+				}
+			}
+		}
+
 		
 	}
 
@@ -1486,29 +1530,50 @@ size_t MicroView::write(uint8_t c) {
 		offsetY=getY();
 
 		if (needFirstDraw) {
-			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
-			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+			if (style==0 || style==1){		//Horizontal
+				uView.lineH(offsetX+tickPosition, offsetY, 3, WHITE, XOR);
+				uView.pixel(offsetX+1+tickPosition, offsetY+1, WHITE, XOR);
+			}
+			else {					//Vertical
+				uView.lineV(offsetX, offsetY+tickPosition, 3, WHITE, XOR);
+				uView.pixel(offsetX+1, offsetY+1+tickPosition, WHITE, XOR);
+			}
+
 			sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
 			needFirstDraw=false;
 		}
 		else {
 			// Draw previous pointer in XOR mode to erase it
 			tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
-			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
-			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+			if (style==0 || style==1){		//Horizontal
+				uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+				uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+			}
+			else {					//Vertical
+				uView.lineV(offsetX, offsetY+tickPosition, 3, WHITE, XOR);
+				uView.pixel(offsetX+1, offsetY+1+tickPosition, WHITE, XOR);
+			}
+
 			// Draw current pointer
 			tickPosition= (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
-			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
-			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+			if (style==0 || style==1){		//Horizontal
+				uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+				uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+			}
+			else {					//Vertical
+				uView.lineV(offsetX, offsetY+tickPosition, 3, WHITE, XOR);
+				uView.pixel(offsetX+1, offsetY+1+tickPosition, WHITE, XOR);
+			}
+
 			sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
 			prevValue=getValue();
 		}
 
 		// Draw value
-		if(style>0) 
-		uView.setCursor(offsetX,offsetY+10);
-		else
-		uView.setCursor(offsetX+34,offsetY+1);
+		if(style%2 > 0) 					//Style 1 or Style 3
+			uView.setCursor(offsetX,offsetY+10);
+		else							//Style 0 or Style 2
+			uView.setCursor(offsetX+34,offsetY+1);
 		uView.print(strBuffer);
 	}
 
@@ -1635,7 +1700,7 @@ size_t MicroView::write(uint8_t c) {
 	}
 
 	// -------------------------------------------------------------------------------------
-	// Slider Widget - end
+	// Gauge Widget - end
 	// -------------------------------------------------------------------------------------
 
 /** \brief SPI Initialisation.
