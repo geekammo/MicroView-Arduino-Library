@@ -1457,7 +1457,7 @@ size_t MicroView::write(uint8_t c) {
 		
 //Horizontal styles, style 0 or 1
 
-		if (style1==0 || style==1) {
+		if (style==0 || style==1) {
 			// Draw major tickers
 			for (uint8_t i=0; i<majorLine;i++) {
 				uView.lineV(offsetX+1+(i*10), offsetY+3, 5);
