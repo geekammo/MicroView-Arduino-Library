@@ -1424,11 +1424,11 @@ size_t MicroView::write(uint8_t c) {
 		}
 		else if (sty==WIDGETSTYLE2) {
 			style=2;
-			totalTicks=30;
+			totalTicks=20;
 		}
 		else if (sty==WIDGETSTYLE3) {
 			style=3;
-			totalTicks=60;
+			totalTicks=40;
 		}
 		else {		//unrecognized style, so use default
 			style=0;
@@ -1450,11 +1450,17 @@ size_t MicroView::write(uint8_t c) {
 		offsetX=getX();
 		offsetY=getY();
 		
-		if(style%2==1)	//style 1 or 3
-			majorLine=7;
-		else			//style 0 or 2
+		if(style==0)	
 			majorLine=4;
-		
+		else	if (style==1)	
+			majorLine=7;
+		else	if (style==2)
+			majorLine=3;
+		else if (style==3)
+			majorLine=5;
+
+
+
 //Horizontal styles, style 0 or 1
 
 		if (style==0 || style==1) {
@@ -1473,7 +1479,7 @@ size_t MicroView::write(uint8_t c) {
 				uView.lineV(offsetX+23+(i*2), offsetY+5, 3);
 			}
 		
-			if(style==1) {			//Explicit test for style
+			if(style==1) {			//Longer line, more minor ticks
 				for (uint8_t i=0; i<4;i++) {
 					uView.lineV(offsetX+33+(i*2), offsetY+5, 3);
 				}
@@ -1489,29 +1495,24 @@ size_t MicroView::write(uint8_t c) {
 		else {
 			// Draw major tickers
 			for (uint8_t i=0; i<majorLine;i++) {
-				uView.lineH(offsetX+3, offsetY+1+(i*10), 5);
+				uView.lineH(offsetX, offsetY+1+(i*10), 5);
 			}
 			// Draw minor tickers
 			for (uint8_t i=0; i<4;i++) {
-				uView.lineH(offsetX+5, offsetY+3+(i*2), 3);
+				uView.lineH(offsetX, offsetY+3+(i*2), 3);
 			}
 			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+5, offsetY+13+(i*2), 3);
-			}
-			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+5, offsetY+23+(i*2), 3);
+				uView.lineH(offsetX, offsetY+13+(i*2), 3);
 			}
 		
 			if(style==3) {			//Explicit test for style
 				for (uint8_t i=0; i<4;i++) {
-					uView.lineV(offsetX+5, offsetY+33+(i*2), 3);
+					uView.lineH(offsetX, offsetY+23+(i*2), 3);
 				}
 				for (uint8_t i=0; i<4;i++) {
-					uView.lineV(offsetX+5, offsetY+43+(i*2), 3);
+					uView.lineH(offsetX, offsetY+33+(i*2), 3);
 				}
-				for (uint8_t i=0; i<4;i++) {
-					uView.lineV(offsetX+5, offsetY+53+(i*2), 3);
-				}
+
 			}
 		}
 
@@ -1535,8 +1536,8 @@ size_t MicroView::write(uint8_t c) {
 				uView.pixel(offsetX+1+tickPosition, offsetY+1, WHITE, XOR);
 			}
 			else {					//Vertical
-				uView.lineV(offsetX, offsetY+tickPosition, 3, WHITE, XOR);
-				uView.pixel(offsetX+1, offsetY+1+tickPosition, WHITE, XOR);
+				uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
+				uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
 			}
 
 			sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
@@ -1550,8 +1551,8 @@ size_t MicroView::write(uint8_t c) {
 				uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
 			}
 			else {					//Vertical
-				uView.lineV(offsetX, offsetY+tickPosition, 3, WHITE, XOR);
-				uView.pixel(offsetX+1, offsetY+1+tickPosition, WHITE, XOR);
+				uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
+				uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
 			}
 
 			// Draw current pointer
@@ -1561,8 +1562,8 @@ size_t MicroView::write(uint8_t c) {
 				uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
 			}
 			else {					//Vertical
-				uView.lineV(offsetX, offsetY+tickPosition, 3, WHITE, XOR);
-				uView.pixel(offsetX+1, offsetY+1+tickPosition, WHITE, XOR);
+				uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
+				uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
 			}
 
 			sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
@@ -1570,10 +1571,15 @@ size_t MicroView::write(uint8_t c) {
 		}
 
 		// Draw value
-		if(style%2 > 0) 					//Style 1 or Style 3
-			uView.setCursor(offsetX,offsetY+10);
-		else							//Style 0 or Style 2
+		if(style==0)
 			uView.setCursor(offsetX+34,offsetY+1);
+		else	if (style==1)
+			uView.setCursor(offsetX,offsetY+10);
+		else if (style==2)
+			uView.setCursor(offsetX+1,offsetY+24);
+		else //style==3
+			uView.setCursor(offsetX+9,offsetY);
+
 		uView.print(strBuffer);
 	}
 
