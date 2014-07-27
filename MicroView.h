@@ -24,14 +24,35 @@
 
 #define swap(a, b) { uint8_t t = a; a = b; b = t; }
 
+#define OLEDPWR	4	// 3.3V regulator enable
+
 #define DC		8
+#define DCPORT	PORTB
+#define DCDDR	DDRB
+#define DCBIT	0
+
 #define RESET	7
-#define OLEDPWR	4
+#define RESETPORT	PORTD
+#define RESETDDR	DDRD
+#define RESETBIT	7
+
+#define SSPORT	PORTB
+#define SSDDR	DDRB
+#define SSBIT	2
+
+#define DCHIGH ((DCPORT |= _BV(DCBIT)), (DCDDR &= ~_BV(DCBIT)))
+#define DCLOW ((DCPORT &= ~_BV(DCBIT)), (DCDDR |= _BV(DCBIT)))
+
+#define RESETHIGH ((RESETPORT |= _BV(RESETBIT)), (RESETDDR &= ~_BV(RESETBIT)))
+#define RESETLOW ((RESETPORT &= ~_BV(RESETBIT)), (RESETDDR |= _BV(RESETBIT)))
 
 // SS, SCK, MOSI already defined by original pins_arduino.h
 //#define CS 		10
 //#define SCK		13
 //#define MOSI	11
+
+#define SSHIGH ((SSPORT |= _BV(SSBIT)), (SSDDR &= ~_BV(SSBIT)))
+#define SSLOW ((SSPORT &= ~_BV(SSBIT)), (SSDDR |= _BV(SSBIT)))
 
 #define BLACK 0
 #define WHITE 1
