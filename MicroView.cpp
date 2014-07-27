@@ -60,18 +60,18 @@ Page buffer is required because in SPI mode, the host cannot read the SSD1306's 
 static uint8_t screenmemory [] = { 
 	// LCD Memory organised in 64 horizontal pixel and 6 rows of byte
 	// B  B .............B  -----
-	// y  y .............y        \        
-	// t  t .............t         \
-	// e  e .............e          \
-	// 0  1 .............63          \
-	//                                \
-	// D0 D0.............D0            \
-	// D1 D1.............D1            / ROW 0
-	// D2 D2.............D2           /
-	// D3 D3.............D3          /
-	// D4 D4.............D4         /
-	// D5 D5.............D5        /
-	// D6 D6.............D6       /
+	// y  y .............y       |
+	// t  t .............t        |
+	// e  e .............e         |
+	// 0  1 .............63         |
+	//                               |
+	// D0 D0.............D0           | ROW 0
+	// D1 D1.............D1           |
+	// D2 D2.............D2          |
+	// D3 D3.............D3         |
+	// D4 D4.............D4        |
+	// D5 D5.............D5       |
+	// D6 D6.............D6      |
 	// D7 D7.............D7  ----
 	
 	//SparkFun Electronics LOGO 
@@ -955,7 +955,7 @@ size_t MicroView::write(uint8_t c) {
 					Serial.println(serCmd[2]);
 					pixel(serCmd[1],serCmd[2]);
 					display();
-				} else if (cmdCount=4) {
+				} else if (cmdCount==4) {
 					Serial.print("pixel ");
 					Serial.print(serCmd[1]);
 					Serial.print(" ");
@@ -1269,7 +1269,7 @@ size_t MicroView::write(uint8_t c) {
 				temp=atoi(result);
 				serCmd[index]=(uint8_t)temp & 0xff;		// we only need 8 bit number
 				index++;
-				for (uint8_t i;i<recvLEN;i++) {
+				for (uint8_t i=0;i<recvLEN;i++) {
 					result=strtok(NULL,",");
 					if (result != NULL) {
 						
@@ -1554,10 +1554,10 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Draw widget face.
 
-    Draw image/diagram represengint the widget's face.
+    Draw image/diagram representing the widget's face.
 */
 	void MicroViewGauge::drawFace() {
-		uint8_t offsetX, offsetY, majorLine;
+		uint8_t offsetX, offsetY;
 		float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
 		offsetX=getX();
 		offsetY=getY();
@@ -1591,8 +1591,7 @@ size_t MicroView::write(uint8_t c) {
 */
 	void MicroViewGauge::draw() {
 		uint8_t offsetX, offsetY;
-		uint8_t tickPosition=0;
-		float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
+		float degreeSec, toSecX, toSecY;
 
 		char strBuffer[5];
 		offsetX=getX();
