@@ -128,7 +128,7 @@ void MicroView::begin() {
 	
 	// Enable 3.3V power to the display
 	pinMode(OLEDPWR, OUTPUT);
-	digitalWrite(OLEDPWR,HIGH);
+	digitalWrite(OLEDPWR, HIGH);
 
 	// Give some time for power to stabilise
 	delay(10);
@@ -150,25 +150,42 @@ void MicroView::begin() {
 	delay(10);
 
 	// Init sequence for 64x48 OLED module
-	command(DISPLAYOFF);				// 0xAE
-	command(SETDISPLAYCLOCKDIV, 0x80);	// 0xD5 / the suggested ratio 0x80
+//	command(DISPLAYOFF);				// 0xAE
+//	command(SETDISPLAYCLOCKDIV, 0x80);	// 0xD5 / the suggested ratio 0x80
 	command(SETMULTIPLEX, 0x2F);		// 0xA8
-	command(SETDISPLAYOFFSET, 0x0);		// 0xD3 / no offset
-	command(SETSTARTLINE | 0x0);		// line #0
-	command(CHARGEPUMP, 0x14);			// enable charge pump
-	command(NORMALDISPLAY);				// 0xA6
-	command(DISPLAYALLONRESUME);		// 0xA4
+//	command(SETDISPLAYOFFSET, 0x0);		// 0xD3 / no offset
+//	command(SETSTARTLINE | 0x0);		// 0x40 / line #0
+	command(CHARGEPUMP, 0x14);			// 0x8D / enable charge pump
+//	command(NORMALDISPLAY);				// 0xA6
+//	command(DISPLAYALLONRESUME);		// 0xA4
 	command(SEGREMAP | 0x1);
 	command(COMSCANDEC);
-	command(SETCOMPINS, 0x12);			// 0xDA
+//	command(SETCOMPINS, 0x12);			// 0xDA
 	command(SETCONTRAST, 0x8F);			// 0x81
-	command(SETPRECHARGE, 0xF1);		// 0xd9
+	command(SETPRECHARGE, 0xF1);		// 0xD9
 	command(SETVCOMDESELECT, 0x40);		// 0xDB
 	command(DISPLAYON);					//--turn on oled panel
 
 	clear(ALL);							// Erase hardware memory inside the OLED controller to avoid random data in memory.
 
 	Serial.begin(115200);
+}
+
+/** \brief Power off the OLED display.
+
+    Reset display control signals and
+    prepare the SSD1306 controller for power off,
+    then power off the 3.3V regulator.
+*/
+void MicroView::end() {
+	DCLOW;						// Just in case
+	command(DISPLAYOFF);
+	command(CHARGEPUMP, 0x10);	// Disable the charge pump
+	delay(150);					// Wait for charge pump off
+	RESETLOW;
+	SSLOW;
+	MVSPI.end();				// Disable SPI mode
+	digitalWrite(OLEDPWR, LOW);	// Power off the 3.3V regulator
 }
 
 /** \brief Send 1 command byte.
@@ -1652,6 +1669,11 @@ size_t MicroView::write(uint8_t c) {
 /** \brief End SPI. */
 	void MVSPIClass::end() {
 		SPCR &= ~_BV(SPE);
+		// SCK and MOSI should already be low but set them again, to be sure.
+		digitalWrite(SCK, LOW);
+		digitalWrite(MOSI, LOW);
+		pinMode(SCK, OUTPUT);
+		pinMode(MOSI, OUTPUT);
 	}
 
 /** \brief Set up SPI for transmitting
