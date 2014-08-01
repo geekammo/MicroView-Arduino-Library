@@ -91,6 +91,9 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.14b: 26th July 2014 by JP Liew
+* added Learning Kit Circuit Sketch
+
 **v1.13b: 13th June 2014 by JP Liew**
 * added Sine Wave Example
 * inserted license to example code
