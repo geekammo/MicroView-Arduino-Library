@@ -258,24 +258,25 @@ void MicroView::setColumnAddress(uint8_t add) {
     To clear GDRAM inside the LCD controller, pass in the variable mode = ALL and to clear screen page buffer pass in the variable mode = PAGE.
 */
 void MicroView::clear(uint8_t mode) {
-	//	uint8_t page=6, col=0x40;
 	if (mode==ALL) {
-		for (int i=0;i<8; i++) {
-			setPageAddress(i);
-			setColumnAddress(0);
-			MVSPI.packetBegin();
-			DCHIGH;
+		command(SETADDRESSMODE, 0);		// Set horizontal addressing mode
+		command(SETCOLUMNBOUNDS, 0, LCDTOTALWIDTH - 1);	// Set width
+		command(SETPAGEBOUNDS, 0, LCDTOTALPAGES - 1);	// Set height
+
+		MVSPI.packetBegin();
+		DCHIGH;
+		MVSPI.transfer(0);
+		for (int i = 1; i < LCDTOTALWIDTH * LCDTOTALPAGES; i++) {
+			MVSPI.wait();
 			MVSPI.transfer(0);
-			for (int j=1; j<0x80; j++) {
-				MVSPI.wait();
-				MVSPI.transfer(0);
-			}
-			MVSPI.packetEnd();
 		}
+		MVSPI.packetEnd();
+
+		command(SETADDRESSMODE, 2);	// Return display to page addressing mode
 	}
 	else
 	{
-		memset(screenmemory,0,384);			// (64 x 48) / 8 = 384
+		memset(screenmemory, 0, LCDWIDTH * LCDPAGES);
 		//display();
 	}
 }
@@ -285,24 +286,25 @@ void MicroView::clear(uint8_t mode) {
 	To clear GDRAM inside the LCD controller, pass in the variable mode = ALL with c character and to clear screen page buffer, pass in the variable mode = PAGE with c character.
 */
 void MicroView::clear(uint8_t mode, uint8_t c) {
-	//uint8_t page=6, col=0x40;
 	if (mode==ALL) {
-		for (int i=0;i<8; i++) {
-			setPageAddress(i);
-			setColumnAddress(0);
-			MVSPI.packetBegin();
-			DCHIGH;
+		command(SETADDRESSMODE, 0);		// Set horizontal addressing mode
+		command(SETCOLUMNBOUNDS, 0, LCDTOTALWIDTH - 1);	// Set width
+		command(SETPAGEBOUNDS, 0, LCDTOTALPAGES - 1);	// Set height
+
+		MVSPI.packetBegin();
+		DCHIGH;
+		MVSPI.transfer(c);
+		for (int i = 1; i < LCDTOTALWIDTH * LCDTOTALPAGES; i++) {
+			MVSPI.wait();
 			MVSPI.transfer(c);
-			for (int j=1; j<0x80; j++) {
-				MVSPI.wait();
-				MVSPI.transfer(c);
-			}
-			MVSPI.packetEnd();
 		}
+		MVSPI.packetEnd();
+
+		command(SETADDRESSMODE, 2);	// Return display to page addressing mode
 	}
 	else
 	{
-		memset(screenmemory,c,384);			// (64 x 48) / 8 = 384
+		memset(screenmemory, c, LCDWIDTH * LCDPAGES);
 		display();
 	}	
 }
@@ -331,20 +333,22 @@ void MicroView::contrast(uint8_t contrast) {
     Bulk move the screen buffer to the SSD1306 controller's memory so that images/graphics drawn on the screen buffer will be displayed on the OLED.
 */
 void MicroView::display(void) {
-	uint8_t i, j;
-	
-	for (i=0; i<6; i++) {
-		setPageAddress(i);
-		setColumnAddress(0);
-		MVSPI.packetBegin();
-		DCHIGH;
-		MVSPI.transfer(screenmemory[i*0x40]);
-		for (j=1;j<0x40;j++) {
-			MVSPI.wait();
-			MVSPI.transfer(screenmemory[i*0x40+j]);
-		}
-		MVSPI.packetEnd();
+	command(SETADDRESSMODE, 0);		// Set horizontal addressing mode
+	command(SETCOLUMNBOUNDS,
+	        LCDCOLUMNOFFSET,
+	        LCDCOLUMNOFFSET + LCDWIDTH - 1);	// Set width
+	command(SETPAGEBOUNDS, 0, LCDPAGES - 1);	// Set height
+
+	MVSPI.packetBegin();
+	DCHIGH;
+	MVSPI.transfer(screenmemory[0]);
+	for (int i = 1; i < LCDWIDTH * LCDPAGES; i++) {
+		MVSPI.wait();
+		MVSPI.transfer(screenmemory[i]);
 	}
+	MVSPI.packetEnd();
+
+	command(SETADDRESSMODE, 2);	// Restore to page addressing mode
 }
 
 //#if ARDUINO >= 100

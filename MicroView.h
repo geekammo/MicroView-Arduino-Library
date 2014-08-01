@@ -60,6 +60,13 @@
 
 #define LCDWIDTH			64
 #define LCDHEIGHT			48
+#define LCDPAGES			(LCDHEIGHT / 8)
+#define LCDCOLUMNOFFSET		32	// Visible start column within SSD1306 controller memory
+
+#define LCDTOTALWIDTH		128	// Full width of SSD1306 controller memory
+#define LCDTOTALHEIGHT		64	// Full height of SSD1306 controller memory
+#define LCDTOTALPAGES		(LCDTOTALHEIGHT / 8)
+
 #define FONTHEADERSIZE		6
 
 #define NORM				0
@@ -88,6 +95,7 @@
 #define SETLOWCOLUMN 		0x00
 #define SETHIGHCOLUMN 		0x10
 #define SETPAGE				0xB0
+#define SETADDRESSMODE		0x20
 #define SETCOLUMNBOUNDS		0x21
 #define SETPAGEBOUNDS		0x22
 #define SETSTARTLINE 		0x40
