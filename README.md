@@ -91,6 +91,9 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.16b: 3rd August 2014 by czetie**
+* added vertical slider widget
+
 **v1.15b: 3rd August 2014 by Scott Allen**
 * improved lots of low level routines, Fast SPI
 * fixed some compilation warnings

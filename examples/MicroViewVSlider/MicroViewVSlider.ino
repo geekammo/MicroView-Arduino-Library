@@ -1,47 +1,43 @@
+/*
+	MicroView Arduino Library
+	Copyright (C) 2014 GeekAmmo
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include <MicroView.h>
 
-int buttonPin = A0;     // push button pin
-int buttonState = 0;	// variable for reading the pushbutton status
-int onCount = 0;
-MicroViewWidget *hWidget, *vWidget1, *vWidget2;
+MicroViewWidget *vWidget1, *vWidget2;
 
 void setup() {
 	uView.begin();
 	uView.clear(PAGE);
-	
-	// initialize the pushbutton pin as an input:
-	pinMode(buttonPin, INPUT);  
-	digitalWrite(buttonPin,HIGH);  
-	
-	//Create a slider to count how long the switch is on
-//	hWidget = new MicroViewSlider(0, 0, 0, 99, WIDGETSTYLE0);
+
 	vWidget1 = new MicroViewSlider(0, 0, 0, 255, WIDGETSTYLE2);
 	vWidget2 = new MicroViewSlider(31, 0, 0, 255, WIDGETSTYLE3);
 }
 
 void loop() {
-	// read the state of the pushbutton value:
-	buttonState = digitalRead(buttonPin);
+	for (int i=0;i<=255;i++) {
+		vWidget1->setValue(i);
+		vWidget2->setValue(255-i);
+		uView.display();
+	}
 
-	// check if the pushbutton is pressed.
-	// if it is not pressed, the buttonState is HIGH:
-	if (buttonState == HIGH) {     
-		onCount = min(onCount+1, 255);
-//		hWidget->setValue(onCount);
-		vWidget1->setValue(onCount);
-		vWidget2->setValue(onCount);
-//		uView.setCursor(0,0);
-//		uView.print("OFF");
+	for(int i=255; i>=0;i--) {
+		vWidget1->setValue(i);		
+		vWidget2->setValue(255-i);
 		uView.display();
- 	} 
-	else {
-		onCount = max(onCount-1, 0);
-//		hWidget->setValue(onCount);
-		vWidget1->setValue(onCount);
-		vWidget2->setValue(onCount);
-//		uView.setCursor(0,0);
-//		uView.print("ON ");
-		uView.display();
-  }
+	}
 }
 
