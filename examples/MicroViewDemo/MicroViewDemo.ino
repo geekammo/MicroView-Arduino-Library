@@ -373,7 +373,7 @@ void loop() {
 	uView.print(6);
 	uView.setCursor(0,uView.getLCDHeight() /2-(uView.getFontHeight()/2));
 	uView.print(9);
-	uView.setCursor(uView.getLCDWidth()-uView.getFontWidth(),uView.getLCDWidth()/2-(uView.getFontHeight()/2));
+	uView.setCursor(uView.getLCDWidth()-uView.getFontWidth(),uView.getLCDHeight()/2-(uView.getFontHeight()/2));
 	uView.print(3);
 	uView.display();			// display the memory buffer drawn
 

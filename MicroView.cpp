@@ -60,18 +60,18 @@ Page buffer is required because in SPI mode, the host cannot read the SSD1306's 
 static uint8_t screenmemory [] = { 
 	// LCD Memory organised in 64 horizontal pixel and 6 rows of byte
 	// B  B .............B  -----
-	// y  y .............y        \        
-	// t  t .............t         \
-	// e  e .............e          \
-	// 0  1 .............63          \
-	//                                \
-	// D0 D0.............D0            \
-	// D1 D1.............D1            / ROW 0
-	// D2 D2.............D2           /
-	// D3 D3.............D3          /
-	// D4 D4.............D4         /
-	// D5 D5.............D5        /
-	// D6 D6.............D6       /
+	// y  y .............y       |
+	// t  t .............t        |
+	// e  e .............e         |
+	// 0  1 .............63         |
+	//                               |
+	// D0 D0.............D0           | ROW 0
+	// D1 D1.............D1           |
+	// D2 D2.............D2          |
+	// D3 D3.............D3         |
+	// D4 D4.............D4        |
+	// D5 D5.............D5       |
+	// D6 D6.............D6      |
 	// D7 D7.............D7  ----
 	
 	//SparkFun Electronics LOGO 
@@ -123,119 +123,116 @@ void MicroView::begin() {
 	setColor(WHITE);
 	setDrawMode(NORM);
 	setCursor(0,0);
+
+	RESETLOW;
 	
+	// Enable 3.3V power to the display
 	pinMode(OLEDPWR, OUTPUT);
-	digitalWrite(OLEDPWR,HIGH);
-	// Setting up SPI pins
-	pinMode(MOSI, OUTPUT);
-	pinMode(SCK, OUTPUT);
-	
-	//pinMode(DC, OUTPUT);
-	pinMode(RESET, OUTPUT);
-	pinMode(SS, INPUT);
-	digitalWrite(SS, HIGH);
-	
-	ssport		= portOutputRegister(digitalPinToPort(SS));
-	sspinmask	= digitalPinToBitMask(SS);
-	ssreg		= portModeRegister(digitalPinToPort(SS));
-	
-	dcport		= portOutputRegister(digitalPinToPort(DC));
-	dcpinmask	= digitalPinToBitMask(DC);
-	dcreg		= portModeRegister(digitalPinToPort(DC));
-	
-	digitalWrite(RESET, HIGH);
-	// VDD (3.3V) goes high at start, lets just chill for 5 ms
+	digitalWrite(OLEDPWR, HIGH);
+
+	// Give some time for power to stabilise
+	delay(10);
+
+	RESETHIGH;
 	delay(5);
-	// bring reset low
-	digitalWrite(RESET, LOW);
-	
+	RESETLOW;
+
 	// Setup SPI frequency
 	MVSPI.setClockDivider(SPI_CLOCK_DIV2); 
+	// Initialise SPI
 	MVSPI.begin();
-	
-	// wait 10ms
-	delay(10);
+
+	delay(5);
+
 	// bring out of reset
-	pinMode(RESET,INPUT_PULLUP);
-	//digitalWrite(RESET, HIGH);
+	RESETHIGH;
+
+	delay(10);
 
 	// Init sequence for 64x48 OLED module
-	command(DISPLAYOFF);			// 0xAE
-
-	command(SETDISPLAYCLOCKDIV);	// 0xD5
-	command(0x80);					// the suggested ratio 0x80
-
-	command(SETMULTIPLEX);			// 0xA8
-	command(0x2F);
-
-	command(SETDISPLAYOFFSET);		// 0xD3
-	command(0x0);					// no offset
-
-	command(SETSTARTLINE | 0x0);	// line #0
-
-	command(CHARGEPUMP);			// enable charge pump
-	command(0x14);
-
-	command(NORMALDISPLAY);			// 0xA6
-	command(DISPLAYALLONRESUME);	// 0xA4
-
+//	command(DISPLAYOFF);				// 0xAE
+//	command(SETDISPLAYCLOCKDIV, 0x80);	// 0xD5 / the suggested ratio 0x80
+	command(SETMULTIPLEX, 0x2F);		// 0xA8
+//	command(SETDISPLAYOFFSET, 0x0);		// 0xD3 / no offset
+//	command(SETSTARTLINE | 0x0);		// 0x40 / line #0
+	command(CHARGEPUMP, 0x14);			// 0x8D / enable charge pump
+//	command(NORMALDISPLAY);				// 0xA6
+//	command(DISPLAYALLONRESUME);		// 0xA4
 	command(SEGREMAP | 0x1);
 	command(COMSCANDEC);
+//	command(SETCOMPINS, 0x12);			// 0xDA
+	command(SETCONTRAST, 0x8F);			// 0x81
+	command(SETPRECHARGE, 0xF1);		// 0xD9
+	command(SETVCOMDESELECT, 0x40);		// 0xDB
+	command(DISPLAYON);					//--turn on oled panel
 
-	command(SETCOMPINS);			// 0xDA
-	command(0x12);
+	clear(ALL);							// Erase hardware memory inside the OLED controller to avoid random data in memory.
 
-	command(SETCONTRAST);			// 0x81
-	command(0x8F);
-
-	command(SETPRECHARGE);			// 0xd9
-	command(0xF1);
-	
-	command(SETVCOMDESELECT);			// 0xDB
-	command(0x40);
-
-	command(DISPLAYON);				//--turn on oled panel
-	clear(ALL);						// Erase hardware memory inside the OLED controller to avoid random data in memory.
 	Serial.begin(115200);
 }
 
-/** \brief SPI command.
-    
-    Setup DC and SS pins, then send command via SPI to SSD1306 controller.
+/** \brief Power off the OLED display.
+
+    Reset display control signals and
+    prepare the SSD1306 controller for power off,
+    then power off the 3.3V regulator.
+*/
+void MicroView::end() {
+	DCLOW;						// Just in case
+	command(DISPLAYOFF);
+	command(CHARGEPUMP, 0x10);	// Disable the charge pump
+	delay(150);					// Wait for charge pump off
+	RESETLOW;
+	SSLOW;
+	MVSPI.end();				// Disable SPI mode
+	digitalWrite(OLEDPWR, LOW);	// Power off the 3.3V regulator
+}
+
+/** \brief Send 1 command byte.
+
+    Send 1 command byte via SPI to SSD1306 controller.
 */
 void MicroView::command(uint8_t c) {
-	// Hardware SPI
-	*dcreg |= dcpinmask;		// Set DC pin to OUTPUT
-	*dcport &= ~dcpinmask;		// DC pin LOW
-	
-	*ssreg |= sspinmask;		// Set SS pin to OUTPUT
-	*ssport &= ~sspinmask;		// SS LOW
-
+	MVSPI.packetBegin();
 	MVSPI.transfer(c);
+	MVSPI.packetEnd();
+}
 
-	*ssport |= sspinmask;	// SS HIGH
-	*ssreg &= ~sspinmask;	// Set SS pin to INPUT
-	
-	*dcreg &= ~dcpinmask;	// Set DC to INPUT to avoid high voltage over driving the OLED logic
+/** \brief Send 2 command bytes.
+
+    Send 2 command bytes via SPI to SSD1306 controller.
+*/
+void MicroView::command(uint8_t c1, uint8_t c2) {
+	MVSPI.packetBegin();
+	MVSPI.transfer(c1);
+	MVSPI.wait();
+	MVSPI.transfer(c2);
+	MVSPI.packetEnd();
+}
+
+/** \brief Send 3 command bytes.
+
+    Send 3 command bytes via SPI to SSD1306 controller.
+*/
+void MicroView::command(uint8_t c1, uint8_t c2, uint8_t c3) {
+	MVSPI.packetBegin();
+	MVSPI.transfer(c1);
+	MVSPI.wait();
+	MVSPI.transfer(c2);
+	MVSPI.wait();
+	MVSPI.transfer(c3);
+	MVSPI.packetEnd();
 }
 
 /** \brief SPI data.
 
-    Setup DC and SS pins, then send data via SPI to SSD1306 controller.
+    Send 1 data byte via SPI to SSD1306 controller.
 */
 void MicroView::data(uint8_t c) {
-	// Hardware SPI
-	*dcport |= dcpinmask;	// DC HIGH
-
-	*ssreg |= sspinmask;		// Set SS pin to OUTPUT
-	*ssport &= ~sspinmask;	// SS LOW
-
+	MVSPI.packetBegin();
+	DCHIGH;
 	MVSPI.transfer(c);
-
-	*ssport |= sspinmask;	// SS HIGH
-	*ssreg &= ~sspinmask;	// Set SS pin to INPUT
-
-	*dcreg &= ~dcpinmask;	// Set DC to INPUT to avoid high voltage over driving the OLED logic
+	MVSPI.packetEnd();
 }
 
 /** \brief Set SSD1306 page address.
@@ -243,8 +240,7 @@ void MicroView::data(uint8_t c) {
     Send page address command and address to the SSD1306 OLED controller.
 */
 void MicroView::setPageAddress(uint8_t add) {
-	add=0xb0|add;
-	command(add);
+	command(SETPAGE|add);
 	return;
 }
 
@@ -253,8 +249,7 @@ void MicroView::setPageAddress(uint8_t add) {
     Send column address command and address to the SSD1306 OLED controller.
 */
 void MicroView::setColumnAddress(uint8_t add) {
-	command((0x10|(add>>4))+0x02);
-	command((0x0f&add));
+	command((SETHIGHCOLUMN|(add>>4))+0x02, SETLOWCOLUMN|(0x0f&add));
 	return;
 }
 
@@ -263,19 +258,25 @@ void MicroView::setColumnAddress(uint8_t add) {
     To clear GDRAM inside the LCD controller, pass in the variable mode = ALL and to clear screen page buffer pass in the variable mode = PAGE.
 */
 void MicroView::clear(uint8_t mode) {
-	//	uint8_t page=6, col=0x40;
 	if (mode==ALL) {
-		for (int i=0;i<8; i++) {
-			setPageAddress(i);
-			setColumnAddress(0);
-			for (int j=0; j<0x80; j++) {
-				data(0);
-			}
+		command(SETADDRESSMODE, 0);		// Set horizontal addressing mode
+		command(SETCOLUMNBOUNDS, 0, LCDTOTALWIDTH - 1);	// Set width
+		command(SETPAGEBOUNDS, 0, LCDTOTALPAGES - 1);	// Set height
+
+		MVSPI.packetBegin();
+		DCHIGH;
+		MVSPI.transfer(0);
+		for (int i = 1; i < LCDTOTALWIDTH * LCDTOTALPAGES; i++) {
+			MVSPI.wait();
+			MVSPI.transfer(0);
 		}
+		MVSPI.packetEnd();
+
+		command(SETADDRESSMODE, 2);	// Return display to page addressing mode
 	}
 	else
 	{
-		memset(screenmemory,0,384);			// (64 x 48) / 8 = 384
+		memset(screenmemory, 0, LCDWIDTH * LCDPAGES);
 		//display();
 	}
 }
@@ -285,19 +286,25 @@ void MicroView::clear(uint8_t mode) {
 	To clear GDRAM inside the LCD controller, pass in the variable mode = ALL with c character and to clear screen page buffer, pass in the variable mode = PAGE with c character.
 */
 void MicroView::clear(uint8_t mode, uint8_t c) {
-	//uint8_t page=6, col=0x40;
 	if (mode==ALL) {
-		for (int i=0;i<8; i++) {
-			setPageAddress(i);
-			setColumnAddress(0);
-			for (int j=0; j<0x80; j++) {
-				data(c);
-			}
+		command(SETADDRESSMODE, 0);		// Set horizontal addressing mode
+		command(SETCOLUMNBOUNDS, 0, LCDTOTALWIDTH - 1);	// Set width
+		command(SETPAGEBOUNDS, 0, LCDTOTALPAGES - 1);	// Set height
+
+		MVSPI.packetBegin();
+		DCHIGH;
+		MVSPI.transfer(c);
+		for (int i = 1; i < LCDTOTALWIDTH * LCDTOTALPAGES; i++) {
+			MVSPI.wait();
+			MVSPI.transfer(c);
 		}
+		MVSPI.packetEnd();
+
+		command(SETADDRESSMODE, 2);	// Return display to page addressing mode
 	}
 	else
 	{
-		memset(screenmemory,c,384);			// (64 x 48) / 8 = 384
+		memset(screenmemory, c, LCDWIDTH * LCDPAGES);
 		display();
 	}	
 }
@@ -315,11 +322,10 @@ void MicroView::invert(boolean inv) {
 
 /** \brief Set contrast.
 
-    OLED contract value from 0 to 255. Note: Contrast level is not very obvious.
+    OLED contrast value from 0 to 255. Note: Contrast level is not very obvious.
 */
 void MicroView::contrast(uint8_t contrast) {
-	command(SETCONTRAST);			// 0x81
-	command(contrast);
+	command(SETCONTRAST, contrast);		// 0x81
 }
 
 /** \brief Transfer display memory.
@@ -327,15 +333,22 @@ void MicroView::contrast(uint8_t contrast) {
     Bulk move the screen buffer to the SSD1306 controller's memory so that images/graphics drawn on the screen buffer will be displayed on the OLED.
 */
 void MicroView::display(void) {
-	uint8_t i, j;
-	
-	for (i=0; i<6; i++) {
-		setPageAddress(i);
-		setColumnAddress(0);
-		for (j=0;j<0x40;j++) {
-			data(screenmemory[i*0x40+j]);
-		}
+	command(SETADDRESSMODE, 0);		// Set horizontal addressing mode
+	command(SETCOLUMNBOUNDS,
+	        LCDCOLUMNOFFSET,
+	        LCDCOLUMNOFFSET + LCDWIDTH - 1);	// Set width
+	command(SETPAGEBOUNDS, 0, LCDPAGES - 1);	// Set height
+
+	MVSPI.packetBegin();
+	DCHIGH;
+	MVSPI.transfer(screenmemory[0]);
+	for (int i = 1; i < LCDWIDTH * LCDPAGES; i++) {
+		MVSPI.wait();
+		MVSPI.transfer(screenmemory[i]);
 	}
+	MVSPI.packetEnd();
+
+	command(SETADDRESSMODE, 2);	// Restore to page addressing mode
 }
 
 //#if ARDUINO >= 100
@@ -847,14 +860,9 @@ size_t MicroView::write(uint8_t c) {
 		if (stop<start)		// stop must be larger or equal to start
 		return;
 		scrollStop();		// need to disable scrolling before starting to avoid memory corrupt
-		command(RIGHTHORIZONTALSCROLL);
-		command(0x00);
-		command(start);
-		command(0x7);		// scroll speed frames , TODO
-		command(stop);
-		command(0x00);
-		command(0xFF);
-		command(ACTIVATESCROLL);
+		command(RIGHTHORIZONTALSCROLL, 0);
+		command(start, 0x7, stop);	// scroll speed frames , TODO
+		command(0x00, 0xFF, ACTIVATESCROLL);
 	}
 	
 /** \brief Vertical flip.
@@ -955,7 +963,7 @@ size_t MicroView::write(uint8_t c) {
 					Serial.println(serCmd[2]);
 					pixel(serCmd[1],serCmd[2]);
 					display();
-				} else if (cmdCount=4) {
+				} else if (cmdCount==4) {
 					Serial.print("pixel ");
 					Serial.print(serCmd[1]);
 					Serial.print(" ");
@@ -1269,7 +1277,7 @@ size_t MicroView::write(uint8_t c) {
 				temp=atoi(result);
 				serCmd[index]=(uint8_t)temp & 0xff;		// we only need 8 bit number
 				index++;
-				for (uint8_t i;i<recvLEN;i++) {
+				for (uint8_t i=0;i<recvLEN;i++) {
 					result=strtok(NULL,",");
 					if (result != NULL) {
 						
@@ -1554,10 +1562,10 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Draw widget face.
 
-    Draw image/diagram represengint the widget's face.
+    Draw image/diagram representing the widget's face.
 */
 	void MicroViewGauge::drawFace() {
-		uint8_t offsetX, offsetY, majorLine;
+		uint8_t offsetX, offsetY;
 		float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
 		offsetX=getX();
 		offsetY=getY();
@@ -1591,8 +1599,7 @@ size_t MicroView::write(uint8_t c) {
 */
 	void MicroViewGauge::draw() {
 		uint8_t offsetX, offsetY;
-		uint8_t tickPosition=0;
-		float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
+		float degreeSec, toSecX, toSecY;
 
 		char strBuffer[5];
 		offsetX=getX();
@@ -1640,39 +1647,69 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief SPI Initialisation.
 
-    Setup SCK, MOSI pins for SPI transmission.
+    Setup SCK, MOSI, SS and DC pins for SPI transmission.
 */
 	void MVSPIClass::begin() {
-		// Set SS to high so a connected chip will be "deselected" by default
-		digitalWrite(SS, HIGH);
-
-		// When the SS pin is set as OUTPUT, it can be used as
-		// a general purpose output port (it doesn't influence
-		// SPI operations).
-		pinMode(SS, OUTPUT);
-
+		// Set SS to high so the display will be "deselected" by default
+		SSHIGH;
 		// Warning: if the SS pin ever becomes a LOW INPUT then SPI
-		// automatically switches to Slave, so the data direction of
-		// the SS pin MUST be kept as OUTPUT.
-		SPCR |= _BV(MSTR);
-		SPCR |= _BV(SPE);
+		// automatically switches to Slave.
+		// This should not occur with the MicroView as nothing can drive the pin.
 
-		// Set direction register for SCK and MOSI pin.
-		// MISO pin automatically overrides to INPUT.
-		// By doing this AFTER enabling SPI, we avoid accidentally
-		// clocking in a single bit since the lines go directly
-		// from "input" to SPI control.  
-		// http://code.google.com/p/arduino/issues/detail?id=888
+		// Set DC low for command mode, where it should always default to unless
+		// data is being transmitted.
+		DCLOW;
+
+		// Set SCK and MOSI to be outputs and low when SPI is disabled.
+		digitalWrite(SCK, LOW);
+		digitalWrite(MOSI, LOW);
 		pinMode(SCK, OUTPUT);
 		pinMode(MOSI, OUTPUT);
+
+		// Set SPI master mode. Don't enable SPI at this time.
+		SPCR |= _BV(MSTR);
 	}
 
 /** \brief End SPI. */
 	void MVSPIClass::end() {
 		SPCR &= ~_BV(SPE);
+		// SCK and MOSI should already be low but set them again, to be sure.
+		digitalWrite(SCK, LOW);
+		digitalWrite(MOSI, LOW);
+		pinMode(SCK, OUTPUT);
+		pinMode(MOSI, OUTPUT);
 	}
 
-/** \brief Set SPI bit order. 
+/** \brief Set up SPI for transmitting
+
+    Pepare the SPI interface for transmitting on or more bytes of
+    commands and/or data.
+*/
+	void MVSPIClass::packetBegin() {
+		// Enable SPI mode
+		SPCR |= _BV(SPE);
+
+		// Set SS low
+		SSLOW;
+}
+
+/** \brief End a SPI packet transmission
+
+    End a SPI packet transmission:
+    - Wait for the last byte to finish being transmitted.
+    - Set DC to command mode (even if already set that way, just in case).
+    - Set SS high.
+    - Disable SPI mode (causing SCK and MOSI to go low).
+*/
+	void MVSPIClass::packetEnd() {
+		while (!(SPSR & _BV(SPIF)))
+			;
+		DCLOW;
+		SSHIGH;
+		SPCR &= ~_BV(SPE);
+}
+
+/** \brief Set SPI bit order.
 
     Set SPI port bit order with LSBFIRST or MSBFIRST.
 */
@@ -1687,7 +1724,7 @@ size_t MicroView::write(uint8_t c) {
 
 /** \brief Set SPI data mode.
 
-    Set the SPI daa mode: clock polarity and phase.  mode - SPI_MODE0, SPI_MODE1, SPI_MODE2, SPI_MODE3.
+    Set the SPI data mode: clock polarity and phase.  mode - SPI_MODE0, SPI_MODE1, SPI_MODE2, SPI_MODE3.
 */
 	void MVSPIClass::setDataMode(uint8_t mode)
 	{

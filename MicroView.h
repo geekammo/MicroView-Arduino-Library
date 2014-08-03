@@ -24,13 +24,35 @@
 
 #define swap(a, b) { uint8_t t = a; a = b; b = t; }
 
-#define DC		8
-#define RESET	7
-#define OLEDPWR	4
+#define OLEDPWR	4	// 3.3V regulator enable
 
-// SS, SCK, MOSI already defined by original pins_arduino.h
-//#define CS 		10
-//#define SCK		13
+// Port and bit mappings for DC, RESET, SS
+// ** These are CPU dependent **
+#define DCPORT	PORTB
+#define DCDDR	DDRB
+#define DCBIT	0
+
+#define RESETPORT	PORTD
+#define RESETDDR	DDRD
+#define RESETBIT	7
+
+#define SSPORT	PORTB
+#define SSDDR	DDRB
+#define SSBIT	2
+
+// Macros to quickly set DC, RESET, SS
+// A HIGH sets the signal to input mode with the internal pullup enabled
+#define DCHIGH ((DCPORT |= _BV(DCBIT)), (DCDDR &= ~_BV(DCBIT)))
+#define DCLOW ((DCPORT &= ~_BV(DCBIT)), (DCDDR |= _BV(DCBIT)))
+
+#define RESETHIGH ((RESETPORT |= _BV(RESETBIT)), (RESETDDR &= ~_BV(RESETBIT)))
+#define RESETLOW ((RESETPORT &= ~_BV(RESETBIT)), (RESETDDR |= _BV(RESETBIT)))
+
+#define SSHIGH ((SSPORT |= _BV(SSBIT)), (SSDDR &= ~_BV(SSBIT)))
+#define SSLOW ((SSPORT &= ~_BV(SSBIT)), (SSDDR |= _BV(SSBIT)))
+
+// SCK, MOSI already defined by original pins_arduino.h
+//#define SCK	13
 //#define MOSI	11
 
 #define BLACK 0
@@ -38,6 +60,13 @@
 
 #define LCDWIDTH			64
 #define LCDHEIGHT			48
+#define LCDPAGES			(LCDHEIGHT / 8)
+#define LCDCOLUMNOFFSET		32	// Visible start column within SSD1306 controller memory
+
+#define LCDTOTALWIDTH		128	// Full width of SSD1306 controller memory
+#define LCDTOTALHEIGHT		64	// Full height of SSD1306 controller memory
+#define LCDTOTALPAGES		(LCDTOTALHEIGHT / 8)
+
 #define FONTHEADERSIZE		6
 
 #define NORM				0
@@ -65,6 +94,10 @@
 #define SETMULTIPLEX 		0xA8
 #define SETLOWCOLUMN 		0x00
 #define SETHIGHCOLUMN 		0x10
+#define SETPAGE				0xB0
+#define SETADDRESSMODE		0x20
+#define SETCOLUMNBOUNDS		0x21
+#define SETPAGEBOUNDS		0x22
 #define SETSTARTLINE 		0x40
 #define MEMORYMODE 			0x20
 #define COMSCANINC 			0xC0
@@ -109,6 +142,7 @@ class MicroView : public Print{
 public:
 	MicroView(void) {};
 	void begin(void);
+	void end(void);
 
 //#if ARDUINO >= 100
 
@@ -120,6 +154,8 @@ public:
 
 	// RAW LCD functions
 	void command(uint8_t c);
+	void command(uint8_t c1, uint8_t c2);
+	void command(uint8_t c1, uint8_t c2, uint8_t c3);
 	void data(uint8_t c);
 	void setColumnAddress(uint8_t add);
 	void setPageAddress(uint8_t add);
@@ -178,10 +214,6 @@ public:
 	void doCmd(uint8_t index);
 	
 private:
-	//uint8_t cs;
-	//volatile uint8_t *mosiport, *sckport;
-	volatile uint8_t *ssport, *dcport, *ssreg, *dcreg;	// use volatile because these are fixed location port address
-	uint8_t mosipinmask, sckpinmask, sspinmask, dcpinmask;
 	uint8_t foreColor,drawMode,fontWidth, fontHeight, fontType, fontStartChar, fontTotalChar, cursorX, cursorY;
 	uint16_t fontMapWidth;
 	//unsigned char *fontsPointer[TOTALFONTS];
@@ -261,8 +293,17 @@ private:
 
 class MVSPIClass {
 public:
+/** \brief Wait for SPI serial transfer complete. */
+  inline static void wait();
+
 /** \brief Transfer data byte via SPI port. */
-  inline static byte transfer(byte _data);
+  inline static void transfer(byte _data);
+
+/** \brief Set up to begin a SPI packet transmit */
+  static void packetBegin();
+
+/** \brief End a SPI packet transmit */
+  static void packetEnd();
 
   // SPI Configuration methods
 
@@ -279,11 +320,13 @@ public:
 
 extern MVSPIClass MVSPI;
 
-byte MVSPIClass::transfer(byte _data) {
-  SPDR = _data;
+void MVSPIClass::wait() {
   while (!(SPSR & _BV(SPIF)))
     ;
-  return SPDR;
+}
+
+void MVSPIClass::transfer(byte _data) {
+  SPDR = _data;
 }
 
 void MVSPIClass::attachInterrupt() {
