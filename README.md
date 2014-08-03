@@ -91,7 +91,15 @@ void loop() {
 </code></pre>
 
 ## History
-**v1.14b: 26th July 2014 by JP Liew
+**v1.15b: 3rd August 2014 by Scott Allen**
+* improved lots of low level routines, Fast SPI
+* fixed some compilation warnings
+* reduced overdriving display inputs
+* added uVuew.end() to power off the display
+* improved speed of display() and clear() functions
+* fixed positionning of "3" on clock face
+
+**v1.14b: 26th July 2014 by JP Liew**
 * added Learning Kit Circuit Sketch
 
 **v1.13b: 13th June 2014 by JP Liew**
