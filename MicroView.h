@@ -78,6 +78,8 @@
 #define WIDGETSTYLE0			0
 #define WIDGETSTYLE1			1
 #define WIDGETSTYLE2			2
+//Added for Vertical slider styles
+#define WIDGETSTYLE3			3
 
 #define SETCONTRAST 		0x81
 #define DISPLAYALLONRESUME 	0xA4
