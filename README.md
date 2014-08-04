@@ -92,6 +92,10 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.18b: 5th August 2014 by Scott Allen**
+* fixed compiler warning in MicroViewSlider
+* changed vertical slider direction.
+
 **v1.17b: 4th August 2014 by JP Liew**
 * added reDraw() for MicroViewWidget class
 * removed Serial.begin() from uView.begin() so that user can have control
