@@ -61,6 +61,7 @@ setMaxValue	KEYWORD2
 setMinValue	KEYWORD2
 setValue	KEYWORD2
 draw	KEYWORD2
+reDraw  KEYWORD2
 drawFace	KEYWORD2
 checkComm	KEYWORD2
 
