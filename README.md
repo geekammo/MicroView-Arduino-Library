@@ -95,7 +95,7 @@ void loop() {
 **v1.17b: 4th August 2014 by JP Liew**
 * added reDraw() for MicroViewWidget class
 * removed Serial.begin() from uView.begin() so that user can have control
-* added MicroViewSliderRedraw example
+* added MicroViewWidgetRedraw example
 
 **v1.16b: 3rd August 2014 by czetie**
 * added vertical slider widget
