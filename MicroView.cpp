@@ -1538,8 +1538,8 @@ size_t MicroView::write(uint8_t c) {
 				uView.pixel(offsetX+1+tickPosition, offsetY+1, WHITE, XOR);
 			}
 			else {					//Vertical
-				uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
-				uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
+				uView.lineV(offsetX+7, offsetY+totalTicks-tickPosition, 3, WHITE, XOR);
+				uView.pixel(offsetX+6, offsetY+1+totalTicks-tickPosition, WHITE, XOR);
 			}
 
 			sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
@@ -1547,23 +1547,25 @@ size_t MicroView::write(uint8_t c) {
 		}
 		else {
 			// Draw previous pointer in XOR mode to erase it
-			tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
 			if (style==0 || style==1){		//Horizontal
+			tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
 				uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
 				uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
 			}
 			else {					//Vertical
+			tickPosition= (((float)(getMaxValue()-prevValue)/(float)(getMaxValue()-getMinValue()))*totalTicks);
 				uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
 				uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
 			}
 
 			// Draw current pointer
-			tickPosition= (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
 			if (style==0 || style==1){		//Horizontal
+			tickPosition= (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
 				uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
 				uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
 			}
 			else {					//Vertical
+			tickPosition= (((float)(getMaxValue()-getValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
 				uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
 				uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
 			}
