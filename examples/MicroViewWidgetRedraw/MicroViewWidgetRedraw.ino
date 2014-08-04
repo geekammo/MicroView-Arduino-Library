@@ -34,7 +34,7 @@ void loop() {
 		uView.display();
 	}
 
-	delay(1000);
+	delay(500);
 	uView.clear(PAGE);
 
 	widget[1]->reDraw();
@@ -43,6 +43,6 @@ void loop() {
 		uView.display();
 	}
 
-	delay(1000);
+	delay(500);
 	uView.clear(PAGE);
 }

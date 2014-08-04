@@ -1396,6 +1396,16 @@ void MicroViewWidget::setValue(int16_t val) {
 	}
 }
 
+/** \brief MicroView Widget reDraw routine.
+	
+	Redraws the widget.
+*/
+void MicroViewWidget::reDraw() {
+	needFirstDraw=true;
+	this->drawFace();
+	this->draw();
+}
+	
 // -------------------------------------------------------------------------------------
 // MicroViewWidget Class - end
 // -------------------------------------------------------------------------------------
@@ -1416,16 +1426,6 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 	drawFace();
 	draw();
 }
-
-/** \brief MicroView Widget reDraw routine.
-	
-	Redraws the widget.
-*/
-void MicroViewSlider::reDraw() {
-	needFirstDraw=true;
-	drawFace();
-	draw();
-}		
 
 /** \brief MicroViewSlider class initialisation with style. 
 
@@ -1545,16 +1545,6 @@ void MicroViewSlider::draw() {
 	offsetY=getY();
 
 	if (needFirstDraw) {
-		/*
-		if (style==0 || style==1){		//Horizontal
-			uView.lineH(offsetX+tickPosition, offsetY, 3, WHITE, XOR);
-			uView.pixel(offsetX+1+tickPosition, offsetY+1, WHITE, XOR);
-		}
-		else {					//Vertical
-			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
-			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
-		}
-		*/
 		tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
 		if (style==0 || style==1){		//Horizontal
 			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
@@ -1628,16 +1618,6 @@ MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t 
 	drawFace();
 	draw();
 }
-
-/** \brief MicroView Widget reDraw routine.
-	
-	Redraws the widget.
-*/
-void MicroViewGauge::reDraw() {
-	needFirstDraw=true;
-	drawFace();
-	draw();
-}		
 
 /** \brief MicroViewGauge class initialisation with style.
 

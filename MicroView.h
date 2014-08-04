@@ -226,6 +226,7 @@ private:
 
 class MicroViewWidget {
 public:
+	bool needFirstDraw;
 	MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max);
 	uint8_t getX();
 	uint8_t getY();
@@ -242,8 +243,7 @@ public:
     virtual void draw(){};
     /** \brief Draw widget face overridden by child class. */
 	virtual void drawFace(){};
-	/** \brief ReDraw widget overridden by child class. */
-	virtual void reDraw(){};
+	void reDraw();
 	
 private:
 	uint8_t x;
@@ -262,7 +262,6 @@ public:
 	void reDraw();
 private:
 	uint8_t totalTicks, style;
-	bool needFirstDraw;
 	int16_t prevValue;
 };
 
@@ -275,7 +274,6 @@ public:
 	void reDraw();
 private:
 	uint8_t radius, style;
-	bool needFirstDraw;
 	int16_t prevValue;
 };
 
