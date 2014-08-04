@@ -259,7 +259,6 @@ public:
 	MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty);
 	void draw();
 	void drawFace();
-	void reDraw();
 private:
 	uint8_t totalTicks, style;
 	int16_t prevValue;
@@ -271,7 +270,6 @@ public:
 	MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty);
 	void draw();
 	void drawFace();
-	void reDraw();
 private:
 	uint8_t radius, style;
 	int16_t prevValue;
