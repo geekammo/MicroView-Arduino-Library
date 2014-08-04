@@ -104,7 +104,7 @@ void loop() {
 * improved lots of low level routines, Fast SPI
 * fixed some compilation warnings
 * reduced overdriving display inputs
-* added uVuew.end() to power off the display
+* added uView.end() to power off the display
 * improved speed of display() and clear() functions
 * fixed positionning of "3" on clock face
 
