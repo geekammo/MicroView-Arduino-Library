@@ -226,7 +226,6 @@ private:
 
 class MicroViewWidget {
 public:
-	bool needToDrawPrev;
 	MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max);
 	uint8_t getX();
 	uint8_t getY();

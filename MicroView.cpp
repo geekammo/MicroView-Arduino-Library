@@ -1413,7 +1413,6 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 	totalTicks=30;
 	prevValue=getMinValue();
 	needFirstDraw=true;
-	needToDrawPrev=true;
 	drawFace();
 	draw();
 }
@@ -1423,7 +1422,7 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 	Redraws the widget.
 */
 void MicroViewSlider::reDraw() {
-	needToDrawPrev=false;
+	needFirstDraw=true;
 	drawFace();
 	draw();
 }		
@@ -1546,9 +1545,20 @@ void MicroViewSlider::draw() {
 	offsetY=getY();
 
 	if (needFirstDraw) {
+		/*
 		if (style==0 || style==1){		//Horizontal
 			uView.lineH(offsetX+tickPosition, offsetY, 3, WHITE, XOR);
 			uView.pixel(offsetX+1+tickPosition, offsetY+1, WHITE, XOR);
+		}
+		else {					//Vertical
+			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
+			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
+		}
+		*/
+		tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
+		if (style==0 || style==1){		//Horizontal
+			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
 		}
 		else {					//Vertical
 			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
@@ -1559,17 +1569,15 @@ void MicroViewSlider::draw() {
 		needFirstDraw=false;
 	}
 	else {
-		if (needToDrawPrev) {
-			// Draw previous pointer in XOR mode to erase it
-			tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
-			if (style==0 || style==1){		//Horizontal
-				uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
-				uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
-			}
-			else {					//Vertical
-				uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
-				uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
-			}
+		// Draw previous pointer in XOR mode to erase it
+		tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
+		if (style==0 || style==1){		//Horizontal
+			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+		}
+		else {					//Vertical
+			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
+			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
 		}
 
 		// Draw current pointer
@@ -1585,7 +1593,6 @@ void MicroViewSlider::draw() {
 
 		sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
 		prevValue=getValue();
-		needToDrawPrev=true;
 	}
 
 	// Draw value
@@ -1618,7 +1625,6 @@ MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t 
 	radius=15;
 	prevValue=getMinValue();
 	needFirstDraw=true;
-	needToDrawPrev=true;
 	drawFace();
 	draw();
 }
@@ -1628,7 +1634,7 @@ MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t 
 	Redraws the widget.
 */
 void MicroViewGauge::reDraw() {
-	needToDrawPrev=false;
+	needFirstDraw=true;
 	drawFace();
 	draw();
 }		
@@ -1707,14 +1713,12 @@ void MicroViewGauge::draw() {
 		needFirstDraw=false;
 	}
 	else {
-		if (needToDrawPrev) {
-			// Draw previous pointer in XOR mode to erase it
-			degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
-			degreeSec = (degreeSec+150) * (PI/180);
-			toSecX = cos(degreeSec) * (radius / 1.2);
-			toSecY = sin(degreeSec) * (radius / 1.2);
-			uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
-		}
+		// Draw previous pointer in XOR mode to erase it
+		degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
+		degreeSec = (degreeSec+150) * (PI/180);
+		toSecX = cos(degreeSec) * (radius / 1.2);
+		toSecY = sin(degreeSec) * (radius / 1.2);
+		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
 		
 		// draw current pointer
 		degreeSec = (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
@@ -1725,7 +1729,6 @@ void MicroViewGauge::draw() {
 
 		sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
 		prevValue=getValue();
-		needToDrawPrev=true;
 	}
 
 	// Draw value
