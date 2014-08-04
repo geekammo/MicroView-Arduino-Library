@@ -1432,11 +1432,7 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 	Initialise the MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) or WIDGETSTYLE3 (like 1, but vertical). If this list gets any longer, it might be better as a switch/case statement.
 */
 MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
-	if (sty==WIDGETSTYLE0) {
-		style=0;
-		totalTicks=30;
-	}
-	else if (sty==WIDGETSTYLE1) {
+	if (sty==WIDGETSTYLE1) {
 		style=1;
 		totalTicks=60;
 	}
@@ -1448,7 +1444,7 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 		style=3;
 		totalTicks=40;
 	}
-	else {		//unrecognized style, so use default
+	else {		// Use style 0 if specified or invalid
 		style=0;
 		totalTicks=30;
 	}
@@ -1468,14 +1464,14 @@ void MicroViewSlider::drawFace() {
 	offsetX=getX();
 	offsetY=getY();
 	
-	if(style==0)	
-	majorLine=4;
-	else	if (style==1)	
-	majorLine=7;
-	else	if (style==2)
-	majorLine=3;
-	else if (style==3)
-	majorLine=5;
+	if (style==0)
+		majorLine=4;
+	else if (style==1)
+		majorLine=7;
+	else if (style==2)
+		majorLine=3;
+	else
+		majorLine=5;
 
 	//Horizontal styles, style 0 or 1
 
