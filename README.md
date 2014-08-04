@@ -83,6 +83,7 @@ void loop() {
 void setup() {
     uView.begin();
     uView.clear(PAGE);
+	Serial.begin(115200);	// user decide the baud rate
 }
 
 void loop() {
@@ -91,6 +92,10 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.17b: 4th August 2014 by JP Liew**
+* added reDraw() for MicroViewWidget class
+* removed Serial.begin() from uView.begin() so that user can have control
+
 **v1.16b: 3rd August 2014 by czetie**
 * added vertical slider widget
 
@@ -143,7 +148,7 @@ void loop() {
 
 **v1.05b: 6th February 2014 by JP Liew**
 * changed MICROVIEW class name to MicroView
-* created MICROVIEWWIDGET class
+* created MicroViewWidget class
 * added routines to draw widget
 * added slider widget
 * merged MicroViewWidget into MicroView

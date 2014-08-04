@@ -115,7 +115,7 @@ static uint8_t screenmemory [] = {
 
 /** \brief Initialisation of MicroView Library.
 
-    Setup IO pins for SPI port then send initialisation commands to the SSD1306 controller inside the OLED. 
+	Setup IO pins for SPI port then send initialisation commands to the SSD1306 controller inside the OLED. 
 */
 void MicroView::begin() {
 	// default 5x7 font
@@ -150,17 +150,17 @@ void MicroView::begin() {
 	delay(10);
 
 	// Init sequence for 64x48 OLED module
-//	command(DISPLAYOFF);				// 0xAE
-//	command(SETDISPLAYCLOCKDIV, 0x80);	// 0xD5 / the suggested ratio 0x80
+	//	command(DISPLAYOFF);				// 0xAE
+	//	command(SETDISPLAYCLOCKDIV, 0x80);	// 0xD5 / the suggested ratio 0x80
 	command(SETMULTIPLEX, 0x2F);		// 0xA8
-//	command(SETDISPLAYOFFSET, 0x0);		// 0xD3 / no offset
-//	command(SETSTARTLINE | 0x0);		// 0x40 / line #0
+	//	command(SETDISPLAYOFFSET, 0x0);		// 0xD3 / no offset
+	//	command(SETSTARTLINE | 0x0);		// 0x40 / line #0
 	command(CHARGEPUMP, 0x14);			// 0x8D / enable charge pump
-//	command(NORMALDISPLAY);				// 0xA6
-//	command(DISPLAYALLONRESUME);		// 0xA4
+	//	command(NORMALDISPLAY);				// 0xA6
+	//	command(DISPLAYALLONRESUME);		// 0xA4
 	command(SEGREMAP | 0x1);
 	command(COMSCANDEC);
-//	command(SETCOMPINS, 0x12);			// 0xDA
+	//	command(SETCOMPINS, 0x12);			// 0xDA
 	command(SETCONTRAST, 0x8F);			// 0x81
 	command(SETPRECHARGE, 0xF1);		// 0xD9
 	command(SETVCOMDESELECT, 0x40);		// 0xDB
@@ -168,14 +168,14 @@ void MicroView::begin() {
 
 	clear(ALL);							// Erase hardware memory inside the OLED controller to avoid random data in memory.
 
-	Serial.begin(115200);
+	//	Serial.begin(115200);				// removed the Serial.begin() so that user can decide their own baud rate.
 }
 
 /** \brief Power off the OLED display.
 
-    Reset display control signals and
-    prepare the SSD1306 controller for power off,
-    then power off the 3.3V regulator.
+	Reset display control signals and
+	prepare the SSD1306 controller for power off,
+	then power off the 3.3V regulator.
 */
 void MicroView::end() {
 	DCLOW;						// Just in case
@@ -190,7 +190,7 @@ void MicroView::end() {
 
 /** \brief Send 1 command byte.
 
-    Send 1 command byte via SPI to SSD1306 controller.
+	Send 1 command byte via SPI to SSD1306 controller.
 */
 void MicroView::command(uint8_t c) {
 	MVSPI.packetBegin();
@@ -200,7 +200,7 @@ void MicroView::command(uint8_t c) {
 
 /** \brief Send 2 command bytes.
 
-    Send 2 command bytes via SPI to SSD1306 controller.
+	Send 2 command bytes via SPI to SSD1306 controller.
 */
 void MicroView::command(uint8_t c1, uint8_t c2) {
 	MVSPI.packetBegin();
@@ -212,7 +212,7 @@ void MicroView::command(uint8_t c1, uint8_t c2) {
 
 /** \brief Send 3 command bytes.
 
-    Send 3 command bytes via SPI to SSD1306 controller.
+	Send 3 command bytes via SPI to SSD1306 controller.
 */
 void MicroView::command(uint8_t c1, uint8_t c2, uint8_t c3) {
 	MVSPI.packetBegin();
@@ -226,7 +226,7 @@ void MicroView::command(uint8_t c1, uint8_t c2, uint8_t c3) {
 
 /** \brief SPI data.
 
-    Send 1 data byte via SPI to SSD1306 controller.
+	Send 1 data byte via SPI to SSD1306 controller.
 */
 void MicroView::data(uint8_t c) {
 	MVSPI.packetBegin();
@@ -237,7 +237,7 @@ void MicroView::data(uint8_t c) {
 
 /** \brief Set SSD1306 page address.
 
-    Send page address command and address to the SSD1306 OLED controller.
+	Send page address command and address to the SSD1306 OLED controller.
 */
 void MicroView::setPageAddress(uint8_t add) {
 	command(SETPAGE|add);
@@ -246,7 +246,7 @@ void MicroView::setPageAddress(uint8_t add) {
 
 /** \brief Set SSD1306 column address.
 
-    Send column address command and address to the SSD1306 OLED controller.
+	Send column address command and address to the SSD1306 OLED controller.
 */
 void MicroView::setColumnAddress(uint8_t add) {
 	command((SETHIGHCOLUMN|(add>>4))+0x02, SETLOWCOLUMN|(0x0f&add));
@@ -254,8 +254,8 @@ void MicroView::setColumnAddress(uint8_t add) {
 }
 
 /** \brief Clear screen buffer or SSD1306's memory.
- 
-    To clear GDRAM inside the LCD controller, pass in the variable mode = ALL and to clear screen page buffer pass in the variable mode = PAGE.
+
+	To clear GDRAM inside the LCD controller, pass in the variable mode = ALL and to clear screen page buffer pass in the variable mode = PAGE.
 */
 void MicroView::clear(uint8_t mode) {
 	if (mode==ALL) {
@@ -311,7 +311,7 @@ void MicroView::clear(uint8_t mode, uint8_t c) {
 
 /** \brief Invert display.
 
-    The WHITE color of the display will turn to BLACK and the BLACK will turn to WHITE.
+	The WHITE color of the display will turn to BLACK and the BLACK will turn to WHITE.
 */
 void MicroView::invert(boolean inv) {
 	if (inv)
@@ -322,7 +322,7 @@ void MicroView::invert(boolean inv) {
 
 /** \brief Set contrast.
 
-    OLED contrast value from 0 to 255. Note: Contrast level is not very obvious.
+	OLED contrast value from 0 to 255. Note: Contrast level is not very obvious.
 */
 void MicroView::contrast(uint8_t contrast) {
 	command(SETCONTRAST, contrast);		// 0x81
@@ -330,13 +330,13 @@ void MicroView::contrast(uint8_t contrast) {
 
 /** \brief Transfer display memory.
 
-    Bulk move the screen buffer to the SSD1306 controller's memory so that images/graphics drawn on the screen buffer will be displayed on the OLED.
+	Bulk move the screen buffer to the SSD1306 controller's memory so that images/graphics drawn on the screen buffer will be displayed on the OLED.
 */
 void MicroView::display(void) {
 	command(SETADDRESSMODE, 0);		// Set horizontal addressing mode
 	command(SETCOLUMNBOUNDS,
-	        LCDCOLUMNOFFSET,
-	        LCDCOLUMNOFFSET + LCDWIDTH - 1);	// Set width
+	LCDCOLUMNOFFSET,
+	LCDCOLUMNOFFSET + LCDWIDTH - 1);	// Set width
 	command(SETPAGEBOUNDS, 0, LCDPAGES - 1);	// Set height
 
 	MVSPI.packetBegin();
@@ -354,466 +354,466 @@ void MicroView::display(void) {
 //#if ARDUINO >= 100
 /** \brief Override Arduino's Print.
 
-    Arduino's print overridden so that we can use uView.print().
+	Arduino's print overridden so that we can use uView.print().
 */
 size_t MicroView::write(uint8_t c) {
 
-//#else
-//	void MicroView::write(uint8_t c) {
-//#endif
-		if (c == '\n') {
+	//#else
+	//	void MicroView::write(uint8_t c) {
+	//#endif
+	if (c == '\n') {
+		cursorY += fontHeight;
+		cursorX  = 0;
+	} else if (c == '\r') {
+		// skip 
+	} else {
+		drawChar(cursorX, cursorY, c, foreColor, drawMode);
+		cursorX += fontWidth+1;
+		if ((cursorX > (LCDWIDTH - fontWidth))) {
 			cursorY += fontHeight;
-			cursorX  = 0;
-		} else if (c == '\r') {
-			// skip 
-		} else {
-			drawChar(cursorX, cursorY, c, foreColor, drawMode);
-			cursorX += fontWidth+1;
-			if ((cursorX > (LCDWIDTH - fontWidth))) {
-				cursorY += fontHeight;
-				cursorX = 0;
-			}
+			cursorX = 0;
 		}
-//#if ARDUINO >= 100
-		return 1;
-//#endif
 	}
+	//#if ARDUINO >= 100
+	return 1;
+	//#endif
+}
 
 /** \brief Set cursor position.
 
-    MicroView's cursor position to x,y.
+	MicroView's cursor position to x,y.
 */
-    void MicroView::setCursor(uint8_t x, uint8_t y) {
-		cursorX=x;
-		cursorY=y;
-	}
+void MicroView::setCursor(uint8_t x, uint8_t y) {
+	cursorX=x;
+	cursorY=y;
+}
 
 /** \brief Draw pixel.
 
-    Draw pixel using the current fore color and current draw mode in the screen buffer's x,y position.
+	Draw pixel using the current fore color and current draw mode in the screen buffer's x,y position.
 */
-	void MicroView::pixel(uint8_t x, uint8_t y) {
-		pixel(x,y,foreColor,drawMode);
-	}
+void MicroView::pixel(uint8_t x, uint8_t y) {
+	pixel(x,y,foreColor,drawMode);
+}
 
 /** \brief Draw pixel with color and mode.
 
-    Draw color pixel in the screen buffer's x,y position with NORM or XOR draw mode.
+	Draw color pixel in the screen buffer's x,y position with NORM or XOR draw mode.
 */
-	void MicroView::pixel(uint8_t x, uint8_t y, uint8_t color, uint8_t mode) {
-		if ((x<0) ||  (x>=LCDWIDTH) || (y<0) || (y>=LCDHEIGHT))
-		return;
-		
-		if (mode==XOR) {
-			if (color==WHITE)
-			screenmemory[x+ (y/8)*LCDWIDTH] ^= _BV((y%8));
-		}
-		else {
-			if (color==WHITE)
-			screenmemory[x+ (y/8)*LCDWIDTH] |= _BV((y%8));
-			else
-			screenmemory[x+ (y/8)*LCDWIDTH] &= ~_BV((y%8)); 
-		}
-		
-		//display();
+void MicroView::pixel(uint8_t x, uint8_t y, uint8_t color, uint8_t mode) {
+	if ((x<0) ||  (x>=LCDWIDTH) || (y<0) || (y>=LCDHEIGHT))
+	return;
+	
+	if (mode==XOR) {
+		if (color==WHITE)
+		screenmemory[x+ (y/8)*LCDWIDTH] ^= _BV((y%8));
 	}
+	else {
+		if (color==WHITE)
+		screenmemory[x+ (y/8)*LCDWIDTH] |= _BV((y%8));
+		else
+		screenmemory[x+ (y/8)*LCDWIDTH] &= ~_BV((y%8)); 
+	}
+	
+	//display();
+}
 
 /** \brief Draw line.
 
-    Draw line using current fore color and current draw mode from x0,y0 to x1,y1 of the screen buffer.
+	Draw line using current fore color and current draw mode from x0,y0 to x1,y1 of the screen buffer.
 */
-	void MicroView::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) {
-		line(x0,y0,x1,y1,foreColor,drawMode);
-	}
+void MicroView::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) {
+	line(x0,y0,x1,y1,foreColor,drawMode);
+}
 
 /** \brief Draw line with color and mode.
 
-    Draw line using color and mode from x0,y0 to x1,y1 of the screen buffer.
+	Draw line using color and mode from x0,y0 to x1,y1 of the screen buffer.
 */
-	void MicroView::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color, uint8_t mode) {
-		uint8_t steep = abs(y1 - y0) > abs(x1 - x0);
-		if (steep) {
-			swap(x0, y0);
-			swap(x1, y1);
-		}
-
-		if (x0 > x1) {
-			swap(x0, x1);
-			swap(y0, y1);
-		}
-
-		uint8_t dx, dy;
-		dx = x1 - x0;
-		dy = abs(y1 - y0);
-
-		int8_t err = dx / 2;
-		int8_t ystep;
-
-		if (y0 < y1) {
-			ystep = 1;
-		} else {
-			ystep = -1;}
-
-		for (; x0<x1; x0++) {
-			if (steep) {
-				pixel(y0, x0, color, mode);
-			} else {
-				pixel(x0, y0, color, mode);
-			}
-			err -= dy;
-			if (err < 0) {
-				y0 += ystep;
-				err += dx;
-			}
-		}	
+void MicroView::line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint8_t color, uint8_t mode) {
+	uint8_t steep = abs(y1 - y0) > abs(x1 - x0);
+	if (steep) {
+		swap(x0, y0);
+		swap(x1, y1);
 	}
+
+	if (x0 > x1) {
+		swap(x0, x1);
+		swap(y0, y1);
+	}
+
+	uint8_t dx, dy;
+	dx = x1 - x0;
+	dy = abs(y1 - y0);
+
+	int8_t err = dx / 2;
+	int8_t ystep;
+
+	if (y0 < y1) {
+		ystep = 1;
+	} else {
+		ystep = -1;}
+
+	for (; x0<x1; x0++) {
+		if (steep) {
+			pixel(y0, x0, color, mode);
+		} else {
+			pixel(x0, y0, color, mode);
+		}
+		err -= dy;
+		if (err < 0) {
+			y0 += ystep;
+			err += dx;
+		}
+	}	
+}
 
 /** \brief Draw horizontal line.
 
-    Draw horizontal line using current fore color and current draw mode from x,y to x+width,y of the screen buffer.
+	Draw horizontal line using current fore color and current draw mode from x,y to x+width,y of the screen buffer.
 */
-	void MicroView::lineH(uint8_t x, uint8_t y, uint8_t width) {
-		line(x,y,x+width,y,foreColor,drawMode);
-	}
+void MicroView::lineH(uint8_t x, uint8_t y, uint8_t width) {
+	line(x,y,x+width,y,foreColor,drawMode);
+}
 
 /** \brief Draw horizontal line with color and mode.
 
-    Draw horizontal line using color and mode from x,y to x+width,y of the screen buffer.
+	Draw horizontal line using color and mode from x,y to x+width,y of the screen buffer.
 */
-	void MicroView::lineH(uint8_t x, uint8_t y, uint8_t width, uint8_t color, uint8_t mode) {
-		line(x,y,x+width,y,color,mode);
-	}
+void MicroView::lineH(uint8_t x, uint8_t y, uint8_t width, uint8_t color, uint8_t mode) {
+	line(x,y,x+width,y,color,mode);
+}
 
 /** \brief Draw vertical line.
 
-    Draw vertical line using current fore color and current draw mode from x,y to x,y+height of the screen buffer.
+	Draw vertical line using current fore color and current draw mode from x,y to x,y+height of the screen buffer.
 */
-	void MicroView::lineV(uint8_t x, uint8_t y, uint8_t height) {
-		line(x,y,x,y+height,foreColor,drawMode);
-	}
+void MicroView::lineV(uint8_t x, uint8_t y, uint8_t height) {
+	line(x,y,x,y+height,foreColor,drawMode);
+}
 
 /** \brief Draw vertical line with color and mode.
 
-    Draw vertical line using color and mode from x,y to x,y+height of the screen buffer.
+	Draw vertical line using color and mode from x,y to x,y+height of the screen buffer.
 */
-	void MicroView::lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8_t mode) {
-		line(x,y,x,y+height,color,mode);
-	}
+void MicroView::lineV(uint8_t x, uint8_t y, uint8_t height, uint8_t color, uint8_t mode) {
+	line(x,y,x,y+height,color,mode);
+}
 
 /** \brief Draw rectangle.
 
-    Draw rectangle using current fore color and current draw mode from x,y to x+width,y+height of the screen buffer.
+	Draw rectangle using current fore color and current draw mode from x,y to x+width,y+height of the screen buffer.
 */
-	void MicroView::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
-		rect(x,y,width,height,foreColor,drawMode);
-	}
+void MicroView::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
+	rect(x,y,width,height,foreColor,drawMode);
+}
 
 /** \brief Draw rectangle with color and mode.
 
-    Draw rectangle using color and mode from x,y to x+width,y+height of the screen buffer.
+	Draw rectangle using color and mode from x,y to x+width,y+height of the screen buffer.
 */
-	void MicroView::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
-		uint8_t tempHeight;
-		
-		lineH(x,y, width, color, mode);
-		lineH(x,y+height-1, width, color, mode);
-		
-		tempHeight=height-2;
-		
-		// skip drawing vertical lines to avoid overlapping of pixel that will 
-		// affect XOR plot if no pixel in between horizontal lines		
-		if (tempHeight<1) return;			
-
-		lineV(x,y+1, tempHeight, color, mode);
-		lineV(x+width-1, y+1, tempHeight, color, mode);
-	}
+void MicroView::rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
+	uint8_t tempHeight;
 	
+	lineH(x,y, width, color, mode);
+	lineH(x,y+height-1, width, color, mode);
+	
+	tempHeight=height-2;
+	
+	// skip drawing vertical lines to avoid overlapping of pixel that will 
+	// affect XOR plot if no pixel in between horizontal lines		
+	if (tempHeight<1) return;			
+
+	lineV(x,y+1, tempHeight, color, mode);
+	lineV(x+width-1, y+1, tempHeight, color, mode);
+}
+
 /** \brief Draw filled rectangle.
 
-    Draw filled rectangle using current fore color and current draw mode from x,y to x+width,y+height of the screen buffer.
+	Draw filled rectangle using current fore color and current draw mode from x,y to x+width,y+height of the screen buffer.
 */
-	void MicroView::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
-		rectFill(x,y,width,height,foreColor,drawMode);
-	}
+void MicroView::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
+	rectFill(x,y,width,height,foreColor,drawMode);
+}
 
 /** \brief Draw filled rectangle with color and mode.
 
-    Draw filled rectangle using color and mode from x,y to x+width,y+height of the screen buffer.
+	Draw filled rectangle using color and mode from x,y to x+width,y+height of the screen buffer.
 */	
-	void MicroView::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
-		// TODO - need to optimise the memory map draw so that this function will not call pixel one by one
-		for (int i=x; i<x+width;i++) {
-			lineV(i,y, height, color, mode);
-		}
+void MicroView::rectFill(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color , uint8_t mode) {
+	// TODO - need to optimise the memory map draw so that this function will not call pixel one by one
+	for (int i=x; i<x+width;i++) {
+		lineV(i,y, height, color, mode);
 	}
+}
 
 /** \brief Draw circle.
 
-    Draw circle with radius using current fore color and current draw mode at x,y of the screen buffer.
+	Draw circle with radius using current fore color and current draw mode at x,y of the screen buffer.
 */
-	void MicroView::circle(uint8_t x0, uint8_t y0, uint8_t radius) {
-		circle(x0,y0,radius,foreColor,drawMode);
-	}
+void MicroView::circle(uint8_t x0, uint8_t y0, uint8_t radius) {
+	circle(x0,y0,radius,foreColor,drawMode);
+}
 
 /** \brief Draw circle with color and mode.
 
-    Draw circle with radius using color and mode at x,y of the screen buffer.
+	Draw circle with radius using color and mode at x,y of the screen buffer.
 */
-	void MicroView::circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
-		//TODO - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
-		int8_t f = 1 - radius;
-		int8_t ddF_x = 1;
-		int8_t ddF_y = -2 * radius;
-		int8_t x = 0;
-		int8_t y = radius;
+void MicroView::circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
+	//TODO - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
+	int8_t f = 1 - radius;
+	int8_t ddF_x = 1;
+	int8_t ddF_y = -2 * radius;
+	int8_t x = 0;
+	int8_t y = radius;
 
-		pixel(x0, y0+radius, color, mode);
-		pixel(x0, y0-radius, color, mode);
-		pixel(x0+radius, y0, color, mode);
-		pixel(x0-radius, y0, color, mode);
+	pixel(x0, y0+radius, color, mode);
+	pixel(x0, y0-radius, color, mode);
+	pixel(x0+radius, y0, color, mode);
+	pixel(x0-radius, y0, color, mode);
 
-		while (x<y) {
-			if (f >= 0) {
-				y--;
-				ddF_y += 2;
-				f += ddF_y;
-			}
-			x++;
-			ddF_x += 2;
-			f += ddF_x;
-
-			pixel(x0 + x, y0 + y, color, mode);
-			pixel(x0 - x, y0 + y, color, mode);
-			pixel(x0 + x, y0 - y, color, mode);
-			pixel(x0 - x, y0 - y, color, mode);
-			
-			pixel(x0 + y, y0 + x, color, mode);
-			pixel(x0 - y, y0 + x, color, mode);
-			pixel(x0 + y, y0 - x, color, mode);
-			pixel(x0 - y, y0 - x, color, mode);
-			
+	while (x<y) {
+		if (f >= 0) {
+			y--;
+			ddF_y += 2;
+			f += ddF_y;
 		}
+		x++;
+		ddF_x += 2;
+		f += ddF_x;
+
+		pixel(x0 + x, y0 + y, color, mode);
+		pixel(x0 - x, y0 + y, color, mode);
+		pixel(x0 + x, y0 - y, color, mode);
+		pixel(x0 - x, y0 - y, color, mode);
+		
+		pixel(x0 + y, y0 + x, color, mode);
+		pixel(x0 - y, y0 + x, color, mode);
+		pixel(x0 + y, y0 - x, color, mode);
+		pixel(x0 - y, y0 - x, color, mode);
+		
 	}
+}
 
 /** \brief Draw filled circle.
 
-    Draw filled circle with radius using current fore color and current draw mode at x,y of the screen buffer.
+	Draw filled circle with radius using current fore color and current draw mode at x,y of the screen buffer.
 */
-	void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius) {
-		circleFill(x0,y0,radius,foreColor,drawMode);
-	}
+void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius) {
+	circleFill(x0,y0,radius,foreColor,drawMode);
+}
 
 /** \brief Draw filled circle with color and mode.
 
-    Draw filled circle with radius using color and mode at x,y of the screen buffer.
+	Draw filled circle with radius using color and mode at x,y of the screen buffer.
 */
-	void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
-		// TODO - - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
-		int8_t f = 1 - radius;
-		int8_t ddF_x = 1;
-		int8_t ddF_y = -2 * radius;
-		int8_t x = 0;
-		int8_t y = radius;
+void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
+	// TODO - - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
+	int8_t f = 1 - radius;
+	int8_t ddF_x = 1;
+	int8_t ddF_y = -2 * radius;
+	int8_t x = 0;
+	int8_t y = radius;
 
-		// Temporary disable fill circle for XOR mode.
-		if (mode==XOR) return;
-		
-		for (uint8_t i=y0-radius; i<=y0+radius; i++) {
-			pixel(x0, i, color, mode);
-		}
-
-		while (x<y) {
-			if (f >= 0) {
-				y--;
-				ddF_y += 2;
-				f += ddF_y;
-			}
-			x++;
-			ddF_x += 2;
-			f += ddF_x;
-
-			for (uint8_t i=y0-y; i<=y0+y; i++) {
-				pixel(x0+x, i, color, mode);
-				pixel(x0-x, i, color, mode);
-			} 
-			for (uint8_t i=y0-x; i<=y0+x; i++) {
-				pixel(x0+y, i, color, mode);
-				pixel(x0-y, i, color, mode);
-			}    
-		}
+	// Temporary disable fill circle for XOR mode.
+	if (mode==XOR) return;
+	
+	for (uint8_t i=y0-radius; i<=y0+radius; i++) {
+		pixel(x0, i, color, mode);
 	}
+
+	while (x<y) {
+		if (f >= 0) {
+			y--;
+			ddF_y += 2;
+			f += ddF_y;
+		}
+		x++;
+		ddF_x += 2;
+		f += ddF_x;
+
+		for (uint8_t i=y0-y; i<=y0+y; i++) {
+			pixel(x0+x, i, color, mode);
+			pixel(x0-x, i, color, mode);
+		} 
+		for (uint8_t i=y0-x; i<=y0+x; i++) {
+			pixel(x0+y, i, color, mode);
+			pixel(x0-y, i, color, mode);
+		}    
+	}
+}
 
 /** \brief Get LCD height.
 
-    The height of the LCD return as byte.
+	The height of the LCD return as byte.
 */
-	uint8_t MicroView::getLCDHeight(void) {
-		return LCDHEIGHT;
-	}
+uint8_t MicroView::getLCDHeight(void) {
+	return LCDHEIGHT;
+}
 
 /** \brief Get LCD width.
 
-    The width of the LCD return as byte.
+	The width of the LCD return as byte.
 */	
-	uint8_t MicroView::getLCDWidth(void) {
-		return LCDWIDTH;
-	}
+uint8_t MicroView::getLCDWidth(void) {
+	return LCDWIDTH;
+}
 
 /** \brief Get font width.
 
-    The cucrrent font's width return as byte.
+	The cucrrent font's width return as byte.
 */	
-	uint8_t MicroView::getFontWidth(void) {
-		return fontWidth;
-	}
+uint8_t MicroView::getFontWidth(void) {
+	return fontWidth;
+}
 
 /** \brief Get font height.
 
-    The current font's height return as byte.
+	The current font's height return as byte.
 */
-	uint8_t MicroView::getFontHeight(void) {
-		return fontHeight;
-	}
+uint8_t MicroView::getFontHeight(void) {
+	return fontHeight;
+}
 
 /** \brief Get font starting character.
 
-    Return the starting ASCII character of the currnet font, not all fonts start with ASCII character 0. Custom fonts can start from any ASCII character.
+	Return the starting ASCII character of the currnet font, not all fonts start with ASCII character 0. Custom fonts can start from any ASCII character.
 */
-	uint8_t MicroView::getFontStartChar(void) {
-		return fontStartChar;
-	}
+uint8_t MicroView::getFontStartChar(void) {
+	return fontStartChar;
+}
 
 /** \brief Get font total characters.
 
-    Return the total characters of the current font.
+	Return the total characters of the current font.
 */
-	uint8_t MicroView::getFontTotalChar(void) {
-		return fontTotalChar;
-	}
+uint8_t MicroView::getFontTotalChar(void) {
+	return fontTotalChar;
+}
 
 /** \brief Get total fonts.
 
-    Return the total number of fonts loaded into the MicroView's flash memory.
+	Return the total number of fonts loaded into the MicroView's flash memory.
 */
-	uint8_t MicroView::getTotalFonts(void) {
-		return TOTALFONTS;
-	}
+uint8_t MicroView::getTotalFonts(void) {
+	return TOTALFONTS;
+}
 
 /** \brief Get font type.
 
-    Return the font type number of the current font.
+	Return the font type number of the current font.
 */
-	uint8_t MicroView::getFontType(void) {
-		return fontType;
-	}
+uint8_t MicroView::getFontType(void) {
+	return fontType;
+}
 
 /** \brief Set font type.
 
-    Set the current font type number, ie changing to different fonts base on the type provided.
+	Set the current font type number, ie changing to different fonts base on the type provided.
 */
-	uint8_t MicroView::setFontType(uint8_t type) {
-		if ((type>=TOTALFONTS) || (type<0))
-		return false;
+uint8_t MicroView::setFontType(uint8_t type) {
+	if ((type>=TOTALFONTS) || (type<0))
+	return false;
 
-		fontType=type;
-		fontWidth=pgm_read_byte(fontsPointer[fontType]+0);
-		fontHeight=pgm_read_byte(fontsPointer[fontType]+1);
-		fontStartChar=pgm_read_byte(fontsPointer[fontType]+2);
-		fontTotalChar=pgm_read_byte(fontsPointer[fontType]+3);
-		fontMapWidth=(pgm_read_byte(fontsPointer[fontType]+4)*100)+pgm_read_byte(fontsPointer[fontType]+5); // two bytes values into integer 16
-		return true;
-	}
+	fontType=type;
+	fontWidth=pgm_read_byte(fontsPointer[fontType]+0);
+	fontHeight=pgm_read_byte(fontsPointer[fontType]+1);
+	fontStartChar=pgm_read_byte(fontsPointer[fontType]+2);
+	fontTotalChar=pgm_read_byte(fontsPointer[fontType]+3);
+	fontMapWidth=(pgm_read_byte(fontsPointer[fontType]+4)*100)+pgm_read_byte(fontsPointer[fontType]+5); // two bytes values into integer 16
+	return true;
+}
 
 /** \brief Set color.
 
-    Set the current draw's color. Only WHITE and BLACK available.
+	Set the current draw's color. Only WHITE and BLACK available.
 */
-	void MicroView::setColor(uint8_t color) {
-		foreColor=color;
-	}
+void MicroView::setColor(uint8_t color) {
+	foreColor=color;
+}
 
 /** \brief Set draw mode.
 
-    Set current draw mode with NORM or XOR.
+	Set current draw mode with NORM or XOR.
 */
-	void MicroView::setDrawMode(uint8_t mode) {
-		drawMode=mode;
-	}
+void MicroView::setDrawMode(uint8_t mode) {
+	drawMode=mode;
+}
 
 /** \brief Draw character.
 
-    Draw character c using current color and current draw mode at x,y.
+	Draw character c using current color and current draw mode at x,y.
 */
-	void  MicroView::drawChar(uint8_t x, uint8_t y, uint8_t c) {
-		drawChar(x,y,c,foreColor,drawMode);
-	}
+void  MicroView::drawChar(uint8_t x, uint8_t y, uint8_t c) {
+	drawChar(x,y,c,foreColor,drawMode);
+}
 
 /** \brief Draw character with color and mode.
 
-    Draw character c using color and draw mode at x,y.
+	Draw character c using color and draw mode at x,y.
 */
-	void  MicroView::drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t mode) {
-		// TODO - New routine to take font of any height, at the moment limited to font height in multiple of 8 pixels
+void  MicroView::drawChar(uint8_t x, uint8_t y, uint8_t c, uint8_t color, uint8_t mode) {
+	// TODO - New routine to take font of any height, at the moment limited to font height in multiple of 8 pixels
 
-		uint8_t rowsToDraw,row, tempC;
-		uint8_t i,j,temp;
-		uint16_t charPerBitmapRow,charColPositionOnBitmap,charRowPositionOnBitmap,charBitmapStartPosition;
-		
-		if ((c<fontStartChar) || (c>(fontStartChar+fontTotalChar-1)))		// no bitmap for the required c
-		return;
-		
-		tempC=c-fontStartChar;
+	uint8_t rowsToDraw,row, tempC;
+	uint8_t i,j,temp;
+	uint16_t charPerBitmapRow,charColPositionOnBitmap,charRowPositionOnBitmap,charBitmapStartPosition;
+	
+	if ((c<fontStartChar) || (c>(fontStartChar+fontTotalChar-1)))		// no bitmap for the required c
+	return;
+	
+	tempC=c-fontStartChar;
 
-		// each row (in datasheet is call page) is 8 bits high, 16 bit high character will have 2 rows to be drawn
-		rowsToDraw=fontHeight/8;	// 8 is LCD's page size, see SSD1306 datasheet
-		if (rowsToDraw<=1) rowsToDraw=1;
+	// each row (in datasheet is call page) is 8 bits high, 16 bit high character will have 2 rows to be drawn
+	rowsToDraw=fontHeight/8;	// 8 is LCD's page size, see SSD1306 datasheet
+	if (rowsToDraw<=1) rowsToDraw=1;
 
-		// the following draw function can draw anywhere on the screen, but SLOW pixel by pixel draw
-		if (rowsToDraw==1) {
-			for  (i=0;i<fontWidth+1;i++) {
-				if (i==fontWidth) // this is done in a weird way because for 5x7 font, there is no margin, this code add a margin after col 5
-				temp=0;
-				else
-				temp=pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(tempC*fontWidth)+i);
+	// the following draw function can draw anywhere on the screen, but SLOW pixel by pixel draw
+	if (rowsToDraw==1) {
+		for  (i=0;i<fontWidth+1;i++) {
+			if (i==fontWidth) // this is done in a weird way because for 5x7 font, there is no margin, this code add a margin after col 5
+			temp=0;
+			else
+			temp=pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(tempC*fontWidth)+i);
+			
+			for (j=0;j<8;j++) {			// 8 is the LCD's page height (see datasheet for explanation)
+				if (temp & 0x1) {
+					pixel(x+i, y+j, color,mode);
+				}
+				else {
+					pixel(x+i, y+j, !color,mode);
+				}
 				
-				for (j=0;j<8;j++) {			// 8 is the LCD's page height (see datasheet for explanation)
-					if (temp & 0x1) {
-						pixel(x+i, y+j, color,mode);
-					}
-					else {
-						pixel(x+i, y+j, !color,mode);
-					}
-					
-					temp >>=1;
-				}
-			}
-			return;
-		}
-
-		// font height over 8 bit
-		// take character "0" ASCII 48 as example
-		charPerBitmapRow=fontMapWidth/fontWidth;  // 256/8 =32 char per row
-		charColPositionOnBitmap=tempC % charPerBitmapRow;  // =16
-		charRowPositionOnBitmap=int(tempC/charPerBitmapRow); // =1
-		charBitmapStartPosition=(charRowPositionOnBitmap * fontMapWidth * (fontHeight/8)) + (charColPositionOnBitmap * fontWidth) ;
-
-		// each row on LCD is 8 bit height (see datasheet for explanation)
-		for(row=0;row<rowsToDraw;row++) {
-			for (i=0; i<fontWidth;i++) {
-				temp=pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(charBitmapStartPosition+i+(row*fontMapWidth)));
-				for (j=0;j<8;j++) {			// 8 is the LCD's page height (see datasheet for explanation)
-					if (temp & 0x1) {
-						pixel(x+i,y+j+(row*8), color, mode);
-					}
-					else {
-						pixel(x+i,y+j+(row*8), !color, mode);
-					}
-					temp >>=1;
-				}
+				temp >>=1;
 			}
 		}
+		return;
+	}
 
-		/*
+	// font height over 8 bit
+	// take character "0" ASCII 48 as example
+	charPerBitmapRow=fontMapWidth/fontWidth;  // 256/8 =32 char per row
+	charColPositionOnBitmap=tempC % charPerBitmapRow;  // =16
+	charRowPositionOnBitmap=int(tempC/charPerBitmapRow); // =1
+	charBitmapStartPosition=(charRowPositionOnBitmap * fontMapWidth * (fontHeight/8)) + (charColPositionOnBitmap * fontWidth) ;
+
+	// each row on LCD is 8 bit height (see datasheet for explanation)
+	for(row=0;row<rowsToDraw;row++) {
+		for (i=0; i<fontWidth;i++) {
+			temp=pgm_read_byte(fontsPointer[fontType]+FONTHEADERSIZE+(charBitmapStartPosition+i+(row*fontMapWidth)));
+			for (j=0;j<8;j++) {			// 8 is the LCD's page height (see datasheet for explanation)
+				if (temp & 0x1) {
+					pixel(x+i,y+j+(row*8), color, mode);
+				}
+				else {
+					pixel(x+i,y+j+(row*8), !color, mode);
+				}
+				temp >>=1;
+			}
+		}
+	}
+
+	/*
 	fast direct memory draw but has a limitation to draw in ROWS
 	// only 1 row to draw for font with 8 bit height
 	if (rowsToDraw==1) {
@@ -842,716 +842,724 @@ size_t MicroView::write(uint8_t c) {
 	}
 */
 
-	}
+}
 
 /** \brief Stop scrolling.
 
-    Stop the scrolling of graphics on the OLED.
+	Stop the scrolling of graphics on the OLED.
 */
-	void MicroView::scrollStop(void){
-		command(DEACTIVATESCROLL);
-	}
+void MicroView::scrollStop(void){
+	command(DEACTIVATESCROLL);
+}
 
 /** \brief Right scrolling.
 
-    Set row start to row stop on the OLED to scroll right. Refer to http://learn.microview.io/intro/general-overview-of-microview.html for explanation of the rows.
+	Set row start to row stop on the OLED to scroll right. Refer to http://learn.microview.io/intro/general-overview-of-microview.html for explanation of the rows.
 */
-	void MicroView::scrollRight(uint8_t start, uint8_t stop){
-		if (stop<start)		// stop must be larger or equal to start
-		return;
-		scrollStop();		// need to disable scrolling before starting to avoid memory corrupt
-		command(RIGHTHORIZONTALSCROLL, 0);
-		command(start, 0x7, stop);	// scroll speed frames , TODO
-		command(0x00, 0xFF, ACTIVATESCROLL);
-	}
-	
+void MicroView::scrollRight(uint8_t start, uint8_t stop){
+	if (stop<start)		// stop must be larger or equal to start
+	return;
+	scrollStop();		// need to disable scrolling before starting to avoid memory corrupt
+	command(RIGHTHORIZONTALSCROLL, 0);
+	command(start, 0x7, stop);	// scroll speed frames , TODO
+	command(0x00, 0xFF, ACTIVATESCROLL);
+}
+
 /** \brief Vertical flip.
 
-    Flip the graphics on the OLED vertically.
+	Flip the graphics on the OLED vertically.
 */
-	void MicroView::flipVertical(boolean flip) {
-		if (flip) {
-			command(COMSCANINC);
-		}
-		else {
-			command(COMSCANDEC);
-		}
+void MicroView::flipVertical(boolean flip) {
+	if (flip) {
+		command(COMSCANINC);
 	}
+	else {
+		command(COMSCANDEC);
+	}
+}
 
 /** \brief Horizontal flip.
 
-    Flip the graphics on the OLED horizontally.
+	Flip the graphics on the OLED horizontally.
 */	
-	void MicroView::flipHorizontal(boolean flip) {
-		if (flip) {
-			command(SEGREMAP | 0x0);
-		}
-		else {
-			command(SEGREMAP | 0x1);
-		}
+void MicroView::flipHorizontal(boolean flip) {
+	if (flip) {
+		command(SEGREMAP | 0x0);
 	}
+	else {
+		command(SEGREMAP | 0x1);
+	}
+}
 
 /** \brief Parse command.
 
-    Command stored in serCmd array will be parsed to performed draw functions.
+	Command stored in serCmd array will be parsed to performed draw functions.
 */
-	void MicroView::doCmd(uint8_t cmdCount) {
-		// decode command
-		switch (serCmd[0]) {
-		case CMD_CLEAR: {
-				if (cmdCount==1) {
-					Serial.print("clear ");
-					Serial.println(serCmd[1]);
-					clear(serCmd[1]);
-				} else if (cmdCount==2) {
-					Serial.print("clear ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.println(serCmd[2]);
-					clear(serCmd[1], serCmd[2]);
-				}
-				break;
+void MicroView::doCmd(uint8_t cmdCount) {
+	// decode command
+	switch (serCmd[0]) {
+	case CMD_CLEAR: {
+			if (cmdCount==1) {
+				Serial.print("clear ");
+				Serial.println(serCmd[1]);
+				clear(serCmd[1]);
+			} else if (cmdCount==2) {
+				Serial.print("clear ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.println(serCmd[2]);
+				clear(serCmd[1], serCmd[2]);
 			}
-			
-		case CMD_INVERT: {
-				
-				if (cmdCount==1) {
-					Serial.print("invert ");
-					Serial.println(serCmd[1]);
-					invert(serCmd[1]);
-				}
-				break;
-			}
-			
-		case CMD_CONTRAST: {
-				
-				if (cmdCount==1) {
-					Serial.print("contrast ");
-					Serial.println(serCmd[1]);
-					contrast(serCmd[1]);
-				}
-				break;
-			}
-			
-		case CMD_DISPLAY: {
-				
-				if (cmdCount==0) {
-					Serial.println("display");
-					display();
-				}
-				break;
-			}
-			
-		case CMD_SETCURSOR: {
-				
-				if (cmdCount==2) {
-					Serial.print("setCursor ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.println(serCmd[2]);
-					setCursor(serCmd[1], serCmd[2]);
-				}
-				break;
-			}
-			
-		case CMD_PIXEL: {
-				
-				if (cmdCount==2) {
-					Serial.print("pixel ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.println(serCmd[2]);
-					pixel(serCmd[1],serCmd[2]);
-					display();
-				} else if (cmdCount==4) {
-					Serial.print("pixel ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.println(serCmd[2]);
-					Serial.print(" ");
-					Serial.print(serCmd[3]);
-					Serial.print(" ");
-					Serial.println(serCmd[4]);
-					
-					pixel(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
-					display();
-				}
-				break;
-			}
-			
-		case CMD_LINE: {
-				if (cmdCount==4) {
-					Serial.print("line ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.print(serCmd[3]);
-					Serial.print(" ");
-					Serial.println(serCmd[4]);
-					
-					line(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
-					display();
-				} else if (cmdCount==6) {
-					Serial.print("line ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.print(serCmd[3]);
-					Serial.print(" ");
-					Serial.print(serCmd[4]);
-					Serial.print(" ");
-					Serial.print(serCmd[5]);
-					Serial.print(" ");
-					Serial.println(serCmd[6]);
-					
-					line(serCmd[1],serCmd[2],serCmd[3],serCmd[4],serCmd[5],serCmd[6]);
-					display();
-				}
-				break;
-			}
-
-		case CMD_LINEH: {
-				if (cmdCount==3) {
-					Serial.print("lineH ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.println(serCmd[3]);
-
-					lineH(serCmd[1], serCmd[2], serCmd[3]);
-					display();
-				} else if (cmdCount==5) {
-					Serial.print("lineH ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.print(serCmd[3]);
-					Serial.print(" ");
-					Serial.print(serCmd[4]);
-					Serial.print(" ");
-					Serial.println(serCmd[5]);
-
-					lineH(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
-					display();
-				}
-				break;
-			}
-			
-		case CMD_LINEV: {
-				if (cmdCount==3) {
-					Serial.print("lineH ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.println(serCmd[3]);
-
-					lineV(serCmd[1], serCmd[2], serCmd[3]);
-					display();
-				} else if (cmdCount==5) {
-					Serial.print("lineH ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.print(serCmd[3]);
-					Serial.print(" ");
-					Serial.print(serCmd[4]);
-					Serial.print(" ");
-					Serial.println(serCmd[5]);
-					lineV(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
-					display();
-				}
-				break;
-			}
-			
-		case CMD_RECT: {
-				if (cmdCount==4) {
-					Serial.print("rect ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.print(serCmd[3]);
-					Serial.print(" ");
-					Serial.println(serCmd[4]);
-					rect(serCmd[1], serCmd[2], serCmd[3], serCmd[4]);
-					display();
-				} else if (cmdCount==6) {
-					Serial.print("rect ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.print(serCmd[3]);
-					Serial.print(" ");
-					Serial.print(serCmd[4]);
-					Serial.print(" ");
-					Serial.print(serCmd[5]);
-					Serial.print(" ");
-					Serial.println(serCmd[6]);
-					rect(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5], serCmd[6]);
-					display();
-				}
-				break;
-			}
-
-		case CMD_RECTFILL: {
-				if (cmdCount==4) {
-					Serial.print("rectFill ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.print(serCmd[3]);
-					Serial.print(" ");
-					Serial.println(serCmd[4]);
-					rectFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4]);
-					display();
-				} else if (cmdCount==6) {
-					Serial.print("rectFill ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.print(serCmd[3]);
-					Serial.print(" ");
-					Serial.print(serCmd[4]);
-					Serial.print(" ");
-					Serial.print(serCmd[5]);
-					Serial.print(" ");
-					Serial.println(serCmd[6]);
-					rectFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5], serCmd[6]);
-					display();
-				}
-				break;
-				
-			}
-			
-		case CMD_CIRCLE: {
-				if (cmdCount==3) {
-					Serial.print("circle ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.println(serCmd[3]);
-					circle(serCmd[1], serCmd[2], serCmd[3]);
-					display();
-				} else if (cmdCount==5) {
-					Serial.print("circle ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.print(serCmd[3]);
-					Serial.print(" ");
-					Serial.print(serCmd[4]);
-					Serial.print(" ");
-					Serial.println(serCmd[5]);
-					circle(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
-					display();
-				}
-				break;
-			}
-
-		case CMD_CIRCLEFILL: {
-
-				if (cmdCount==3) {
-					Serial.print("circle ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.println(serCmd[3]);
-					circleFill(serCmd[1], serCmd[2], serCmd[3]);
-					display();
-				} else if (cmdCount==5) {
-					Serial.print("circle ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.print(serCmd[3]);
-					Serial.print(" ");
-					Serial.print(serCmd[4]);
-					Serial.print(" ");
-					Serial.println(serCmd[5]);
-					circleFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
-					display();
-				}
-				break;
-			}
-
-		case CMD_DRAWCHAR: {
-				if (cmdCount==3) {
-					Serial.print("drawChar ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.println(serCmd[3]);
-					drawChar(serCmd[1], serCmd[2], serCmd[3]);
-					display();
-				} else if (cmdCount==5) {
-					Serial.print("drawChar ");
-					Serial.print(serCmd[1]);
-					Serial.print(" ");
-					Serial.print(serCmd[2]);
-					Serial.print(" ");
-					Serial.print(serCmd[3]);
-					Serial.print(" ");
-					Serial.print(serCmd[4]);
-					Serial.print(" ");
-					Serial.println(serCmd[5]);
-					drawChar(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
-					display();
-				}
-				break;
-			}
-
-		case CMD_DRAWBITMAP: {
-				// TODO
-				
-				break;
-			}
-			
-		case CMD_GETLCDWIDTH: {
-				
-				if (cmdCount==0) {
-					Serial.print("LCDWidth=");
-					Serial.println(getLCDWidth());
-				}
-				break;
-			}
-			
-		case CMD_GETLCDHEIGHT: {
-				if (cmdCount==0) {
-					Serial.print("LCDHeight=");
-					Serial.println(getLCDHeight());
-				}
-				break;
-			}
-			
-		case CMD_SETCOLOR: {
-				if (cmdCount==1) {
-					Serial.print("setColor ");
-					Serial.println(serCmd[1]);
-					setColor(serCmd[1]);
-				}
-				break;
-			}
-			
-		case CMD_SETDRAWMODE: {
-				if (cmdCount==1) {
-					Serial.print("drawMode ");
-					Serial.println(serCmd[1]);
-					setDrawMode(serCmd[1]);
-				}
-				break;
-				
-			}
-		default:
 			break;
 		}
+		
+	case CMD_INVERT: {
+			
+			if (cmdCount==1) {
+				Serial.print("invert ");
+				Serial.println(serCmd[1]);
+				invert(serCmd[1]);
+			}
+			break;
+		}
+		
+	case CMD_CONTRAST: {
+			
+			if (cmdCount==1) {
+				Serial.print("contrast ");
+				Serial.println(serCmd[1]);
+				contrast(serCmd[1]);
+			}
+			break;
+		}
+		
+	case CMD_DISPLAY: {
+			
+			if (cmdCount==0) {
+				Serial.println("display");
+				display();
+			}
+			break;
+		}
+		
+	case CMD_SETCURSOR: {
+			
+			if (cmdCount==2) {
+				Serial.print("setCursor ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.println(serCmd[2]);
+				setCursor(serCmd[1], serCmd[2]);
+			}
+			break;
+		}
+		
+	case CMD_PIXEL: {
+			
+			if (cmdCount==2) {
+				Serial.print("pixel ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.println(serCmd[2]);
+				pixel(serCmd[1],serCmd[2]);
+				display();
+			} else if (cmdCount==4) {
+				Serial.print("pixel ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.println(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.println(serCmd[4]);
+				
+				pixel(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
+				display();
+			}
+			break;
+		}
+		
+	case CMD_LINE: {
+			if (cmdCount==4) {
+				Serial.print("line ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.println(serCmd[4]);
+				
+				line(serCmd[1],serCmd[2],serCmd[3],serCmd[4]);
+				display();
+			} else if (cmdCount==6) {
+				Serial.print("line ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.print(serCmd[5]);
+				Serial.print(" ");
+				Serial.println(serCmd[6]);
+				
+				line(serCmd[1],serCmd[2],serCmd[3],serCmd[4],serCmd[5],serCmd[6]);
+				display();
+			}
+			break;
+		}
+
+	case CMD_LINEH: {
+			if (cmdCount==3) {
+				Serial.print("lineH ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.println(serCmd[3]);
+
+				lineH(serCmd[1], serCmd[2], serCmd[3]);
+				display();
+			} else if (cmdCount==5) {
+				Serial.print("lineH ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.println(serCmd[5]);
+
+				lineH(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+				display();
+			}
+			break;
+		}
+		
+	case CMD_LINEV: {
+			if (cmdCount==3) {
+				Serial.print("lineH ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.println(serCmd[3]);
+
+				lineV(serCmd[1], serCmd[2], serCmd[3]);
+				display();
+			} else if (cmdCount==5) {
+				Serial.print("lineH ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.println(serCmd[5]);
+				lineV(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+				display();
+			}
+			break;
+		}
+		
+	case CMD_RECT: {
+			if (cmdCount==4) {
+				Serial.print("rect ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.println(serCmd[4]);
+				rect(serCmd[1], serCmd[2], serCmd[3], serCmd[4]);
+				display();
+			} else if (cmdCount==6) {
+				Serial.print("rect ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.print(serCmd[5]);
+				Serial.print(" ");
+				Serial.println(serCmd[6]);
+				rect(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5], serCmd[6]);
+				display();
+			}
+			break;
+		}
+
+	case CMD_RECTFILL: {
+			if (cmdCount==4) {
+				Serial.print("rectFill ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.println(serCmd[4]);
+				rectFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4]);
+				display();
+			} else if (cmdCount==6) {
+				Serial.print("rectFill ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.print(serCmd[5]);
+				Serial.print(" ");
+				Serial.println(serCmd[6]);
+				rectFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5], serCmd[6]);
+				display();
+			}
+			break;
+			
+		}
+		
+	case CMD_CIRCLE: {
+			if (cmdCount==3) {
+				Serial.print("circle ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.println(serCmd[3]);
+				circle(serCmd[1], serCmd[2], serCmd[3]);
+				display();
+			} else if (cmdCount==5) {
+				Serial.print("circle ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.println(serCmd[5]);
+				circle(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+				display();
+			}
+			break;
+		}
+
+	case CMD_CIRCLEFILL: {
+
+			if (cmdCount==3) {
+				Serial.print("circle ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.println(serCmd[3]);
+				circleFill(serCmd[1], serCmd[2], serCmd[3]);
+				display();
+			} else if (cmdCount==5) {
+				Serial.print("circle ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.println(serCmd[5]);
+				circleFill(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+				display();
+			}
+			break;
+		}
+
+	case CMD_DRAWCHAR: {
+			if (cmdCount==3) {
+				Serial.print("drawChar ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.println(serCmd[3]);
+				drawChar(serCmd[1], serCmd[2], serCmd[3]);
+				display();
+			} else if (cmdCount==5) {
+				Serial.print("drawChar ");
+				Serial.print(serCmd[1]);
+				Serial.print(" ");
+				Serial.print(serCmd[2]);
+				Serial.print(" ");
+				Serial.print(serCmd[3]);
+				Serial.print(" ");
+				Serial.print(serCmd[4]);
+				Serial.print(" ");
+				Serial.println(serCmd[5]);
+				drawChar(serCmd[1], serCmd[2], serCmd[3], serCmd[4], serCmd[5]);
+				display();
+			}
+			break;
+		}
+
+	case CMD_DRAWBITMAP: {
+			// TODO
+			
+			break;
+		}
+		
+	case CMD_GETLCDWIDTH: {
+			
+			if (cmdCount==0) {
+				Serial.print("LCDWidth=");
+				Serial.println(getLCDWidth());
+			}
+			break;
+		}
+		
+	case CMD_GETLCDHEIGHT: {
+			if (cmdCount==0) {
+				Serial.print("LCDHeight=");
+				Serial.println(getLCDHeight());
+			}
+			break;
+		}
+		
+	case CMD_SETCOLOR: {
+			if (cmdCount==1) {
+				Serial.print("setColor ");
+				Serial.println(serCmd[1]);
+				setColor(serCmd[1]);
+			}
+			break;
+		}
+		
+	case CMD_SETDRAWMODE: {
+			if (cmdCount==1) {
+				Serial.print("drawMode ");
+				Serial.println(serCmd[1]);
+				setDrawMode(serCmd[1]);
+			}
+			break;
+			
+		}
+	default:
+		break;
 	}
+}
 
 /** \brief Listen for serial command.
 
-    Instruct the MicroView to check for serial command from the UART.
+	Instruct the MicroView to check for serial command from the UART.
 */
-	void MicroView::checkComm(void) {
-		int count = readSerial();
-		char *result;
-		uint8_t index=0;
-		int temp;
-		
-		if (count>0) {
-			// process Serial data
-			result=strtok(serInStr,",");
-			if (result !=NULL) {
-				temp=atoi(result);
-				serCmd[index]=(uint8_t)temp & 0xff;		// we only need 8 bit number
-				index++;
-				for (uint8_t i=0;i<recvLEN;i++) {
-					result=strtok(NULL,",");
-					if (result != NULL) {
-						
-						temp=atoi(result);
-						serCmd[index]=(uint8_t)temp & 0xff;		// we only need 8 bit number
-						index++;
-					}
-					else {
-						break;
-					}
+void MicroView::checkComm(void) {
+	int count = readSerial();
+	char *result;
+	uint8_t index=0;
+	int temp;
+	
+	if (count>0) {
+		// process Serial data
+		result=strtok(serInStr,",");
+		if (result !=NULL) {
+			temp=atoi(result);
+			serCmd[index]=(uint8_t)temp & 0xff;		// we only need 8 bit number
+			index++;
+			for (uint8_t i=0;i<recvLEN;i++) {
+				result=strtok(NULL,",");
+				if (result != NULL) {
+					
+					temp=atoi(result);
+					serCmd[index]=(uint8_t)temp & 0xff;		// we only need 8 bit number
+					index++;
 				}
-				/*
+				else {
+					break;
+				}
+			}
+			/*
 				// debug output
 				Serial.print("command received=");
 				Serial.println(index);
 				for (uint8_t i=0;i<index;i++) {
 					Serial.println(serCmd[i]);
 				}
-                */
-			}
-			doCmd(index-1);	// index-1 is the total parameters count of a command
+				*/
 		}
+		doCmd(index-1);	// index-1 is the total parameters count of a command
 	}
+}
 
 
 /** \brief Read serial port.
 
-    Check for data from the serial port (UART) and store to serInStr array.
+	Check for data from the serial port (UART) and store to serInStr array.
 */
-	int MicroView::readSerial(void)
+int MicroView::readSerial(void)
+{
+	int i=0;
+	if(!Serial.available())
+	return -1;
+
+	while (Serial.available()>0)
 	{
-		int i=0;
-		if(!Serial.available())
-		return -1;
-
-		while (Serial.available()>0)
+		if( i < recvLEN)
 		{
-			if( i < recvLEN)
-			{
-				serInStr[i++] = Serial.read();
-				delay(2);
-			}
-			else
-			break;	
+			serInStr[i++] = Serial.read();
+			delay(2);
 		}
-		serInStr[i]='\0';
-		return i;
+		else
+		break;	
 	}
+	serInStr[i]='\0';
+	return i;
+}
 
-	// -------------------------------------------------------------------------------------
-	// MicroViewWidget Class - start
-	// -------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+// MicroViewWidget Class - start
+// -------------------------------------------------------------------------------------
 
 /** \brief MicroView widget parent class.
 
-    The MicroViewWidget class is the parent class for child widget like MicroViewSlider and MicroViewGauge.
+	The MicroViewWidget class is the parent class for child widget like MicroViewSlider and MicroViewGauge.
 */
-	MicroViewWidget::MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max) {
-		setX(newx);
-		setY(newy);
-		value=0;
-		setMinValue(min);
-		setMaxValue(max);
-	}
+MicroViewWidget::MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max) {
+	setX(newx);
+	setY(newy);
+	value=0;
+	setMinValue(min);
+	setMaxValue(max);
+}
 
 /** \brief Get widget x position. */
-	uint8_t MicroViewWidget::getX() { return x; }
+uint8_t MicroViewWidget::getX() { return x; }
 
 /** \brief Get widget y position. */
-	uint8_t MicroViewWidget::getY() { return y; }
+uint8_t MicroViewWidget::getY() { return y; }
 
 /** \brief Set widget x position. */
-	void MicroViewWidget::setX(uint8_t newx) { x = newx; }
+void MicroViewWidget::setX(uint8_t newx) { x = newx; }
 
 /** \brief Set widget y position. */
-	void MicroViewWidget::setY(uint8_t newy) { y = newy; }
+void MicroViewWidget::setY(uint8_t newy) { y = newy; }
 
 /** \brief Get minimum value.
 
-    Return the minimum value of the widget.
+	Return the minimum value of the widget.
 */
-	int16_t MicroViewWidget::getMinValue() { return minValue; }
+int16_t MicroViewWidget::getMinValue() { return minValue; }
 
 /** \brief Get maximum value.
 
-    Return the maximum value of the widget.
+	Return the maximum value of the widget.
 */
-	int16_t MicroViewWidget::getMaxValue() { return maxValue; }
+int16_t MicroViewWidget::getMaxValue() { return maxValue; }
 
 /** \brief Get current value.
 
-    Return the current value of the widget.
+	Return the current value of the widget.
 */
-	int16_t MicroViewWidget::getValue() { return value; }
+int16_t MicroViewWidget::getValue() { return value; }
 
 /** \brief Set minimum value.
 
-    The minimum value of the widget is set to the variable passed in.
+	The minimum value of the widget is set to the variable passed in.
 */
-	void MicroViewWidget::setMinValue(int16_t min) { minValue=min; }
+void MicroViewWidget::setMinValue(int16_t min) { minValue=min; }
 
 /** \brief Set maximum value.
 
-    The maximum value of the widget is set to the variable passed in.
+	The maximum value of the widget is set to the variable passed in.
 */
-	void MicroViewWidget::setMaxValue(int16_t max) { maxValue=max; }
+void MicroViewWidget::setMaxValue(int16_t max) { maxValue=max; }
 
 /** \brief Set current value.
 
-    The current value of the widget is set to the variable passed in.
+	The current value of the widget is set to the variable passed in.
 */
-	void MicroViewWidget::setValue(int16_t val) { 
-		if ((val<=maxValue) && (val>=minValue)){ 
-			value=val; 
-			this->draw();
-		}
+void MicroViewWidget::setValue(int16_t val) { 
+	if ((val<=maxValue) && (val>=minValue)){ 
+		value=val; 
+		this->draw();
 	}
+}
 
-	// -------------------------------------------------------------------------------------
-	// MicroViewWidget Class - end
-	// -------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+// MicroViewWidget Class - end
+// -------------------------------------------------------------------------------------
 
-	// -------------------------------------------------------------------------------------
-	// Slider Widget - start
-	// -------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+// Slider Widget - start
+// -------------------------------------------------------------------------------------
 
-/** \brief MicroViewSlider class initilisation. 
+/** \brief MicroViewSlider class initialisation. 
 
-    Initialise the MicroViewSlider widget with default style.
+	Initialise the MicroViewSlider widget with default style.
 */
-	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
-		style=0;
-		totalTicks=30;
-		needFirstDraw=true;
-		prevValue=getMinValue();
-		drawFace();
-		draw();
-	}
+MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
+	style=0;
+	totalTicks=30;
+	prevValue=getMinValue();
+	needFirstDraw=true;
+	needToDrawPrev=true;
+	drawFace();
+	draw();
+}
+
+/** \brief MicroView Widget reDraw routine.
+	
+	Redraws the widget.
+*/
+void MicroViewSlider::reDraw() {
+	needToDrawPrev=false;
+	drawFace();
+	draw();
+}		
 
 /** \brief MicroViewSlider class initialisation with style. 
 
-    Initialise the MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) or WIDGETSTYLE3 (like 1, but vertical). If this list gets any longer, it might be better as a switch/case statement.
+	Initialise the MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) or WIDGETSTYLE3 (like 1, but vertical). If this list gets any longer, it might be better as a switch/case statement.
 */
-	MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
-		if (sty==WIDGETSTYLE0) {
-			style=0;
-			totalTicks=30;
-		}
-		else if (sty==WIDGETSTYLE1) {
-			style=1;
-			totalTicks=60;
-		}
-		else if (sty==WIDGETSTYLE2) {
-			style=2;
-			totalTicks=20;
-		}
-		else if (sty==WIDGETSTYLE3) {
-			style=3;
-			totalTicks=40;
-		}
-		else {		//unrecognized style, so use default
-			style=0;
-			totalTicks=30;
-		}
-
-		needFirstDraw=true;
-		prevValue=getMinValue();
-		drawFace();
-		draw();
+MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
+	if (sty==WIDGETSTYLE0) {
+		style=0;
+		totalTicks=30;
 	}
+	else if (sty==WIDGETSTYLE1) {
+		style=1;
+		totalTicks=60;
+	}
+	else if (sty==WIDGETSTYLE2) {
+		style=2;
+		totalTicks=20;
+	}
+	else if (sty==WIDGETSTYLE3) {
+		style=3;
+		totalTicks=40;
+	}
+	else {		//unrecognized style, so use default
+		style=0;
+		totalTicks=30;
+	}
+
+	prevValue=getMinValue();
+	needFirstDraw=true;
+	drawFace();
+	draw();
+}
 
 /** \brief Draw widget face.
 
-    Draw image/diagram representing the widget's face.
+	Draw image/diagram representing the widget's face.
 */
-	void MicroViewSlider::drawFace() {
-		uint8_t offsetX, offsetY, majorLine;
-		offsetX=getX();
-		offsetY=getY();
+void MicroViewSlider::drawFace() {
+	uint8_t offsetX, offsetY, majorLine;
+	offsetX=getX();
+	offsetY=getY();
+	
+	if(style==0)	
+	majorLine=4;
+	else	if (style==1)	
+	majorLine=7;
+	else	if (style==2)
+	majorLine=3;
+	else if (style==3)
+	majorLine=5;
+
+	//Horizontal styles, style 0 or 1
+
+	if (style==0 || style==1) {
+		// Draw major tickers
+		for (uint8_t i=0; i<majorLine;i++) {
+			uView.lineV(offsetX+1+(i*10), offsetY+3, 5);
+		}
+		// Draw minor tickers
+		for (uint8_t i=0; i<4;i++) {
+			uView.lineV(offsetX+3+(i*2), offsetY+5, 3);
+		}
+		for (uint8_t i=0; i<4;i++) {
+			uView.lineV(offsetX+13+(i*2), offsetY+5, 3);
+		}
+		for (uint8_t i=0; i<4;i++) {
+			uView.lineV(offsetX+23+(i*2), offsetY+5, 3);
+		}
 		
-		if(style==0)	
-			majorLine=4;
-		else	if (style==1)	
-			majorLine=7;
-		else	if (style==2)
-			majorLine=3;
-		else if (style==3)
-			majorLine=5;
-
-
-
-//Horizontal styles, style 0 or 1
-
-		if (style==0 || style==1) {
-			// Draw major tickers
-			for (uint8_t i=0; i<majorLine;i++) {
-				uView.lineV(offsetX+1+(i*10), offsetY+3, 5);
-			}
-			// Draw minor tickers
+		if(style==1) {			//Longer line, more minor ticks
 			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+3+(i*2), offsetY+5, 3);
+				uView.lineV(offsetX+33+(i*2), offsetY+5, 3);
 			}
 			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+13+(i*2), offsetY+5, 3);
+				uView.lineV(offsetX+43+(i*2), offsetY+5, 3);
 			}
 			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+23+(i*2), offsetY+5, 3);
-			}
-		
-			if(style==1) {			//Longer line, more minor ticks
-				for (uint8_t i=0; i<4;i++) {
-					uView.lineV(offsetX+33+(i*2), offsetY+5, 3);
-				}
-				for (uint8_t i=0; i<4;i++) {
-					uView.lineV(offsetX+43+(i*2), offsetY+5, 3);
-				}
-				for (uint8_t i=0; i<4;i++) {
-					uView.lineV(offsetX+53+(i*2), offsetY+5, 3);
-				}
+				uView.lineV(offsetX+53+(i*2), offsetY+5, 3);
 			}
 		}
-//Vertical styles, style 2 or 3
-		else {
-			// Draw major tickers
-			for (uint8_t i=0; i<majorLine;i++) {
-				uView.lineH(offsetX, offsetY+1+(i*10), 5);
-			}
-			// Draw minor tickers
-			for (uint8_t i=0; i<4;i++) {
-				uView.lineH(offsetX, offsetY+3+(i*2), 3);
-			}
-			for (uint8_t i=0; i<4;i++) {
-				uView.lineH(offsetX, offsetY+13+(i*2), 3);
-			}
-		
-			if(style==3) {			//Explicit test for style
-				for (uint8_t i=0; i<4;i++) {
-					uView.lineH(offsetX, offsetY+23+(i*2), 3);
-				}
-				for (uint8_t i=0; i<4;i++) {
-					uView.lineH(offsetX, offsetY+33+(i*2), 3);
-				}
-
-			}
-		}
-
-		
 	}
+	//Vertical styles, style 2 or 3
+	else {
+		// Draw major tickers
+		for (uint8_t i=0; i<majorLine;i++) {
+			uView.lineH(offsetX, offsetY+1+(i*10), 5);
+		}
+		// Draw minor tickers
+		for (uint8_t i=0; i<4;i++) {
+			uView.lineH(offsetX, offsetY+3+(i*2), 3);
+		}
+		for (uint8_t i=0; i<4;i++) {
+			uView.lineH(offsetX, offsetY+13+(i*2), 3);
+		}
+		
+		if(style==3) {			//Explicit test for style
+			for (uint8_t i=0; i<4;i++) {
+				uView.lineH(offsetX, offsetY+23+(i*2), 3);
+			}
+			for (uint8_t i=0; i<4;i++) {
+				uView.lineH(offsetX, offsetY+33+(i*2), 3);
+			}
+
+		}
+	}
+}
 
 /** \brief Draw widget value.
 
-    Convert the current value of the widget and draw the ticker representing the value.
+	Convert the current value of the widget and draw the ticker representing the value.
 */
-	void MicroViewSlider::draw() {
-		uint8_t offsetX, offsetY;
-		uint8_t tickPosition=0;
-		char strBuffer[5];
-		offsetX=getX();
-		offsetY=getY();
+void MicroViewSlider::draw() {
+	uint8_t offsetX, offsetY;
+	uint8_t tickPosition=0;
+	char strBuffer[5];
+	offsetX=getX();
+	offsetY=getY();
 
-		if (needFirstDraw) {
-			if (style==0 || style==1){		//Horizontal
-				uView.lineH(offsetX+tickPosition, offsetY, 3, WHITE, XOR);
-				uView.pixel(offsetX+1+tickPosition, offsetY+1, WHITE, XOR);
-			}
-			else {					//Vertical
-				uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
-				uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
-			}
-
-			sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
-			needFirstDraw=false;
+	if (needFirstDraw) {
+		if (style==0 || style==1){		//Horizontal
+			uView.lineH(offsetX+tickPosition, offsetY, 3, WHITE, XOR);
+			uView.pixel(offsetX+1+tickPosition, offsetY+1, WHITE, XOR);
 		}
-		else {
+		else {					//Vertical
+			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
+			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
+		}
+
+		sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
+		needFirstDraw=false;
+	}
+	else {
+		if (needToDrawPrev) {
 			// Draw previous pointer in XOR mode to erase it
 			tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
 			if (style==0 || style==1){		//Horizontal
@@ -1562,265 +1570,282 @@ size_t MicroView::write(uint8_t c) {
 				uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
 				uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
 			}
-
-			// Draw current pointer
-			tickPosition= (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
-			if (style==0 || style==1){		//Horizontal
-				uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
-				uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
-			}
-			else {					//Vertical
-				uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
-				uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
-			}
-
-			sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
-			prevValue=getValue();
 		}
 
-		// Draw value
-		if(style==0)
-			uView.setCursor(offsetX+34,offsetY+1);
-		else	if (style==1)
-			uView.setCursor(offsetX,offsetY+10);
-		else if (style==2)
-			uView.setCursor(offsetX+1,offsetY+24);
-		else //style==3
-			uView.setCursor(offsetX+9,offsetY);
+		// Draw current pointer
+		tickPosition= (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
+		if (style==0 || style==1){		//Horizontal
+			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+		}
+		else {					//Vertical
+			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
+			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
+		}
 
-		uView.print(strBuffer);
+		sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
+		prevValue=getValue();
+		needToDrawPrev=true;
 	}
 
-	// -------------------------------------------------------------------------------------
-	// Slider Widget - end
-	// -------------------------------------------------------------------------------------
+	// Draw value
+	if(style==0)
+	uView.setCursor(offsetX+34,offsetY+1);
+	else	if (style==1)
+	uView.setCursor(offsetX,offsetY+10);
+	else if (style==2)
+	uView.setCursor(offsetX+1,offsetY+24);
+	else //style==3
+	uView.setCursor(offsetX+9,offsetY);
 
-	// -------------------------------------------------------------------------------------
-	// Gauge Widget - start
-	// -------------------------------------------------------------------------------------
+	uView.print(strBuffer);
+}
+
+// -------------------------------------------------------------------------------------
+// Slider Widget - end
+// -------------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------------
+// Gauge Widget - start
+// -------------------------------------------------------------------------------------
 
 /** \brief MicroViewGauge class initilisation.
 
-    Initialise the MicroViewGauge widget with default style.
+	Initialise the MicroViewGauge widget with default style.
 */
-	MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
-		style=0;
-		radius=15;
-		needFirstDraw=true;
-		prevValue=getMinValue();
-		drawFace();
-		draw();
-	}
+MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
+	style=0;
+	radius=15;
+	prevValue=getMinValue();
+	needFirstDraw=true;
+	needToDrawPrev=true;
+	drawFace();
+	draw();
+}
+
+/** \brief MicroView Widget reDraw routine.
+	
+	Redraws the widget.
+*/
+void MicroViewGauge::reDraw() {
+	needToDrawPrev=false;
+	drawFace();
+	draw();
+}		
 
 /** \brief MicroViewGauge class initialisation with style.
 
-    Initialise the MicroViewGauge widget with style WIDGETSTYLE0 or WIDGETSTYLE1.
+	Initialise the MicroViewGauge widget with style WIDGETSTYLE0 or WIDGETSTYLE1.
 */
-	MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
-		if (sty==WIDGETSTYLE0) {
-			style=0;
-			radius=15;
-		}
-		else {
-			style=1;
-			radius=23;
-		}
-		needFirstDraw=true;
-		prevValue=getMinValue();
-		drawFace();
-		draw();
+MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
+	if (sty==WIDGETSTYLE0) {
+		style=0;
+		radius=15;
 	}
+	else {
+		style=1;
+		radius=23;
+	}
+	prevValue=getMinValue();
+	needFirstDraw=true;
+	drawFace();
+	draw();
+}
 
 /** \brief Draw widget face.
 
-    Draw image/diagram representing the widget's face.
+	Draw image/diagram representing the widget's face.
 */
-	void MicroViewGauge::drawFace() {
-		uint8_t offsetX, offsetY;
-		float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
-		offsetX=getX();
-		offsetY=getY();
+void MicroViewGauge::drawFace() {
+	uint8_t offsetX, offsetY;
+	float degreeSec, fromSecX, fromSecY, toSecX, toSecY;
+	offsetX=getX();
+	offsetY=getY();
 
-		uView.circle(offsetX,offsetY,radius);
-		
-		for (int i=150;i<=390;i+=30) {	// Major tick from 150 degree to 390 degree
+	uView.circle(offsetX,offsetY,radius);
+	
+	for (int i=150;i<=390;i+=30) {	// Major tick from 150 degree to 390 degree
+		degreeSec=i*(PI/180);
+		fromSecX = cos(degreeSec) * (radius / 1.5);
+		fromSecY = sin(degreeSec) * (radius / 1.5);
+		toSecX = cos(degreeSec) * (radius / 1);
+		toSecY = sin(degreeSec) * (radius / 1);
+		uView.line(1+offsetX+fromSecX,1+offsetY+fromSecY,1+offsetX+toSecX,1+offsetY+toSecY);
+	}
+	
+	if(radius>15) {
+		for (int i=150;i<=390;i+=15) {	// Minor tick from 150 degree to 390 degree
 			degreeSec=i*(PI/180);
-			fromSecX = cos(degreeSec) * (radius / 1.5);
-			fromSecY = sin(degreeSec) * (radius / 1.5);
+			fromSecX = cos(degreeSec) * (radius / 1.3);
+			fromSecY = sin(degreeSec) * (radius / 1.3);
 			toSecX = cos(degreeSec) * (radius / 1);
 			toSecY = sin(degreeSec) * (radius / 1);
 			uView.line(1+offsetX+fromSecX,1+offsetY+fromSecY,1+offsetX+toSecX,1+offsetY+toSecY);
 		}
-		
-		if(radius>15) {
-			for (int i=150;i<=390;i+=15) {	// Minor tick from 150 degree to 390 degree
-				degreeSec=i*(PI/180);
-				fromSecX = cos(degreeSec) * (radius / 1.3);
-				fromSecY = sin(degreeSec) * (radius / 1.3);
-				toSecX = cos(degreeSec) * (radius / 1);
-				toSecY = sin(degreeSec) * (radius / 1);
-				uView.line(1+offsetX+fromSecX,1+offsetY+fromSecY,1+offsetX+toSecX,1+offsetY+toSecY);
-			}
-		}
 	}
+}
 
 /** \brief Draw widget value.
 
-    Convert the current value of the widget and draw the ticker representing the value.
+	Convert the current value of the widget and draw the ticker representing the value.
 */
-	void MicroViewGauge::draw() {
-		uint8_t offsetX, offsetY;
-		float degreeSec, toSecX, toSecY;
+void MicroViewGauge::draw() {
+	uint8_t offsetX, offsetY;
+	float degreeSec, toSecX, toSecY;
 
-		char strBuffer[5];
-		offsetX=getX();
-		offsetY=getY();
+	char strBuffer[5];
+	offsetX=getX();
+	offsetY=getY();
 
-		if (needFirstDraw) {
-			degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
-			degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
-			toSecX = cos(degreeSec) * (radius / 1.2);
-			toSecY = sin(degreeSec) * (radius / 1.2);
-			uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
-			sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
-			needFirstDraw=false;
-		}
-		else {
+	if (needFirstDraw) {
+		degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
+		degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
+		toSecX = cos(degreeSec) * (radius / 1.2);
+		toSecY = sin(degreeSec) * (radius / 1.2);
+		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
+		sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
+		needFirstDraw=false;
+	}
+	else {
+		if (needToDrawPrev) {
 			// Draw previous pointer in XOR mode to erase it
 			degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
 			degreeSec = (degreeSec+150) * (PI/180);
 			toSecX = cos(degreeSec) * (radius / 1.2);
 			toSecY = sin(degreeSec) * (radius / 1.2);
 			uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
-
-			degreeSec = (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
-			degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
-			toSecX = cos(degreeSec) * (radius / 1.2);
-			toSecY = sin(degreeSec) * (radius / 1.2);
-			uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
-
-			sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
-			prevValue=getValue();
 		}
-
-		// Draw value
-		if(style>0) 
-		uView.setCursor(offsetX-10,offsetY+10);
-		else
-		uView.setCursor(offsetX-11,offsetY+11);
 		
-		uView.print(strBuffer);
+		// draw current pointer
+		degreeSec = (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
+		degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
+		toSecX = cos(degreeSec) * (radius / 1.2);
+		toSecY = sin(degreeSec) * (radius / 1.2);
+		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
+
+		sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
+		prevValue=getValue();
+		needToDrawPrev=true;
 	}
 
-	// -------------------------------------------------------------------------------------
-	// Gauge Widget - end
-	// -------------------------------------------------------------------------------------
+	// Draw value
+	if(style>0) 
+	uView.setCursor(offsetX-10,offsetY+10);
+	else
+	uView.setCursor(offsetX-11,offsetY+11);
+	
+	uView.print(strBuffer);
+}
+
+// -------------------------------------------------------------------------------------
+// Gauge Widget - end
+// -------------------------------------------------------------------------------------
 
 /** \brief SPI Initialisation.
 
-    Setup SCK, MOSI, SS and DC pins for SPI transmission.
+	Setup SCK, MOSI, SS and DC pins for SPI transmission.
 */
-	void MVSPIClass::begin() {
-		// Set SS to high so the display will be "deselected" by default
-		SSHIGH;
-		// Warning: if the SS pin ever becomes a LOW INPUT then SPI
-		// automatically switches to Slave.
-		// This should not occur with the MicroView as nothing can drive the pin.
+void MVSPIClass::begin() {
+	// Set SS to high so the display will be "deselected" by default
+	SSHIGH;
+	// Warning: if the SS pin ever becomes a LOW INPUT then SPI
+	// automatically switches to Slave.
+	// This should not occur with the MicroView as nothing can drive the pin.
 
-		// Set DC low for command mode, where it should always default to unless
-		// data is being transmitted.
-		DCLOW;
+	// Set DC low for command mode, where it should always default to unless
+	// data is being transmitted.
+	DCLOW;
 
-		// Set SCK and MOSI to be outputs and low when SPI is disabled.
-		digitalWrite(SCK, LOW);
-		digitalWrite(MOSI, LOW);
-		pinMode(SCK, OUTPUT);
-		pinMode(MOSI, OUTPUT);
+	// Set SCK and MOSI to be outputs and low when SPI is disabled.
+	digitalWrite(SCK, LOW);
+	digitalWrite(MOSI, LOW);
+	pinMode(SCK, OUTPUT);
+	pinMode(MOSI, OUTPUT);
 
-		// Set SPI master mode. Don't enable SPI at this time.
-		SPCR |= _BV(MSTR);
-	}
+	// Set SPI master mode. Don't enable SPI at this time.
+	SPCR |= _BV(MSTR);
+}
 
 /** \brief End SPI. */
-	void MVSPIClass::end() {
-		SPCR &= ~_BV(SPE);
-		// SCK and MOSI should already be low but set them again, to be sure.
-		digitalWrite(SCK, LOW);
-		digitalWrite(MOSI, LOW);
-		pinMode(SCK, OUTPUT);
-		pinMode(MOSI, OUTPUT);
-	}
+void MVSPIClass::end() {
+	SPCR &= ~_BV(SPE);
+	// SCK and MOSI should already be low but set them again, to be sure.
+	digitalWrite(SCK, LOW);
+	digitalWrite(MOSI, LOW);
+	pinMode(SCK, OUTPUT);
+	pinMode(MOSI, OUTPUT);
+}
 
 /** \brief Set up SPI for transmitting
 
-    Pepare the SPI interface for transmitting on or more bytes of
-    commands and/or data.
+	Pepare the SPI interface for transmitting on or more bytes of
+	commands and/or data.
 */
-	void MVSPIClass::packetBegin() {
-		// Enable SPI mode
-		SPCR |= _BV(SPE);
+void MVSPIClass::packetBegin() {
+	// Enable SPI mode
+	SPCR |= _BV(SPE);
 
-		// Set SS low
-		SSLOW;
+	// Set SS low
+	SSLOW;
 }
 
 /** \brief End a SPI packet transmission
 
-    End a SPI packet transmission:
-    - Wait for the last byte to finish being transmitted.
-    - Set DC to command mode (even if already set that way, just in case).
-    - Set SS high.
-    - Disable SPI mode (causing SCK and MOSI to go low).
+	End a SPI packet transmission:
+	- Wait for the last byte to finish being transmitted.
+	- Set DC to command mode (even if already set that way, just in case).
+	- Set SS high.
+	- Disable SPI mode (causing SCK and MOSI to go low).
 */
-	void MVSPIClass::packetEnd() {
-		while (!(SPSR & _BV(SPIF)))
-			;
-		DCLOW;
-		SSHIGH;
-		SPCR &= ~_BV(SPE);
+void MVSPIClass::packetEnd() {
+	while (!(SPSR & _BV(SPIF)))
+	;
+	DCLOW;
+	SSHIGH;
+	SPCR &= ~_BV(SPE);
 }
 
 /** \brief Set SPI bit order.
 
-    Set SPI port bit order with LSBFIRST or MSBFIRST.
+	Set SPI port bit order with LSBFIRST or MSBFIRST.
 */
-	void MVSPIClass::setBitOrder(uint8_t bitOrder)
-	{
-		if(bitOrder == LSBFIRST) {
-			SPCR |= _BV(DORD);
-		} else {
-			SPCR &= ~(_BV(DORD));
-		}
+void MVSPIClass::setBitOrder(uint8_t bitOrder)
+{
+	if(bitOrder == LSBFIRST) {
+		SPCR |= _BV(DORD);
+	} else {
+		SPCR &= ~(_BV(DORD));
 	}
+}
 
 /** \brief Set SPI data mode.
 
-    Set the SPI data mode: clock polarity and phase.  mode - SPI_MODE0, SPI_MODE1, SPI_MODE2, SPI_MODE3.
+	Set the SPI data mode: clock polarity and phase.  mode - SPI_MODE0, SPI_MODE1, SPI_MODE2, SPI_MODE3.
 */
-	void MVSPIClass::setDataMode(uint8_t mode)
-	{
-		SPCR = (SPCR & ~SPI_MODE_MASK) | mode;
-	}
+void MVSPIClass::setDataMode(uint8_t mode)
+{
+	SPCR = (SPCR & ~SPI_MODE_MASK) | mode;
+}
 
 /** \brief Set clock divider.
 
-    Set the clocl divider of the SPI, default is 4Mhz.
+	Set the clocl divider of the SPI, default is 4Mhz.
 
-    rate:   SPI_CLOCK_DIV2
-            SPI_CLOCK_DIV4
-            SPI_CLOCK_DIV8
-            SPI_CLOCK_DIV16
-            SPI_CLOCK_DIV32
-            SPI_CLOCK_DIV64
-            SPI_CLOCK_DIV128 
+	rate:   SPI_CLOCK_DIV2
+			SPI_CLOCK_DIV4
+			SPI_CLOCK_DIV8
+			SPI_CLOCK_DIV16
+			SPI_CLOCK_DIV32
+			SPI_CLOCK_DIV64
+			SPI_CLOCK_DIV128 
 */
-	void MVSPIClass::setClockDivider(uint8_t rate)
-	{
-		SPCR = (SPCR & ~SPI_CLOCK_MASK) | (rate & SPI_CLOCK_MASK);
-		SPSR = (SPSR & ~SPI_2XCLOCK_MASK) | ((rate >> 2) & SPI_2XCLOCK_MASK);
-	}
+void MVSPIClass::setClockDivider(uint8_t rate)
+{
+	SPCR = (SPCR & ~SPI_CLOCK_MASK) | (rate & SPI_CLOCK_MASK);
+	SPSR = (SPSR & ~SPI_2XCLOCK_MASK) | ((rate >> 2) & SPI_2XCLOCK_MASK);
+}
 
-	MVSPIClass MVSPI;
-	MicroView uView;
+MVSPIClass MVSPI;
+MicroView uView;
 
 

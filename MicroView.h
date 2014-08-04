@@ -226,6 +226,7 @@ private:
 
 class MicroViewWidget {
 public:
+	bool needToDrawPrev;
 	MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max);
 	uint8_t getX();
 	uint8_t getY();
@@ -242,6 +243,8 @@ public:
     virtual void draw(){};
     /** \brief Draw widget face overridden by child class. */
 	virtual void drawFace(){};
+	/** \brief ReDraw widget overridden by child class. */
+	virtual void reDraw(){};
 	
 private:
 	uint8_t x;
@@ -257,6 +260,7 @@ public:
 	MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty);
 	void draw();
 	void drawFace();
+	void reDraw();
 private:
 	uint8_t totalTicks, style;
 	bool needFirstDraw;
@@ -269,6 +273,7 @@ public:
 	MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty);
 	void draw();
 	void drawFace();
+	void reDraw();
 private:
 	uint8_t radius, style;
 	bool needFirstDraw;
@@ -338,7 +343,6 @@ void MVSPIClass::attachInterrupt() {
 void MVSPIClass::detachInterrupt() {
   SPCR &= ~_BV(SPIE);
 }
-
 
 extern MicroView uView;
 #endif
