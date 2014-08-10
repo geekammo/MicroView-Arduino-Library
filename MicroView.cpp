@@ -1460,71 +1460,32 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 	Draw image/diagram representing the widget's face.
 */
 void MicroViewSlider::drawFace() {
-	uint8_t offsetX, offsetY, majorLine;
+	uint8_t offsetX, offsetY, endOffset;
 	offsetX=getX();
 	offsetY=getY();
-	
-	if (style==0)
-		majorLine=4;
-	else if (style==1)
-		majorLine=7;
-	else if (style==2)
-		majorLine=3;
-	else
-		majorLine=5;
 
 	//Horizontal styles, style 0 or 1
-
 	if (style==0 || style==1) {
-		// Draw major tickers
-		for (uint8_t i=0; i<majorLine;i++) {
-			uView.lineV(offsetX+1+(i*10), offsetY+3, 5);
+		endOffset = offsetX + totalTicks + 2;
+		// Draw minor ticks
+		for (uint8_t i=offsetX+1; i<endOffset; i+=2) {
+			uView.lineV(i, offsetY+5, 3);
 		}
-		// Draw minor tickers
-		for (uint8_t i=0; i<4;i++) {
-			uView.lineV(offsetX+3+(i*2), offsetY+5, 3);
-		}
-		for (uint8_t i=0; i<4;i++) {
-			uView.lineV(offsetX+13+(i*2), offsetY+5, 3);
-		}
-		for (uint8_t i=0; i<4;i++) {
-			uView.lineV(offsetX+23+(i*2), offsetY+5, 3);
-		}
-		
-		if(style==1) {			//Longer line, more minor ticks
-			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+33+(i*2), offsetY+5, 3);
-			}
-			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+43+(i*2), offsetY+5, 3);
-			}
-			for (uint8_t i=0; i<4;i++) {
-				uView.lineV(offsetX+53+(i*2), offsetY+5, 3);
-			}
+		// Draw extensions for major ticks
+		for (uint8_t i=offsetX+1; i<endOffset; i+=10) {
+			uView.lineV(i, offsetY+3, 2);
 		}
 	}
 	//Vertical styles, style 2 or 3
 	else {
-		// Draw major tickers
-		for (uint8_t i=0; i<majorLine;i++) {
-			uView.lineH(offsetX, offsetY+1+(i*10), 5);
+		endOffset = offsetY + totalTicks + 2;
+		// Draw minor ticks
+		for (uint8_t i=offsetY+1; i<=endOffset; i+=2) {
+			uView.lineH(offsetX, i, 3);
 		}
-		// Draw minor tickers
-		for (uint8_t i=0; i<4;i++) {
-			uView.lineH(offsetX, offsetY+3+(i*2), 3);
-		}
-		for (uint8_t i=0; i<4;i++) {
-			uView.lineH(offsetX, offsetY+13+(i*2), 3);
-		}
-		
-		if(style==3) {			//Explicit test for style
-			for (uint8_t i=0; i<4;i++) {
-				uView.lineH(offsetX, offsetY+23+(i*2), 3);
-			}
-			for (uint8_t i=0; i<4;i++) {
-				uView.lineH(offsetX, offsetY+33+(i*2), 3);
-			}
-
+		// Draw extensions for major ticks
+		for (uint8_t i=offsetY+1; i<=endOffset; i+=10) {
+			uView.lineH(offsetX+3, i, 2);
 		}
 	}
 }
