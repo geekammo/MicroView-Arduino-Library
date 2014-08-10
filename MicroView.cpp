@@ -1385,6 +1385,18 @@ void MicroViewWidget::setMinValue(int16_t min) { minValue=min; }
 */
 void MicroViewWidget::setMaxValue(int16_t max) { maxValue=max; }
 
+/** \brief Get the maximum possible print lenth of the value
+
+	Return the maximum number of characters that would be printed using printf("%d", value) for the current value range.
+*/
+uint8_t MicroViewWidget::getMaxValLen() {
+	uint8_t minLen, maxLen;
+
+	maxLen = getInt16PrintLen(maxValue);
+	minLen = getInt16PrintLen(minValue);
+	return maxLen >= minLen ? maxLen : minLen;
+}
+
 /** \brief Set current value.
 
 	The current value of the widget is set to the variable passed in.
@@ -1536,63 +1548,67 @@ void MicroViewSlider::drawFace() {
 void MicroViewSlider::draw() {
 	uint8_t offsetX, offsetY;
 	uint8_t tickPosition=0;
-	char strBuffer[5];
+	char strBuffer[7];
+	char formatStr[] = "%1d";
+
+	formatStr[1] = '0' + getMaxValLen();	// Set the field width for the value range
+
 	offsetX=getX();
 	offsetY=getY();
 
 	if (needFirstDraw) {
 		if (style==0 || style==1){		//Horizontal
-			tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
+			tickPosition = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
 			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
 			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
 		}
 		else {					//Vertical
-			tickPosition= (((float)(getMaxValue()-prevValue)/(float)(getMaxValue()-getMinValue()))*totalTicks);
+			tickPosition = ((float)(uint16_t)(getMaxValue()-prevValue)/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
 			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
 			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
 		}
 
-		sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
+		sprintf(strBuffer, formatStr, prevValue);	// print with fixed width so that blank space will cover larger value
 		needFirstDraw=false;
 	}
 	else {
 		// Draw previous pointer in XOR mode to erase it
 		if (style==0 || style==1){		//Horizontal
-			tickPosition= (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
+			tickPosition = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
 			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
 			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
 		}
 		else {					//Vertical
-			tickPosition= (((float)(getMaxValue()-prevValue)/(float)(getMaxValue()-getMinValue()))*totalTicks);
+			tickPosition = ((float)(uint16_t)(getMaxValue()-prevValue)/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
 			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
 			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
 		}
 
 		// Draw current pointer
 		if (style==0 || style==1){		//Horizontal
-			tickPosition= (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
+			tickPosition = ((float)(uint16_t)(getValue()-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
 			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
 			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
 		}
 		else {					//Vertical
-			tickPosition= (((float)(getMaxValue()-getValue())/(float)(getMaxValue()-getMinValue()))*totalTicks);
+			tickPosition = ((float)(uint16_t)(getMaxValue()-getValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
 			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
 			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
 		}
 
-		sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
+		sprintf(strBuffer, formatStr, getValue());	// print with fixed width so that blank space will cover larger value
 		prevValue=getValue();
 	}
 
 	// Draw value
-	if(style==0)
-	uView.setCursor(offsetX+34,offsetY+1);
-	else	if (style==1)
-	uView.setCursor(offsetX,offsetY+10);
+	if (style==0)
+		uView.setCursor(offsetX+totalTicks+4, offsetY+1);
+	else if (style==1)
+		uView.setCursor(offsetX, offsetY+10);
 	else if (style==2)
-	uView.setCursor(offsetX+1,offsetY+24);
+		uView.setCursor(offsetX+1, offsetY+totalTicks+4);
 	else //style==3
-	uView.setCursor(offsetX+9,offsetY);
+		uView.setCursor(offsetX+9, offsetY);
 
 	uView.print(strBuffer);
 }
@@ -1676,45 +1692,51 @@ void MicroViewGauge::drawFace() {
 */
 void MicroViewGauge::draw() {
 	uint8_t offsetX, offsetY;
+	uint8_t maxValLen, valOffset;
 	float degreeSec, toSecX, toSecY;
+	char strBuffer[7];
+	char formatStr[] = "%1d"; // The 1 will be replaced later by the proper length
 
-	char strBuffer[5];
+	maxValLen = getMaxValLen();
+	formatStr[1] = '0' + maxValLen;	// Set the field width for the value range
+	valOffset = maxValLen * 3 - 1;	// Offset left of centre to print the value
+
 	offsetX=getX();
 	offsetY=getY();
 
 	if (needFirstDraw) {
-		degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
+		degreeSec = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*240;	// total 240 degree in the widget
 		degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
 		toSecX = cos(degreeSec) * (radius / 1.2);
 		toSecY = sin(degreeSec) * (radius / 1.2);
 		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
-		sprintf(strBuffer,"%4d", prevValue);	// we need to force 4 digit so that blank space will cover larger value
+		sprintf(strBuffer, formatStr, prevValue);	// print with fixed width so that blank space will cover larger value
 		needFirstDraw=false;
 	}
 	else {
 		// Draw previous pointer in XOR mode to erase it
-		degreeSec = (((float)(prevValue-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
+		degreeSec = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*240;	// total 240 degree in the widget
 		degreeSec = (degreeSec+150) * (PI/180);
 		toSecX = cos(degreeSec) * (radius / 1.2);
 		toSecY = sin(degreeSec) * (radius / 1.2);
 		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
 		
 		// draw current pointer
-		degreeSec = (((float)(getValue()-getMinValue())/(float)(getMaxValue()-getMinValue()))*240);	// total 240 degree in the widget
+		degreeSec = ((float)(uint16_t)(getValue()-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*240;	// total 240 degree in the widget
 		degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
 		toSecX = cos(degreeSec) * (radius / 1.2);
 		toSecY = sin(degreeSec) * (radius / 1.2);
 		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
 
-		sprintf(strBuffer,"%4d", getValue());	// we need to force 4 digit so that blank space will cover larger value
+		sprintf(strBuffer, formatStr, getValue());	// print with fixed width so that blank space will cover larger value
 		prevValue=getValue();
 	}
 
 	// Draw value
-	if(style>0) 
-	uView.setCursor(offsetX-10,offsetY+10);
+	if (style>0) 
+	uView.setCursor(offsetX-valOffset, offsetY+10);
 	else
-	uView.setCursor(offsetX-11,offsetY+11);
+	uView.setCursor(offsetX-valOffset, offsetY+11);
 	
 	uView.print(strBuffer);
 }
@@ -1830,4 +1852,13 @@ void MVSPIClass::setClockDivider(uint8_t rate)
 MVSPIClass MVSPI;
 MicroView uView;
 
+/** \brief Get the number of characters for a 16 bit signed value.
+
+	Return the number of characters that would be printed using printf("%d", x) for x being a signed 16 bit integer.
+*/
+uint8_t getInt16PrintLen(int16_t val) {
+	char sbuf[7];
+
+	return sprintf(sbuf, "%d", val);
+}
 

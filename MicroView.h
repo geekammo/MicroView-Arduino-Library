@@ -239,6 +239,7 @@ public:
 	void setMaxValue(int16_t max);
 	void setMinValue(int16_t max);
 	void setValue(int16_t val);
+	uint8_t getMaxValLen();
 	/** \brief Draw widget value overridden by child class. */
     virtual void draw(){};
     /** \brief Draw widget face overridden by child class. */
@@ -340,4 +341,8 @@ void MVSPIClass::detachInterrupt() {
 }
 
 extern MicroView uView;
+
+/** \brief Get the number of print characters for a 16 bit signed value. */
+uint8_t getInt16PrintLen(int16_t val);
+
 #endif
