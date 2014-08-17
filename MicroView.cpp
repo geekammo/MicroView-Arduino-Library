@@ -1327,6 +1327,14 @@ int MicroView::readSerial(void)
 	return i;
 }
 
+/** \brief Get pointer to screen buffer
+
+	Return a pointer to the start of the RAM screen buffer for direct access.
+*/
+uint8_t *MicroView::screenBuffer(void) {
+	return screenmemory;
+}
+
 // -------------------------------------------------------------------------------------
 // MicroViewWidget Class - start
 // -------------------------------------------------------------------------------------
