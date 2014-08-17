@@ -858,9 +858,22 @@ void MicroView::scrollStop(void){
 */
 void MicroView::scrollRight(uint8_t start, uint8_t stop){
 	if (stop<start)		// stop must be larger or equal to start
-	return;
+		return;
 	scrollStop();		// need to disable scrolling before starting to avoid memory corrupt
 	command(RIGHTHORIZONTALSCROLL, 0);
+	command(start, 0x7, stop);	// scroll speed frames , TODO
+	command(0x00, 0xFF, ACTIVATESCROLL);
+}
+
+/** \brief Left scrolling.
+
+	Set row start to row stop on the OLED to scroll left. Refer to http://learn.microview.io/intro/general-overview-of-microview.html for explanation of the rows.
+*/
+void MicroView::scrollLeft(uint8_t start, uint8_t stop){
+	if (stop<start)		// stop must be larger or equal to start
+		return;
+	scrollStop();		// need to disable scrolling before starting to avoid memory corrupt
+	command(LEFTHORIZONTALSCROLL, 0);
 	command(start, 0x7, stop);	// scroll speed frames , TODO
 	command(0x00, 0xFF, ACTIVATESCROLL);
 }
