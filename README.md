@@ -92,6 +92,12 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.19b: 19th August 2014 by Scott Allen**
+* added uView.scrollLeft() function
+* simplified Silder Widget drawFace() function
+* added full signed 16 bit ranges for widgets
+* improved drawing for minor and major ticks
+
 **v1.18b: 5th August 2014 by Scott Allen**
 * fixed compiler warning in MicroViewSlider
 * changed vertical slider direction.
