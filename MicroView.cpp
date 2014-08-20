@@ -904,6 +904,14 @@ void MicroView::flipHorizontal(boolean flip) {
 	}
 }
 
+/** \brief Get pointer to screen buffer
+
+	Return a pointer to the start of the RAM screen buffer for direct access.
+*/
+uint8_t *MicroView::getScreenBuffer(void) {
+	return screenmemory;
+}
+
 /** \brief Parse command.
 
 	Command stored in serCmd array will be parsed to performed draw functions.
@@ -1338,14 +1346,6 @@ int MicroView::readSerial(void)
 	}
 	serInStr[i]='\0';
 	return i;
-}
-
-/** \brief Get pointer to screen buffer
-
-	Return a pointer to the start of the RAM screen buffer for direct access.
-*/
-uint8_t *MicroView::screenBuffer(void) {
-	return screenmemory;
 }
 
 // -------------------------------------------------------------------------------------
