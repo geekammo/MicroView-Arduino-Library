@@ -192,6 +192,7 @@ public:
 	uint8_t getLCDHeight(void);
 	void setColor(uint8_t color);
 	void setDrawMode(uint8_t mode);
+	uint8_t *getScreenBuffer(void);
 
 	// Font functions
 	uint8_t getFontWidth(void);
