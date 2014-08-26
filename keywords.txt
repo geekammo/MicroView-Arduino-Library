@@ -17,7 +17,6 @@ MicroViewGauge	KEYWORD1
 #######################################
 
 begin	KEYWORD2
-invert	KEYWORD2
 clear	KEYWORD2
 invert	KEYWORD2
 contrast	KEYWORD2
