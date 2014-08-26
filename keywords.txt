@@ -50,6 +50,10 @@ scrollVertLeft	KEYWORD2
 scrollStop	KEYWORD2
 flipVertical	KEYWORD2
 flipHorizontal	KEYWORD2
+setColumnAddress	KEYWORD2
+setPageAddress	KEYWORD2
+data	KEYWORD2
+getScreenBuffer	KEYWORD2
 
 getX	KEYWORD2
 getY	KEYWORD2
@@ -63,7 +67,6 @@ setValue	KEYWORD2
 draw	KEYWORD2
 reDraw	KEYWORD2
 drawFace	KEYWORD2
-getScreenBuffer	KEYWORD2
 checkComm	KEYWORD2
 
 #######################################
