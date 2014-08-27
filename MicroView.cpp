@@ -591,7 +591,6 @@ void MicroView::circle(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, ui
 		pixel(x0 - y, y0 + x, color, mode);
 		pixel(x0 + y, y0 - x, color, mode);
 		pixel(x0 - y, y0 - x, color, mode);
-		
 	}
 }
 
@@ -608,38 +607,44 @@ void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius) {
 	Draw filled circle with radius using color and mode at x,y of the screen buffer.
 */
 void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color, uint8_t mode) {
-	// TODO - - find a way to check for no overlapping of pixels so that XOR draw mode will work perfectly 
-	int8_t f = 1 - radius;
-	int8_t ddF_x = 1;
-	int8_t ddF_y = -2 * radius;
-	int8_t x = 0;
-	int8_t y = radius;
-
-	// Temporary disable fill circle for XOR mode.
-	if (mode==XOR) return;
-	
-	for (uint8_t i=y0-radius; i<=y0+radius; i++) {
-		pixel(x0, i, color, mode);
+	// Don't bother trying to draw something totally offscreen
+	if (x0 - radius >= LCDWIDTH || y0 - radius >= LCDHEIGHT) {
+		return;
 	}
 
-	while (x<y) {
-		if (f >= 0) {
-			y--;
-			ddF_y += 2;
-			f += ddF_y;
-		}
-		x++;
-		ddF_x += 2;
-		f += ddF_x;
+	// High-level algorithm overview:
+	// Scan horizontally from left to right, then top to bottom, checking if each pixel
+	// is within the circle. We use uint16_t's because even the small screen squares beyond 8 bits.
+	uint16_t radiusSq = radius * radius;
 
-		for (uint8_t i=y0-y; i<=y0+y; i++) {
-			pixel(x0+x, i, color, mode);
-			pixel(x0-x, i, color, mode);
-		} 
-		for (uint8_t i=y0-x; i<=y0+x; i++) {
-			pixel(x0+y, i, color, mode);
-			pixel(x0-y, i, color, mode);
-		}    
+	// Optimization: define the start and end onscreen
+	uint16_t xStart = max(0, x0-radius);
+	uint16_t xEnd = min(LCDWIDTH-1, x0+radius);
+	uint16_t yStart = max(0, y0-radius);
+	uint16_t yEnd = min(LCDHEIGHT-1, y0+radius);
+
+	// scan horizontally...
+	for (uint16_t x = xStart; x <= xEnd; ++x) {
+		// Optimization: Record where if we have intersected the circle on this vertical
+		// scan. Once we have intersected, then don't intersect anymore, don't bother
+		// drawing; we've exited the circle.
+		bool intersected = false;
+
+		// Optimization: relative x squared only changes with the outer loop/the horizontal scan.
+		int16_t rx2 = (x-x0) * (x-x0);
+
+		// Scan vertically...
+		for (uint16_t y = yStart; y <= yEnd; ++y) {
+			int16_t ry2 = (y-y0) * (y-y0);
+			if (rx2 + ry2 <= radiusSq) {
+				pixel(x, y, color, mode);
+				intersected = true;
+			}
+			else if (intersected) {
+				// We've left the circle. Move on to the next horizontal scan line.
+				break;
+			}
+		}
 	}
 }
 
