@@ -92,6 +92,12 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.20b: 27th August 2014 by Scott Allen, Emil Ong**
+* added Flashing Heart Example - JP
+* added getScreenBuffer() for access to screen RAM - Scott
+* added keywords  for existing functions - Scott
+* fixed circleFill() - Emil
+
 **v1.19b: 19th August 2014 by Scott Allen**
 * added uView.scrollLeft() function
 * simplified Silder Widget drawFace() function
