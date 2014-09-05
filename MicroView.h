@@ -161,13 +161,14 @@ public:
 	void data(uint8_t c);
 	void setColumnAddress(uint8_t add);
 	void setPageAddress(uint8_t add);
-	
+
 	// LCD Draw functions
 	void clear(uint8_t mode);
 	void clear(uint8_t mode, uint8_t c);
 	void invert(boolean inv);
 	void contrast(uint8_t contrast);
 	void display(void);
+	void displayBuffer(uint8_t* buffer);
 	void setCursor(uint8_t x, uint8_t y);
 	void pixel(uint8_t x, uint8_t y);
 	void pixel(uint8_t x, uint8_t y, uint8_t color, uint8_t mode);
@@ -203,7 +204,7 @@ public:
 	uint8_t getFontStartChar(void);
 	uint8_t getFontTotalChar(void);
 
-	// LCD Rotate Scroll functions	
+	// LCD Rotate Scroll functions
 	void scrollRight(uint8_t start, uint8_t stop);
 	void scrollLeft(uint8_t start, uint8_t stop);
 	void scrollVertRight(uint8_t start, uint8_t stop);
@@ -211,17 +212,17 @@ public:
 	void scrollStop(void);
 	void flipVertical(boolean flip);
 	void flipHorizontal(boolean flip);
-	
+
 	// Communication
 	void checkComm(void);
 	void doCmd(uint8_t index);
-	
+
 private:
 	uint8_t foreColor,drawMode,fontWidth, fontHeight, fontType, fontStartChar, fontTotalChar, cursorX, cursorY;
 	uint16_t fontMapWidth;
 	//unsigned char *fontsPointer[TOTALFONTS];
 	static const unsigned char *fontsPointer[];
-	
+
 	int readSerial(void);
 };
 
@@ -233,7 +234,7 @@ public:
 	uint8_t getY();
 	void setX(uint8_t newx);
 	void setY(uint8_t newy);
-	
+
 	int16_t getMinValue();
 	int16_t getMaxValue();
 	int16_t getValue();
@@ -246,7 +247,7 @@ public:
     /** \brief Draw widget face overridden by child class. */
 	virtual void drawFace(){};
 	void reDraw();
-	
+
 private:
 	uint8_t x;
 	uint8_t y;
