@@ -333,14 +333,14 @@ void MicroView::contrast(uint8_t contrast) {
 	Bulk move the internal screen buffer to the SSD1306 controller's memory so that images/graphics drawn on the screen buffer will be displayed on the OLED.
 */
 void MicroView::display(void) {
-	displayScreen(screenmemory);
+	display(screenmemory);
 }
 
-/** \brief Transfer display buffer.
+/** \brief Transfer display memory.
 
 	Bulk move a screen buffer to the SSD1306 controller's memory so that images/graphics drawn on the screen buffer will be displayed on the OLED.
 */
-void MicroView::displayScreen(uint8_t* buffer) {
+void MicroView::display(uint8_t* buffer) {
 	command(SETADDRESSMODE, 0);		// Set horizontal addressing mode
 	command(SETCOLUMNBOUNDS,
 	LCDCOLUMNOFFSET,
