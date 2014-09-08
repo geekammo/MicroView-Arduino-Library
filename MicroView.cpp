@@ -340,7 +340,7 @@ void MicroView::display(void) {
 
 	Bulk move a screen buffer to the SSD1306 controller's memory so that images/graphics drawn on the screen buffer will be displayed on the OLED.
 */
-void MicroView::display(uint8_t* buffer) {
+void MicroView::display(uint8_t *buffer) {
 	command(SETADDRESSMODE, 0);		// Set horizontal addressing mode
 	command(SETCOLUMNBOUNDS,
 	LCDCOLUMNOFFSET,
