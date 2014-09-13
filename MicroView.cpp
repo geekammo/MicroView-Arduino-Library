@@ -1467,11 +1467,10 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 
 /** \brief MicroViewSlider class initialisation with style. 
 
-	Initialise the MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) or WIDGETSTYLE3 (like 1, but vertical). If this list gets any longer, it might be better as a switch/case statement.
+	Initialise the MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) or WIDGETSTYLE3 (like 1, but vertical). 	
 */
 MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
 
-	// @esmitperez: replaced with switch...but original if/else here because it's faster? 
 	switch(sty){
 	  case WIDGETSTYLE1: 
 	    style=1;
@@ -1584,7 +1583,6 @@ void MicroViewSlider::draw() {
 	}
 
 	// Draw value
-	// @esmitperez: replaced with switch...but original if/else here because it's faster? 
     switch(style){
     	case 0:
 	    	uView.setCursor(offsetX+totalTicks+4, offsetY+1);
