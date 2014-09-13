@@ -1470,21 +1470,25 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 	Initialise the MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) or WIDGETSTYLE3 (like 1, but vertical). If this list gets any longer, it might be better as a switch/case statement.
 */
 MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
-	if (sty==WIDGETSTYLE1) {
-		style=1;
-		totalTicks=60;
-	}
-	else if (sty==WIDGETSTYLE2) {
-		style=2;
-		totalTicks=20;
-	}
-	else if (sty==WIDGETSTYLE3) {
-		style=3;
-		totalTicks=40;
-	}
-	else {		// Use style 0 if specified or invalid
-		style=0;
-		totalTicks=30;
+
+	// @esmitperez: replaced with switch...but original if/else here because it's faster? 
+	switch(sty){
+	  case WIDGETSTYLE1: 
+	    style=1;
+	    totalTicks=60;
+	    break;
+	  case WIDGETSTYLE2: 
+	    style=2;
+	    totalTicks=20;
+	    break;
+	  case WIDGETSTYLE3: 
+	    style=3;
+	    totalTicks=40;
+	    break;
+	  default: 
+	    style=0;
+	    totalTicks=30;
+	    break;
 	}
 
 	prevValue=getMinValue();
@@ -1526,6 +1530,7 @@ void MicroViewSlider::drawFace() {
 			uView.lineH(offsetX+3, i, 2);
 		}
 	}
+
 }
 
 /** \brief Draw widget value.
@@ -1543,61 +1548,59 @@ void MicroViewSlider::draw() {
 	offsetX=getX();
 	offsetY=getY();
 
-	if (needFirstDraw) {
-		if (style==0 || style==1){		//Horizontal
-			tickPosition = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
-			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
-			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
-		}
-		else {					//Vertical
-			tickPosition = ((float)(uint16_t)(getMaxValue()-prevValue)/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
-			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
-			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
-		}
+	// @esmitperez: this block executed all the time, so moved out of if/else
+	// Draw previous pointer in XOR mode to erase it
+	if (style==0 || style==1){		//Horizontal
+		tickPosition = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
+		uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+		uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+	}
+	else {					//Vertical
+		tickPosition = ((float)(uint16_t)(getMaxValue()-prevValue)/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
+		uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
+		uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
+	}
 
-		sprintf(strBuffer, formatStr, prevValue);	// print with fixed width so that blank space will cover larger value
-		needFirstDraw=false;
+
+	if (needFirstDraw) {
+	    sprintf(strBuffer, formatStr, prevValue);	// print with fixed width so that blank space will cover larger value
+	    needFirstDraw=false;
 	}
 	else {
-		// Draw previous pointer in XOR mode to erase it
-		if (style==0 || style==1){		//Horizontal
-			tickPosition = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
-			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
-			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
-		}
-		else {					//Vertical
-			tickPosition = ((float)(uint16_t)(getMaxValue()-prevValue)/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
-			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
-			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
-		}
+	    // Draw current pointer
+	    if (style==0 || style==1){		//Horizontal
+	    	tickPosition = ((float)(uint16_t)(getValue()-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
+	    	uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+	    	uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+	    }
+	    else {					//Vertical
+	    	tickPosition = ((float)(uint16_t)(getMaxValue()-getValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
+	    	uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
+	    	uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
+	    }
 
-		// Draw current pointer
-		if (style==0 || style==1){		//Horizontal
-			tickPosition = ((float)(uint16_t)(getValue()-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
-			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
-			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
-		}
-		else {					//Vertical
-			tickPosition = ((float)(uint16_t)(getMaxValue()-getValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
-			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
-			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
-		}
-
-		sprintf(strBuffer, formatStr, getValue());	// print with fixed width so that blank space will cover larger value
-		prevValue=getValue();
+	    sprintf(strBuffer, formatStr, getValue());	// print with fixed width so that blank space will cover larger value
+	    prevValue=getValue();
 	}
 
 	// Draw value
-	if (style==0)
-		uView.setCursor(offsetX+totalTicks+4, offsetY+1);
-	else if (style==1)
-		uView.setCursor(offsetX, offsetY+10);
-	else if (style==2)
-		uView.setCursor(offsetX+1, offsetY+totalTicks+4);
-	else //style==3
-		uView.setCursor(offsetX+9, offsetY);
+	// @esmitperez: replaced with switch...but original if/else here because it's faster? 
+    switch(style){
+    	case 0:
+	    	uView.setCursor(offsetX+totalTicks+4, offsetY+1);
+	    	break;
+    	case 1:
+	    	uView.setCursor(offsetX, offsetY+10);
+	    	break;
+    	case 2:
+	    	uView.setCursor(offsetX+1, offsetY+totalTicks+4);
+	    	break;  
+    	default:
+	    	uView.setCursor(offsetX+9, offsetY);
+	    	break;
+    }
 
-	uView.print(strBuffer);
+    uView.print(strBuffer);
 }
 
 // -------------------------------------------------------------------------------------
@@ -1691,16 +1694,24 @@ void MicroViewGauge::draw() {
 	offsetX=getX();
 	offsetY=getY();
 
+	// @esmitperez: this block executed regardless, so moved out of if/else
+	degreeSec = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*240;	// total 240 degree in the widget
+	degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
+	toSecX = cos(degreeSec) * (radius / 1.2);
+	toSecY = sin(degreeSec) * (radius / 1.2);
+	uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
+
 	if (needFirstDraw) {
+		sprintf(strBuffer, formatStr, prevValue);	// print with fixed width so that blank space will cover larger value
+		needFirstDraw=false;
+	}
+	else {
 		degreeSec = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*240;	// total 240 degree in the widget
 		degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
 		toSecX = cos(degreeSec) * (radius / 1.2);
 		toSecY = sin(degreeSec) * (radius / 1.2);
 		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
-		sprintf(strBuffer, formatStr, prevValue);	// print with fixed width so that blank space will cover larger value
-		needFirstDraw=false;
-	}
-	else {
+
 		// Draw previous pointer in XOR mode to erase it
 		degreeSec = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*240;	// total 240 degree in the widget
 		degreeSec = (degreeSec+150) * (PI/180);
