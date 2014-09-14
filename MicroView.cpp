@@ -1702,20 +1702,7 @@ void MicroViewGauge::draw() {
 		needFirstDraw=false;
 	}
 	else {
-		degreeSec = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*240;	// total 240 degree in the widget
-		degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
-		toSecX = cos(degreeSec) * (radius / 1.2);
-		toSecY = sin(degreeSec) * (radius / 1.2);
-		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
-
-		// Draw previous pointer in XOR mode to erase it
-		degreeSec = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*240;	// total 240 degree in the widget
-		degreeSec = (degreeSec+150) * (PI/180);
-		toSecX = cos(degreeSec) * (radius / 1.2);
-		toSecY = sin(degreeSec) * (radius / 1.2);
-		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
-		
-		// draw current pointer
+		/// draw current pointer
 		degreeSec = ((float)(uint16_t)(getValue()-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*240;	// total 240 degree in the widget
 		degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
 		toSecX = cos(degreeSec) * (radius / 1.2);
