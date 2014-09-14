@@ -1502,35 +1502,35 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 */
 void MicroViewSlider::drawFace() {
 	uint8_t offsetX, offsetY, endOffset;
-		offsetX=getX();
-		offsetY=getY();
+	offsetX=getX();
+	offsetY=getY();
 
 	//Horizontal styles, style 0 or 1
-		if (style==0 || style==1) {
-			endOffset = offsetX + totalTicks + 2;
+	if (style==0 || style==1) {
+		endOffset = offsetX + totalTicks + 2;
 		// Draw minor ticks
-			for (uint8_t i=offsetX+1; i<endOffset; i+=2) {
-				uView.lineV(i, offsetY+5, 3);
-			}
-		// Draw extensions for major ticks
-			for (uint8_t i=offsetX+1; i<endOffset; i+=10) {
-				uView.lineV(i, offsetY+3, 2);
-			}
+		for (uint8_t i=offsetX+1; i<endOffset; i+=2) {
+			uView.lineV(i, offsetY+5, 3);
 		}
-	//Vertical styles, style 2 or 3
-		else {
-			endOffset = offsetY + totalTicks + 2;
-		// Draw minor ticks
-			for (uint8_t i=offsetY+1; i<=endOffset; i+=2) {
-				uView.lineH(offsetX, i, 3);
-			}
 		// Draw extensions for major ticks
-			for (uint8_t i=offsetY+1; i<=endOffset; i+=10) {
-				uView.lineH(offsetX+3, i, 2);
-			}
+		for (uint8_t i=offsetX+1; i<endOffset; i+=10) {
+			uView.lineV(i, offsetY+3, 2);
 		}
-
 	}
+	//Vertical styles, style 2 or 3
+	else {
+		endOffset = offsetY + totalTicks + 2;
+		// Draw minor ticks
+		for (uint8_t i=offsetY+1; i<=endOffset; i+=2) {
+			uView.lineH(offsetX, i, 3);
+		}
+		// Draw extensions for major ticks
+		for (uint8_t i=offsetY+1; i<=endOffset; i+=10) {
+			uView.lineH(offsetX+3, i, 2);
+		}
+	}
+
+}
 
 /** \brief Draw widget value.
 
@@ -1539,8 +1539,8 @@ void MicroViewSlider::drawFace() {
 void MicroViewSlider::draw() {
 	uint8_t offsetX, offsetY;
 	uint8_t tickPosition=0;
-		char strBuffer[7];
-		char formatStr[] = "%1d";
+	char strBuffer[7];
+	char formatStr[] = "%1d";
 
 	formatStr[1] = '0' + getMaxValLen();	// Set the field width for the value range
 
@@ -1715,9 +1715,9 @@ void MicroViewGauge::draw() {
 
 	// Draw value
 	if (style>0) 
-		uView.setCursor(offsetX-valOffset, offsetY+10);
+	uView.setCursor(offsetX-valOffset, offsetY+10);
 	else
-		uView.setCursor(offsetX-valOffset, offsetY+11);
+	uView.setCursor(offsetX-valOffset, offsetY+11);
 	
 	uView.print(strBuffer);
 }
