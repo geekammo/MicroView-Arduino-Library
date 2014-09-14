@@ -1547,7 +1547,6 @@ void MicroViewSlider::draw() {
 	offsetX=getX();
 	offsetY=getY();
 
-	// @esmitperez: this block executed all the time, so moved out of if/else
 	// Draw previous pointer in XOR mode to erase it
 	if (style==0 || style==1){		//Horizontal
 		tickPosition = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
@@ -1692,7 +1691,6 @@ void MicroViewGauge::draw() {
 	offsetX=getX();
 	offsetY=getY();
 
-	// @esmitperez: this block executed regardless, so moved out of if/else
 	degreeSec = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*240;	// total 240 degree in the widget
 	degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
 	toSecX = cos(degreeSec) * (radius / 1.2);
