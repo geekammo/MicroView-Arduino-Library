@@ -1472,22 +1472,22 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
 
 	switch(sty){
-	  case WIDGETSTYLE1: 
-	    style=1;
-	    totalTicks=60;
-	    break;
-	  case WIDGETSTYLE2: 
-	    style=2;
-	    totalTicks=20;
-	    break;
-	  case WIDGETSTYLE3: 
-	    style=3;
-	    totalTicks=40;
-	    break;
-	  default: 
-	    style=0;
-	    totalTicks=30;
-	    break;
+		case WIDGETSTYLE1: 
+			style=1;
+			totalTicks=60;
+		break;
+			case WIDGETSTYLE2: 
+			style=2;
+			totalTicks=20;
+			break;
+		case WIDGETSTYLE3: 
+			style=3;
+			totalTicks=40;
+			break;
+		default: 
+			style=0;
+			totalTicks=30;
+			break;
 	}
 
 	prevValue=getMinValue();
@@ -1502,35 +1502,35 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 */
 void MicroViewSlider::drawFace() {
 	uint8_t offsetX, offsetY, endOffset;
-	offsetX=getX();
-	offsetY=getY();
+		offsetX=getX();
+		offsetY=getY();
 
 	//Horizontal styles, style 0 or 1
-	if (style==0 || style==1) {
-		endOffset = offsetX + totalTicks + 2;
+		if (style==0 || style==1) {
+			endOffset = offsetX + totalTicks + 2;
 		// Draw minor ticks
-		for (uint8_t i=offsetX+1; i<endOffset; i+=2) {
-			uView.lineV(i, offsetY+5, 3);
-		}
+			for (uint8_t i=offsetX+1; i<endOffset; i+=2) {
+				uView.lineV(i, offsetY+5, 3);
+			}
 		// Draw extensions for major ticks
-		for (uint8_t i=offsetX+1; i<endOffset; i+=10) {
-			uView.lineV(i, offsetY+3, 2);
+			for (uint8_t i=offsetX+1; i<endOffset; i+=10) {
+				uView.lineV(i, offsetY+3, 2);
+			}
 		}
-	}
 	//Vertical styles, style 2 or 3
-	else {
-		endOffset = offsetY + totalTicks + 2;
+		else {
+			endOffset = offsetY + totalTicks + 2;
 		// Draw minor ticks
-		for (uint8_t i=offsetY+1; i<=endOffset; i+=2) {
-			uView.lineH(offsetX, i, 3);
-		}
+			for (uint8_t i=offsetY+1; i<=endOffset; i+=2) {
+				uView.lineH(offsetX, i, 3);
+			}
 		// Draw extensions for major ticks
-		for (uint8_t i=offsetY+1; i<=endOffset; i+=10) {
-			uView.lineH(offsetX+3, i, 2);
+			for (uint8_t i=offsetY+1; i<=endOffset; i+=10) {
+				uView.lineH(offsetX+3, i, 2);
+			}
 		}
-	}
 
-}
+	}
 
 /** \brief Draw widget value.
 
@@ -1539,8 +1539,8 @@ void MicroViewSlider::drawFace() {
 void MicroViewSlider::draw() {
 	uint8_t offsetX, offsetY;
 	uint8_t tickPosition=0;
-	char strBuffer[7];
-	char formatStr[] = "%1d";
+		char strBuffer[7];
+		char formatStr[] = "%1d";
 
 	formatStr[1] = '0' + getMaxValLen();	// Set the field width for the value range
 
@@ -1561,43 +1561,43 @@ void MicroViewSlider::draw() {
 
 
 	if (needFirstDraw) {
-	    sprintf(strBuffer, formatStr, prevValue);	// print with fixed width so that blank space will cover larger value
-	    needFirstDraw=false;
+		sprintf(strBuffer, formatStr, prevValue);	// print with fixed width so that blank space will cover larger value
+		needFirstDraw=false;
 	}
 	else {
-	    // Draw current pointer
-	    if (style==0 || style==1){		//Horizontal
-	    	tickPosition = ((float)(uint16_t)(getValue()-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
-	    	uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
-	    	uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
-	    }
-	    else {					//Vertical
-	    	tickPosition = ((float)(uint16_t)(getMaxValue()-getValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
-	    	uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
-	    	uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
-	    }
+		// Draw current pointer
+		if (style==0 || style==1){		//Horizontal
+			tickPosition = ((float)(uint16_t)(getValue()-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
+			uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
+			uView.pixel(offsetX+1+tickPosition,offsetY+1, WHITE, XOR);
+		}
+		else {					//Vertical
+			tickPosition = ((float)(uint16_t)(getMaxValue()-getValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
+			uView.lineV(offsetX+7, offsetY+tickPosition, 3, WHITE, XOR);
+			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
+		}
 
-	    sprintf(strBuffer, formatStr, getValue());	// print with fixed width so that blank space will cover larger value
-	    prevValue=getValue();
+		sprintf(strBuffer, formatStr, getValue());	// print with fixed width so that blank space will cover larger value
+		prevValue=getValue();
 	}
 
 	// Draw value
-    switch(style){
-    	case 0:
-	    	uView.setCursor(offsetX+totalTicks+4, offsetY+1);
-	    	break;
-    	case 1:
-	    	uView.setCursor(offsetX, offsetY+10);
-	    	break;
-    	case 2:
-	    	uView.setCursor(offsetX+1, offsetY+totalTicks+4);
-	    	break;  
-    	default:
-	    	uView.setCursor(offsetX+9, offsetY);
-	    	break;
-    }
+	switch(style){
+		case 0:
+			uView.setCursor(offsetX+totalTicks+4, offsetY+1);
+			break;
+		case 1:
+			uView.setCursor(offsetX, offsetY+10);
+			break;
+		case 2:
+			uView.setCursor(offsetX+1, offsetY+totalTicks+4);
+			break;  
+		default:
+			uView.setCursor(offsetX+9, offsetY);
+			break;
+	}
 
-    uView.print(strBuffer);
+	uView.print(strBuffer);
 }
 
 // -------------------------------------------------------------------------------------
@@ -1651,7 +1651,7 @@ void MicroViewGauge::drawFace() {
 	offsetY=getY();
 
 	uView.circle(offsetX,offsetY,radius);
-	
+
 	for (int i=150;i<=390;i+=30) {	// Major tick from 150 degree to 390 degree
 		degreeSec=i*(PI/180);
 		fromSecX = cos(degreeSec) * (radius / 1.5);
@@ -1715,9 +1715,9 @@ void MicroViewGauge::draw() {
 
 	// Draw value
 	if (style>0) 
-	uView.setCursor(offsetX-valOffset, offsetY+10);
+		uView.setCursor(offsetX-valOffset, offsetY+10);
 	else
-	uView.setCursor(offsetX-valOffset, offsetY+11);
+		uView.setCursor(offsetX-valOffset, offsetY+11);
 	
 	uView.print(strBuffer);
 }
