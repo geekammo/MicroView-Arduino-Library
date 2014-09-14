@@ -1475,8 +1475,8 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 		case WIDGETSTYLE1: 
 			style=1;
 			totalTicks=60;
-		break;
-			case WIDGETSTYLE2: 
+			break;
+		case WIDGETSTYLE2: 
 			style=2;
 			totalTicks=20;
 			break;
