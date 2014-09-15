@@ -631,11 +631,11 @@ void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t color
 		bool intersected = false;
 
 		// Optimization: relative x squared only changes with the outer loop/the horizontal scan.
-		int16_t rx2 = (x-x0) * (x-x0);
+		uint16_t rx2 = (x-x0) * (x-x0);
 
 		// Scan vertically...
 		for (uint16_t y = yStart; y <= yEnd; ++y) {
-			int16_t ry2 = (y-y0) * (y-y0);
+			uint16_t ry2 = (y-y0) * (y-y0);
 			if (rx2 + ry2 <= radiusSq) {
 				pixel(x, y, color, mode);
 				intersected = true;
