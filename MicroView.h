@@ -246,7 +246,7 @@ public:
     /** \brief Draw widget face overridden by child class. */
 	virtual void drawFace(){};
 	void reDraw();
-	
+	virtual ~MicroViewWidget(){};
 private:
 	uint8_t x;
 	uint8_t y;
