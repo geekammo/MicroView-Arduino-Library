@@ -1656,18 +1656,18 @@ void MicroViewGauge::drawFace() {
 		degreeSec=i*(PI/180);
 		fromSecX = cos(degreeSec) * (radius / 1.5);
 		fromSecY = sin(degreeSec) * (radius / 1.5);
-		toSecX = cos(degreeSec) * (radius / 1);
-		toSecY = sin(degreeSec) * (radius / 1);
+		toSecX = cos(degreeSec) * radius;
+		toSecY = sin(degreeSec) * radius;
 		uView.line(1+offsetX+fromSecX,1+offsetY+fromSecY,1+offsetX+toSecX,1+offsetY+toSecY);
 	}
 	
 	if(radius>15) {
-		for (int i=150;i<=390;i+=15) {	// Minor tick from 150 degree to 390 degree
+		for (int i=165;i<=375;i+=30) {	// Minor tick from 165 degree to 375 degree
 			degreeSec=i*(PI/180);
 			fromSecX = cos(degreeSec) * (radius / 1.3);
 			fromSecY = sin(degreeSec) * (radius / 1.3);
-			toSecX = cos(degreeSec) * (radius / 1);
-			toSecY = sin(degreeSec) * (radius / 1);
+			toSecX = cos(degreeSec) * radius;
+			toSecY = sin(degreeSec) * radius;
 			uView.line(1+offsetX+fromSecX,1+offsetY+fromSecY,1+offsetX+toSecX,1+offsetY+toSecY);
 		}
 	}
