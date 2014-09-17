@@ -266,6 +266,7 @@ public:
 	void draw();
 	void drawFace();
 private:
+	void drawPointer();
 	uint8_t totalTicks, style;
 	bool noValDraw;
 	int16_t prevValue;
@@ -278,6 +279,7 @@ public:
 	void draw();
 	void drawFace();
 private:
+	void drawPointer();
 	uint8_t radius, style;
 	bool noValDraw;
 	int16_t prevValue;
