@@ -1443,7 +1443,20 @@ void MicroViewWidget::reDraw() {
 	this->drawFace();
 	this->draw();
 }
-	
+
+/** \brief Draw a signed decimal numeric value at the current cursor location.
+
+	The value is right justified with leading spaces, within a field the length of the maximum posible for the widget's value range.
+*/
+void MicroViewWidget::drawNumValue(int16_t value) {
+	char strBuffer[7];
+	char formatStr[] = "%1d";
+
+	formatStr[1] = '0' + getMaxValLen();	// Set the field width for the value range
+	sprintf(strBuffer, formatStr, value);
+	uView.print(strBuffer);
+}
+
 // -------------------------------------------------------------------------------------
 // MicroViewWidget Class - end
 // -------------------------------------------------------------------------------------
@@ -1459,6 +1472,7 @@ void MicroViewWidget::reDraw() {
 MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
 	style=0;
 	totalTicks=30;
+	noValDraw=false;
 	prevValue=getMinValue();
 	needFirstDraw=true;
 	drawFace();
@@ -1467,11 +1481,13 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 
 /** \brief MicroViewSlider class initialisation with style. 
 
-	Initialise the MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) or WIDGETSTYLE3 (like 1, but vertical). 	
+	Initialise the MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) or WIDGETSTYLE3 (like 1, but vertical).
+	Add WIDGETNOVALUE to the style to suppress displaying the numeric value. E.g. WIDGETSTYLE0 + WIDGETNOVALUE
 */
 MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
+	noValDraw = sty & WIDGETNOVALUE; // set "no value draw" flag as specified
 
-	switch(sty){
+	switch(sty & ~WIDGETNOVALUE) {
 		case WIDGETSTYLE1: 
 			style=1;
 			totalTicks=60;
@@ -1529,7 +1545,6 @@ void MicroViewSlider::drawFace() {
 			uView.lineH(offsetX+3, i, 2);
 		}
 	}
-
 }
 
 /** \brief Draw widget value.
@@ -1539,15 +1554,11 @@ void MicroViewSlider::drawFace() {
 void MicroViewSlider::draw() {
 	uint8_t offsetX, offsetY;
 	uint8_t tickPosition=0;
-	char strBuffer[7];
-	char formatStr[] = "%1d";
-
-	formatStr[1] = '0' + getMaxValLen();	// Set the field width for the value range
 
 	offsetX=getX();
 	offsetY=getY();
 
-	// Draw previous pointer in XOR mode to erase it
+	// Draw pointer in XOR mode for first draw or to erase it
 	if (style==0 || style==1){		//Horizontal
 		tickPosition = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks;
 		uView.lineH(offsetX+tickPosition,offsetY, 3, WHITE, XOR);
@@ -1559,9 +1570,7 @@ void MicroViewSlider::draw() {
 		uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
 	}
 
-
 	if (needFirstDraw) {
-		sprintf(strBuffer, formatStr, prevValue);	// print with fixed width so that blank space will cover larger value
 		needFirstDraw=false;
 	}
 	else {
@@ -1577,27 +1586,28 @@ void MicroViewSlider::draw() {
 			uView.pixel(offsetX+6, offsetY+1+tickPosition, WHITE, XOR);
 		}
 
-		sprintf(strBuffer, formatStr, getValue());	// print with fixed width so that blank space will cover larger value
 		prevValue=getValue();
 	}
 
-	// Draw value
-	switch(style){
-		case 0:
-			uView.setCursor(offsetX+totalTicks+4, offsetY+1);
-			break;
-		case 1:
-			uView.setCursor(offsetX, offsetY+10);
-			break;
-		case 2:
-			uView.setCursor(offsetX+1, offsetY+totalTicks+4);
-			break;  
-		default:
-			uView.setCursor(offsetX+9, offsetY);
-			break;
-	}
+	// Draw numeric value if required
+	if (!noValDraw) {
+		switch(style) {
+			case 0:
+				uView.setCursor(offsetX+totalTicks+4, offsetY+1);
+				break;
+			case 1:
+				uView.setCursor(offsetX, offsetY+10);
+				break;
+			case 2:
+				uView.setCursor(offsetX+1, offsetY+totalTicks+4);
+				break;
+			default:
+				uView.setCursor(offsetX+9, offsetY);
+				break;
+		}
 
-	uView.print(strBuffer);
+		drawNumValue(prevValue);
+	}
 }
 
 // -------------------------------------------------------------------------------------
@@ -1615,6 +1625,7 @@ void MicroViewSlider::draw() {
 MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
 	style=0;
 	radius=15;
+	noValDraw=false;
 	prevValue=getMinValue();
 	needFirstDraw=true;
 	drawFace();
@@ -1624,9 +1635,12 @@ MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t 
 /** \brief MicroViewGauge class initialisation with style.
 
 	Initialise the MicroViewGauge widget with style WIDGETSTYLE0 or WIDGETSTYLE1.
+	Add WIDGETNOVALUE to the style to suppress displaying the numeric value. E.g. WIDGETSTYLE0 + WIDGETNOVALUE
 */
 MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
-	if (sty==WIDGETSTYLE0) {
+	noValDraw = sty & WIDGETNOVALUE; // set "no value draw" flag as specified
+
+	if ((sty & ~WIDGETNOVALUE) == WIDGETSTYLE0) {
 		style=0;
 		radius=15;
 	}
@@ -1679,18 +1693,12 @@ void MicroViewGauge::drawFace() {
 */
 void MicroViewGauge::draw() {
 	uint8_t offsetX, offsetY;
-	uint8_t maxValLen, valOffset;
 	float degreeSec, toSecX, toSecY;
-	char strBuffer[7];
-	char formatStr[] = "%1d"; // The 1 will be replaced later by the proper length
-
-	maxValLen = getMaxValLen();
-	formatStr[1] = '0' + maxValLen;	// Set the field width for the value range
-	valOffset = maxValLen * 3 - 1;	// Offset left of centre to print the value
 
 	offsetX=getX();
 	offsetY=getY();
 
+	// Draw pointer in XOR mode for first draw or to erase it
 	degreeSec = ((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*240;	// total 240 degree in the widget
 	degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
 	toSecX = cos(degreeSec) * (radius / 1.2);
@@ -1698,28 +1706,30 @@ void MicroViewGauge::draw() {
 	uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
 
 	if (needFirstDraw) {
-		sprintf(strBuffer, formatStr, prevValue);	// print with fixed width so that blank space will cover larger value
 		needFirstDraw=false;
 	}
 	else {
-		/// draw current pointer
+		// draw current pointer
 		degreeSec = ((float)(uint16_t)(getValue()-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*240;	// total 240 degree in the widget
 		degreeSec = (degreeSec+150) * (PI/180);		// 150 degree starting point
 		toSecX = cos(degreeSec) * (radius / 1.2);
 		toSecY = sin(degreeSec) * (radius / 1.2);
 		uView.line(offsetX,offsetY,1+offsetX+toSecX,1+offsetY+toSecY, WHITE,XOR);
 
-		sprintf(strBuffer, formatStr, getValue());	// print with fixed width so that blank space will cover larger value
 		prevValue=getValue();
 	}
 
-	// Draw value
-	if (style>0) 
-	uView.setCursor(offsetX-valOffset, offsetY+10);
-	else
-	uView.setCursor(offsetX-valOffset, offsetY+11);
-	
-	uView.print(strBuffer);
+	// Draw numeric value if required
+	if (!noValDraw) {
+		uint8_t valX = offsetX - (getMaxValLen() * 3 - 1);	// Offset left of centre to print the value
+
+		if (style > 0)
+			uView.setCursor(valX, offsetY+10);
+		else
+			uView.setCursor(valX, offsetY+11);
+
+		drawNumValue(prevValue);
+	}
 }
 
 // -------------------------------------------------------------------------------------
