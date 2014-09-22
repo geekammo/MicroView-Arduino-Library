@@ -77,9 +77,12 @@
 
 #define WIDGETSTYLE0			0
 #define WIDGETSTYLE1			1
+// Added for Vertical slider styles
 #define WIDGETSTYLE2			2
-//Added for Vertical slider styles
 #define WIDGETSTYLE3			3
+
+// Flag to be added to widget style to indicate no numeric value display
+#define WIDGETNOVALUE			0x80
 
 #define SETCONTRAST 		0x81
 #define DISPLAYALLONRESUME 	0xA4
@@ -237,8 +240,8 @@ public:
 	int16_t getMinValue();
 	int16_t getMaxValue();
 	int16_t getValue();
+	void setMinValue(int16_t min);
 	void setMaxValue(int16_t max);
-	void setMinValue(int16_t max);
 	void setValue(int16_t val);
 	uint8_t getMaxValLen();
 	/** \brief Draw widget value overridden by child class. */
@@ -246,7 +249,8 @@ public:
     /** \brief Draw widget face overridden by child class. */
 	virtual void drawFace(){};
 	void reDraw();
-	
+	void drawNumValue(int16_t value);
+	virtual ~MicroViewWidget(){};
 private:
 	uint8_t x;
 	uint8_t y;
@@ -262,7 +266,9 @@ public:
 	void draw();
 	void drawFace();
 private:
+	void drawPointer();
 	uint8_t totalTicks, style;
+	bool noValDraw;
 	int16_t prevValue;
 };
 
@@ -273,7 +279,9 @@ public:
 	void draw();
 	void drawFace();
 private:
+	void drawPointer();
 	uint8_t radius, style;
+	bool noValDraw;
 	int16_t prevValue;
 };
 
