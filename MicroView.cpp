@@ -1362,11 +1362,13 @@ int MicroView::readSerial(void)
 	The MicroViewWidget class is the parent class for child widget like MicroViewSlider and MicroViewGauge.
 */
 MicroViewWidget::MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max) {
-	setX(newx);
-	setY(newy);
-	value=0;
-	setMinValue(min);
-	setMaxValue(max);
+	x=newx;
+	y=newy;
+	value=min;
+	valLen=getInt16PrintLen(value);
+	minValue=min;
+	maxValue=max;
+	setMaxValLen();
 }
 
 /** \brief Get widget x position. */
@@ -1403,36 +1405,43 @@ int16_t MicroViewWidget::getValue() { return value; }
 
 	The minimum value of the widget is set to the variable passed in.
 */
-void MicroViewWidget::setMinValue(int16_t min) { minValue=min; }
+void MicroViewWidget::setMinValue(int16_t min) {
+	minValue = min;
+	setMaxValLen();
+}
 
 /** \brief Set maximum value.
 
 	The maximum value of the widget is set to the variable passed in.
 */
-void MicroViewWidget::setMaxValue(int16_t max) { maxValue=max; }
-
-/** \brief Get the maximum possible print lenth of the value
-
-	Return the maximum number of characters that would be printed using printf("%d", value) for the current value range.
-*/
-uint8_t MicroViewWidget::getMaxValLen() {
-	uint8_t minLen, maxLen;
-
-	maxLen = getInt16PrintLen(maxValue);
-	minLen = getInt16PrintLen(minValue);
-	return maxLen >= minLen ? maxLen : minLen;
+void MicroViewWidget::setMaxValue(int16_t max) {
+	maxValue = max;
+	setMaxValLen();
 }
+
+/** \brief Get the maximum possible print length of the value
+
+	Return the maximum number of characters that would be printed using uView.print(value) for the current value range.
+*/
+uint8_t MicroViewWidget::getMaxValLen() { return maxValLen; }
 
 /** \brief Set current value.
 
 	The current value of the widget is set to the variable passed in.
 */
-void MicroViewWidget::setValue(int16_t val) { 
-	if ((val<=maxValue) && (val>=minValue)){ 
-		value=val; 
+void MicroViewWidget::setValue(int16_t val) {
+	if ((val<=maxValue) && (val>=minValue)) {
+		value = val;
+		valLen = getInt16PrintLen(val);
 		this->draw();
 	}
 }
+
+/** \brief Get the print length of the value
+
+	Return the number of characters that would be printed using uView.print(value) for the current value.
+*/
+uint8_t MicroViewWidget::getValLen() { return valLen; }
 
 /** \brief MicroView Widget reDraw routine.
 	
@@ -1449,12 +1458,22 @@ void MicroViewWidget::reDraw() {
 	The value is right justified with leading spaces, within a field the length of the maximum posible for the widget's value range.
 */
 void MicroViewWidget::drawNumValue(int16_t value) {
-	char strBuffer[7];
-	char formatStr[] = "%1d";
 
-	formatStr[1] = '0' + getMaxValLen();	// Set the field width for the value range
-	sprintf(strBuffer, formatStr, value);
-	uView.print(strBuffer);
+	for (uint8_t i = maxValLen - getInt16PrintLen(value); i > 0; i--) {
+		uView.print(" ");
+	}
+	uView.print(value);
+}
+
+/*	Set the maximum number of characters that would be printed
+	using uView.print(value) for the current value range.
+*/
+void MicroViewWidget::setMaxValLen() {
+	uint8_t minLen, maxLen;
+
+	maxLen = getInt16PrintLen(maxValue);
+	minLen = getInt16PrintLen(minValue);
+	maxValLen = maxLen >= minLen ? maxLen : minLen;
 }
 
 // -------------------------------------------------------------------------------------
@@ -1844,11 +1863,34 @@ MicroView uView;
 
 /** \brief Get the number of characters for a 16 bit signed value.
 
-	Return the number of characters that would be printed using printf("%d", x) for x being a signed 16 bit integer.
+	Return the number of characters that would be printed using uView.print(x) for x being a signed 16 bit integer.
 */
 uint8_t getInt16PrintLen(int16_t val) {
-	char sbuf[7];
+	int16_t i;
+	uint8_t count;
 
-	return sprintf(sbuf, "%d", val);
+	if (val >= 10000) {
+		return 5;
+	}
+
+	if (val <= -10000) {
+		return 6;
+	}
+
+	if (val >= 0) {
+		count = 1;
+	}
+	else {
+		count = 2;
+		val = abs(val);
+	}
+
+	i = 10;
+	while (val >= i) {
+		count++;
+		i *= 10;
+	}
+
+	return count;
 }
 

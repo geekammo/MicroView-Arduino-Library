@@ -243,6 +243,7 @@ public:
 	void setMinValue(int16_t min);
 	void setMaxValue(int16_t max);
 	void setValue(int16_t val);
+	uint8_t getValLen();
 	uint8_t getMaxValLen();
 	/** \brief Draw widget value overridden by child class. */
     virtual void draw(){};
@@ -252,11 +253,14 @@ public:
 	void drawNumValue(int16_t value);
 	virtual ~MicroViewWidget(){};
 private:
+	void setMaxValLen();
 	uint8_t x;
 	uint8_t y;
 	int16_t maxValue;
 	int16_t minValue;
 	int16_t value;
+	uint8_t valLen;
+	uint8_t maxValLen;
 };
 
 class MicroViewSlider: public MicroViewWidget{

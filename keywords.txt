@@ -63,6 +63,8 @@ getMaxValue	KEYWORD2
 setMaxValue	KEYWORD2
 setMinValue	KEYWORD2
 setValue	KEYWORD2
+getValLen	KEYWORD2
+getMaxValLen	KEYWORD2
 draw	KEYWORD2
 reDraw	KEYWORD2
 drawFace	KEYWORD2

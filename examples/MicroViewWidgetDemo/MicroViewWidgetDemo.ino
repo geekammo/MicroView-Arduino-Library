@@ -208,7 +208,7 @@ void loop() {
 
   /*  ==================== Demo 13 ====================
       Gauge style 1, with no numeric value.
-      Value manually displayed beneath, as a letter.
+      Value manually displayed as a letter.
       Range 1 to 26 (A to Z).
       ================================================ */
   demoNumber(13);
@@ -246,15 +246,15 @@ void customSlider0(int16_t val) {
 
 // Update function for Demo 9
 void customSlider1(int16_t val) {
+  widget1->setValue(val);
   uint8_t offsetY = widget1->getY() - 10;
   uint8_t offsetX = widget1->getX() + 14;
   uView.setCursor(offsetX, offsetY);
   uView.print("      "); // erase the previous value in case it's longer
   // calculate the offset to centre the value
-  offsetX += ((widget1->getMaxValLen() - getInt16PrintLen(val)) * 3);
+  offsetX += ((widget1->getMaxValLen() - widget1->getValLen()) * 3);
   uView.setCursor(offsetX, offsetY);
   uView.print(val);
-  widget1->setValue(val);
 }
 
 // Update function for Demo 10
@@ -324,6 +324,7 @@ void spin(int16_t lowVal, int16_t highVal, int16_t stepSize,
           unsigned long stepDelay, void (*drawFunction)(int16_t val)) {
   drawFunction(lowVal);
   uView.display();
+  prevVal = lowVal;
   delay(1500);
 
   for (int16_t i = lowVal + stepSize; i <= highVal; i += stepSize) {
