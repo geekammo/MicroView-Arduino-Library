@@ -604,62 +604,63 @@ void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius) {
 
 /** \brief Draw filled circle with color and mode.
 
-	Draw filled circle with radius using color and mode at x,y of the screen buffer.
+	Draw filled circle with radius using color and mode at x,y of the screen
+	buffer.  Uses the Bresenham circle algorithm with a few modifications to
+	paint the circle without overlapping draw operations.
 */
 void MicroView::circleFill(uint8_t x0, uint8_t y0, uint8_t radius, uint8_t
 color, uint8_t mode) {
-  int8_t x = radius;
-  int8_t y = 0;
-  int8_t radiusError = 1 - x;
-  int8_t y_last = y0 + x;
-  int8_t y_low;
-  int8_t x_alt;
-  int8_t x_alt_max;
-  while (x >= y) {
-    pixel(x + x0, y + y0, color, mode);
-    x_alt = (x0 - x);
-    x_alt_max = x0 + x;
-    while (x_alt < x_alt_max) { // Fill the line between these two points
-      pixel(x_alt, y + y0, color, mode);
-      x_alt++;
-    }
-    if (y != x) {
-      pixel(y + x0, x + y0, color, mode);
-      pixel(y + x0, y0 - x, color, mode);
-    }
-    if (y != 0) {
-      pixel(x + x0, y0 - y, color, mode);
-      x_alt = (x0 - x);
-      x_alt_max = x0 + x;
-      while (x_alt < x_alt_max) {
-	pixel(x_alt, y0 - y, color, mode);
-	x_alt++;
-      }
-      if (y != x) {
-	pixel(x0 - y, x + y0, color, mode);
-	pixel(x0 - y, y0 - x, color, mode);
-	if (y_last > y0 + x) {
-	  x_alt = x0 - y + 1;
-	  x_alt_max = x0 + y;
-	  y_last = y0 + x;
-	  y_low = y0 - x;
-	  while (x_alt < x_alt_max) {
-	    pixel(x_alt, y_last, color, mode);
-	    pixel(x_alt, y_low, color, mode);
-	    x_alt++;
-	  }
+	int8_t x = radius;
+	int8_t y = 0;
+	int8_t radiusError = 1 - x;
+	int8_t y_last = y0 + x;
+	int8_t y_low;
+	int8_t x_alt;
+	int8_t x_alt_max;
+	while (x >= y) {
+		pixel(x + x0, y + y0, color, mode);
+		x_alt = (x0 - x);
+		x_alt_max = x0 + x;
+		while (x_alt < x_alt_max) {
+			pixel(x_alt, y + y0, color, mode);
+			x_alt++;
+		}
+		if (y != x) {
+			pixel(y + x0, x + y0, color, mode);
+			pixel(y + x0, y0 - x, color, mode);
+		}
+		if (y != 0) {
+			pixel(x + x0, y0 - y, color, mode);
+			x_alt = (x0 - x);
+			x_alt_max = x0 + x;
+			while (x_alt < x_alt_max) {
+				pixel(x_alt, y0 - y, color, mode);
+				x_alt++;
+			}
+			if (y != x) {
+				pixel(x0 - y, x + y0, color, mode);
+				pixel(x0 - y, y0 - x, color, mode);
+				if (y_last > y0 + x) {
+					x_alt = x0 - y + 1;
+					x_alt_max = x0 + y;
+					y_last = y0 + x;
+					y_low = y0 - x;
+					while (x_alt < x_alt_max) {
+						pixel(x_alt, y_last, color, mode);
+						pixel(x_alt, y_low, color, mode);
+						x_alt++;
+					}
+				}
+			}
+		}
+		y++;
+		if (radiusError<0) {
+			radiusError += 2 * y + 1;
+		} else {
+			x--;
+			radiusError += 2 * (y - x + 1);
+		}
 	}
-      }
-    }
-    y++;
-    if (radiusError<0) {
-      radiusError += 2 * y + 1;
-    }
-    else {
-      x--;
-      radiusError += 2 * (y - x + 1);
-    }
-  }
 }
 
 /** \brief Get LCD height.
