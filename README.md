@@ -92,6 +92,14 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.21b: 22nd September 2014 by Esmit Pérez and Scott Allen**
+* re-factored code if/else with switch - Esmit Pérez
+* simplified draw() to remove redundant code - Esmit Pérez
+* added WIDGETNOVALUE to widgets - Scott 
+* fixed compiler warning - Scott
+* improved gauge minor ticks - Scott
+* added destructor for MicroViewWidget base class - Scott
+
 **v1.20b: 27th August 2014 by Scott Allen, Emil Ong**
 * added Flashing Heart Example - JP
 * added getScreenBuffer() for access to screen RAM - Scott
