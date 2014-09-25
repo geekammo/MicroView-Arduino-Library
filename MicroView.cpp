@@ -1366,8 +1366,7 @@ MicroViewWidget::MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_
 	posY(newy),
 	minValue(min),
 	maxValue(max),
-	value(min),
-	needFirstDraw(true)
+	value(min)
 {
 	valLen=getInt16PrintLen(value);
 	setMaxValLen();
@@ -1450,8 +1449,8 @@ uint8_t MicroViewWidget::getValLen() { return valLen; }
 	Redraws the widget.
 */
 void MicroViewWidget::reDraw() {
-	needFirstDraw=true;
 	this->drawFace();
+	this->drawPointer(); // initial pointer (will be erased)
 	this->draw();
 }
 
@@ -1498,6 +1497,7 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 	prevValue(value)
 {
 	drawFace();
+	drawPointer(); // Initial pointer (will be erased)
 	draw();
 }
 
@@ -1532,6 +1532,7 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 	}
 
 	drawFace();
+	drawPointer(); // Initial pointer (will be erased)
 	draw();
 }
 
@@ -1573,17 +1574,9 @@ void MicroViewSlider::drawFace() {
 	Convert the current value of the widget and draw the ticker representing the value.
 */
 void MicroViewSlider::draw() {
-	// Draw the initial pointer or erase the previous pointer
-	drawPointer();
-
-	if (needFirstDraw) {
-		needFirstDraw=false;
-	}
-	else {
-		prevValue=value;
-		// Draw current pointer
-		drawPointer();
-	}
+	drawPointer(); // Erase the previous pointer
+	prevValue=value;
+	drawPointer(); // Draw the current pointer
 
 	// Draw numeric value if required
 	if (!noValDraw) {
@@ -1642,6 +1635,7 @@ MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t 
 	prevValue(value)
 {
 	drawFace();
+	drawPointer(); // Initial pointer (will be erased)
 	draw();
 }
 
@@ -1666,6 +1660,7 @@ MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t 
 	}
 
 	drawFace();
+	drawPointer(); // Initial pointer (will be erased)
 	draw();
 }
 
@@ -1704,17 +1699,9 @@ void MicroViewGauge::drawFace() {
 	Convert the current value of the widget and draw the ticker representing the value.
 */
 void MicroViewGauge::draw() {
-	// Draw the initial pointer or erase the previous pointer
-	drawPointer();
-
-	if (needFirstDraw) {
-		needFirstDraw=false;
-	}
-	else {
-		prevValue=value;
-		// Draw current pointer
-		drawPointer();
-	}
+	drawPointer(); // Erase the previous pointer
+	prevValue=value;
+	drawPointer(); // Draw the current pointer
 
 	// Draw numeric value if required
 	if (!noValDraw) {

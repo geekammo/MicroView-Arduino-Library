@@ -244,8 +244,8 @@ public:
 	uint8_t getValLen();
 	uint8_t getMaxValLen();
 	/** \brief Draw widget value overridden by child class. */
-    virtual void draw(){};
-    /** \brief Draw widget face overridden by child class. */
+	virtual void draw(){};
+	/** \brief Draw widget face overridden by child class. */
 	virtual void drawFace(){};
 	void reDraw();
 	void drawNumValue(int16_t value);
@@ -258,8 +258,9 @@ protected:
 	int16_t value;
 	uint8_t valLen;
 	uint8_t maxValLen;
-	bool needFirstDraw;
 private:
+	/** \brief Draw or erase the widget pointer. Overridden by child class. */
+	virtual void drawPointer(){};
 	void setMaxValLen();
 };
 
