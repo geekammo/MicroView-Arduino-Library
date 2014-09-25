@@ -236,7 +236,6 @@ public:
 	uint8_t getY();
 	void setX(uint8_t newx);
 	void setY(uint8_t newy);
-	
 	int16_t getMinValue();
 	int16_t getMaxValue();
 	int16_t getValue();
@@ -252,15 +251,16 @@ public:
 	void reDraw();
 	void drawNumValue(int16_t value);
 	virtual ~MicroViewWidget(){};
-private:
-	void setMaxValLen();
-	uint8_t x;
-	uint8_t y;
+protected:
+	uint8_t posX;
+	uint8_t posY;
 	int16_t maxValue;
 	int16_t minValue;
 	int16_t value;
 	uint8_t valLen;
 	uint8_t maxValLen;
+private:
+	void setMaxValLen();
 };
 
 class MicroViewSlider: public MicroViewWidget{
