@@ -1361,13 +1361,15 @@ int MicroView::readSerial(void)
 
 	The MicroViewWidget class is the parent class for child widget like MicroViewSlider and MicroViewGauge.
 */
-MicroViewWidget::MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max) {
-	posX=newx;
-	posY=newy;
-	value=min;
+MicroViewWidget::MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max):
+	posX(newx),
+	posY(newy),
+	minValue(min),
+	maxValue(max),
+	value(min),
+	needFirstDraw(true)
+{
 	valLen=getInt16PrintLen(value);
-	minValue=min;
-	maxValue=max;
 	setMaxValLen();
 }
 
@@ -1488,12 +1490,13 @@ void MicroViewWidget::setMaxValLen() {
 
 	Initialise the MicroViewSlider widget with default style.
 */
-MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
-	style=0;
-	totalTicks=30;
-	noValDraw=false;
-	prevValue=minValue;
-	needFirstDraw=true;
+MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max):
+	MicroViewWidget(newx, newy, min, max),
+	style(0),
+	totalTicks(30),
+	noValDraw(false),
+	prevValue(value)
+{
 	drawFace();
 	draw();
 }
@@ -1503,7 +1506,10 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 	Initialise the MicroViewSlider widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) or WIDGETSTYLE3 (like 1, but vertical).
 	Add WIDGETNOVALUE to the style to suppress displaying the numeric value. E.g. WIDGETSTYLE0 + WIDGETNOVALUE
 */
-MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
+MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):
+	MicroViewWidget(newx, newy, min, max),
+	prevValue(value)
+{
 	noValDraw = sty & WIDGETNOVALUE; // set "no value draw" flag as specified
 
 	switch(sty & ~WIDGETNOVALUE) {
@@ -1525,8 +1531,6 @@ MicroViewSlider::MicroViewSlider(uint8_t newx, uint8_t newy, int16_t min, int16_
 			break;
 	}
 
-	prevValue=minValue;
-	needFirstDraw=true;
 	drawFace();
 	draw();
 }
@@ -1630,12 +1634,13 @@ void MicroViewSlider::drawPointer() {
 
 	Initialise the MicroViewGauge widget with default style.
 */
-MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max):MicroViewWidget(newx, newy, min, max) {
-	style=0;
-	radius=15;
-	noValDraw=false;
-	prevValue=minValue;
-	needFirstDraw=true;
+MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max):
+	MicroViewWidget(newx, newy, min, max),
+	style(0),
+	radius(15),
+	noValDraw(false),
+	prevValue(value)
+{
 	drawFace();
 	draw();
 }
@@ -1645,7 +1650,10 @@ MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t 
 	Initialise the MicroViewGauge widget with style WIDGETSTYLE0 or WIDGETSTYLE1.
 	Add WIDGETNOVALUE to the style to suppress displaying the numeric value. E.g. WIDGETSTYLE0 + WIDGETNOVALUE
 */
-MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):MicroViewWidget(newx, newy, min, max) {
+MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):
+	MicroViewWidget(newx, newy, min, max),
+	prevValue(value)
+{
 	noValDraw = sty & WIDGETNOVALUE; // set "no value draw" flag as specified
 
 	if ((sty & ~WIDGETNOVALUE) == WIDGETSTYLE0) {
@@ -1656,8 +1664,7 @@ MicroViewGauge::MicroViewGauge(uint8_t newx, uint8_t newy, int16_t min, int16_t 
 		style=1;
 		radius=23;
 	}
-	prevValue=minValue;
-	needFirstDraw=true;
+
 	drawFace();
 	draw();
 }

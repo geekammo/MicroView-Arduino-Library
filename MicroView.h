@@ -230,7 +230,6 @@ private:
 
 class MicroViewWidget {
 public:
-	bool needFirstDraw;
 	MicroViewWidget(uint8_t newx, uint8_t newy, int16_t min, int16_t max);
 	uint8_t getX();
 	uint8_t getY();
@@ -254,11 +253,12 @@ public:
 protected:
 	uint8_t posX;
 	uint8_t posY;
-	int16_t maxValue;
 	int16_t minValue;
+	int16_t maxValue;
 	int16_t value;
 	uint8_t valLen;
 	uint8_t maxValLen;
+	bool needFirstDraw;
 private:
 	void setMaxValLen();
 };
@@ -271,7 +271,7 @@ public:
 	void drawFace();
 private:
 	void drawPointer();
-	uint8_t totalTicks, style;
+	uint8_t style, totalTicks;
 	bool noValDraw;
 	int16_t prevValue;
 };
@@ -284,7 +284,7 @@ public:
 	void drawFace();
 private:
 	void drawPointer();
-	uint8_t radius, style;
+	uint8_t style, radius;
 	bool noValDraw;
 	int16_t prevValue;
 };
