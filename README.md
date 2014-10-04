@@ -92,6 +92,14 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.22b: 4th October 2014 by Scott Allen and Ben Lewis**
+* replaced circleFill() with a faster algorithm, better looking circle - Ben Lewis
+* replaced sprintf with dedicated code, reduced program size - Scott Allen
+* added getValLen method for widgets to return length of current value - Scott Allen
+* initialised widget with minimum value instead of 0 - Scott Allen
+* added getValLen and getMaxValLen keywords
+* modified MicroViewDemo example to use getValLen method - Scott Allen
+
 **v1.21b: 22nd September 2014 by Esmit Pérez and Scott Allen**
 * re-factored code if/else with switch - Esmit Pérez
 * simplified draw() to remove redundant code - Esmit Pérez
