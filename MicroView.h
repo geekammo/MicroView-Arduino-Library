@@ -75,6 +75,8 @@
 #define PAGE				0
 #define ALL					1
 
+#define UPSIDEDOWN			1
+
 #define WIDGETSTYLE0			0
 #define WIDGETSTYLE1			1
 // Added for Vertical slider styles
@@ -147,6 +149,7 @@ class MicroView : public Print{
 public:
 	MicroView(void) {};
 	void begin(void);
+	void begin(bool flipDisplay);
 	void end(void);
 
 //#if ARDUINO >= 100
