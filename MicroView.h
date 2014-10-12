@@ -147,6 +147,7 @@ class MicroView : public Print{
 public:
 	MicroView(void) {};
 	void begin(void);
+	void begin(bool flipDisplay);
 	void end(void);
 
 //#if ARDUINO >= 100

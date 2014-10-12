@@ -37,6 +37,7 @@
 #define recvLEN			100
 char serInStr[recvLEN];		// TODO - need to fix a value so that this will not take up too much memory.
 uint8_t serCmd[recvLEN];
+bool upsideDown;
 
 // Add the font name as declared in the header file.  Remove as many as possible to get conserve FLASH memory.
 const unsigned char *MicroView::fontsPointer[]={
@@ -168,8 +169,72 @@ void MicroView::begin() {
 
 	clear(ALL);							// Erase hardware memory inside the OLED controller to avoid random data in memory.
 
+	upsideDown = false;
+
 	//	Serial.begin(115200);				// removed the Serial.begin() so that user can decide their own baud rate.
 }
+
+/** \brief Initialisation of MicroView Library.
+
+Setup IO pins for SPI port then send initialisation commands to the SSD1306 controller inside the OLED.
+Allows display to be displayed upside down.
+*/
+void MicroView::begin(bool flipDisplay) {
+	// default 5x7 font
+	setFontType(0);
+	setColor(WHITE);
+	setDrawMode(NORM);
+	setCursor(0, 0);
+
+	RESETLOW;
+
+	// Enable 3.3V power to the display
+	pinMode(OLEDPWR, OUTPUT);
+	digitalWrite(OLEDPWR, HIGH);
+
+	// Give some time for power to stabilise
+	delay(10);
+
+	RESETHIGH;
+	delay(5);
+	RESETLOW;
+
+	// Setup SPI frequency
+	MVSPI.setClockDivider(SPI_CLOCK_DIV2);
+	// Initialise SPI
+	MVSPI.begin();
+
+	delay(5);
+
+	// bring out of reset
+	RESETHIGH;
+
+	delay(10);
+
+	// Init sequence for 64x48 OLED module
+	//	command(DISPLAYOFF);				// 0xAE
+	//	command(SETDISPLAYCLOCKDIV, 0x80);	// 0xD5 / the suggested ratio 0x80
+	command(SETMULTIPLEX, 0x2F);		// 0xA8
+	//	command(SETDISPLAYOFFSET, 0x0);		// 0xD3 / no offset
+	//	command(SETSTARTLINE | 0x0);		// 0x40 / line #0
+	command(CHARGEPUMP, 0x14);			// 0x8D / enable charge pump
+	//	command(NORMALDISPLAY);				// 0xA6
+	//	command(DISPLAYALLONRESUME);		// 0xA4
+	command(SEGREMAP | 0x1);
+	command(COMSCANDEC);
+	//	command(SETCOMPINS, 0x12);			// 0xDA
+	command(SETCONTRAST, 0x8F);			// 0x81
+	command(SETPRECHARGE, 0xF1);		// 0xD9
+	command(SETVCOMDESELECT, 0x40);		// 0xDB
+	command(DISPLAYON);					//--turn on oled panel
+
+	clear(ALL);							// Erase hardware memory inside the OLED controller to avoid random data in memory.
+
+	upsideDown = flipDisplay;
+
+	//	Serial.begin(115200);				// removed the Serial.begin() so that user can decide their own baud rate.
+}
+
 
 /** \brief Power off the OLED display.
 
@@ -341,12 +406,35 @@ void MicroView::display(void) {
 
 	MVSPI.packetBegin();
 	DCHIGH;
-	MVSPI.transfer(screenmemory[0]);
-	for (int i = 1; i < LCDWIDTH * LCDPAGES; i++) {
-		MVSPI.wait();
-		MVSPI.transfer(screenmemory[i]);
+	//Upside-down printing
+	if (upsideDown)
+	{
+		for (int i = LCDPAGES - 1; i >= 0; i--)
+		{
+			for (int j = LCDWIDTH - 1; j >= 0; j--)
+			{
+				//Bitwise rotates values
+				uint8_t value = screenmemory[j + LCDWIDTH * i];
+				value = ((value >> 1) & 0x55) | ((value << 1) & 0xaa);
+				value = ((value >> 2) & 0x33) | ((value << 2) & 0xcc);
+				value = ((value >> 4) & 0x0f) | ((value << 4) & 0xf0);
+				MVSPI.wait();
+				MVSPI.transfer(value);
+			}
+		}
+		MVSPI.packetEnd();
 	}
-	MVSPI.packetEnd();
+
+	//Normal up-right printing
+	else
+	{
+		MVSPI.transfer(screenmemory[0]);
+		for (int i = 1; i < LCDWIDTH * LCDPAGES; i++) {
+			MVSPI.wait();
+			MVSPI.transfer(screenmemory[i]);
+		}
+		MVSPI.packetEnd();
+	}
 
 	command(SETADDRESSMODE, 2);	// Restore to page addressing mode
 }
