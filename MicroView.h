@@ -75,6 +75,8 @@
 #define PAGE				0
 #define ALL					1
 
+#define UPSIDEDOWN			1
+
 #define WIDGETSTYLE0			0
 #define WIDGETSTYLE1			1
 // Added for Vertical slider styles
