@@ -1441,19 +1441,29 @@ void MicroViewWidget::setMaxValue(int16_t max) {
 */
 uint8_t MicroViewWidget::getMaxValLen() { return maxValLen; }
 
-/** \brief Set current value.
+/** \brief Set current value and update widget.
 
-	The current value of the widget is set to the variable passed in.
+	The current value of the widget is set to the variable passed in and the widget is drawn with the new value.
 */
 void MicroViewWidget::setValue(int16_t val) {
+	setValue(val, true);
+}
+
+/** \brief Set current value with optional update.
+
+	The current value of the widget is set to the variable passed in. The widget is drawn with the new value if the doDraw argument is true.
+*/
+void MicroViewWidget::setValue(int16_t val, boolean doDraw) {
 	if ((val<=maxValue) && (val>=minValue)) {
 		value = val;
 		valLen = getInt16PrintLen(val);
-		this->draw();
+		if (doDraw) {
+			this->draw();
+		}
 	}
 }
 
-/** \brief Get the print length of the value
+/** \brief Get the print length of the value.
 
 	Return the number of characters that would be printed using uView.print(value) for the current value.
 */
