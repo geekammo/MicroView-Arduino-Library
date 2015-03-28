@@ -92,6 +92,9 @@ void loop() {
 </code></pre>
 
 ## History
+**v1.23b: 29th March 2015 by Scott Allen
+* added overloaded setValue() function to add a boolean argument doDraw which controls whether the display buffer is updated.
+
 **v1.22b: 4th October 2014 by Scott Allen and Ben Lewis**
 * replaced circleFill() with a faster algorithm, better looking circle - Ben Lewis
 * replaced sprintf with dedicated code, reduced program size - Scott Allen
