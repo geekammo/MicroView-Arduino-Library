@@ -241,6 +241,7 @@ public:
 	void setMinValue(int16_t min);
 	void setMaxValue(int16_t max);
 	void setValue(int16_t val);
+	void setValue(int16_t val, boolean doDraw);
 	uint8_t getValLen();
 	uint8_t getMaxValLen();
 	/** \brief Draw widget value overridden by child class. */
@@ -273,7 +274,7 @@ public:
 private:
 	void drawPointer();
 	uint8_t style, totalTicks;
-	bool noValDraw;
+	boolean noValDraw;
 	int16_t prevValue;
 };
 
@@ -286,7 +287,7 @@ public:
 private:
 	void drawPointer();
 	uint8_t style, radius;
-	bool noValDraw;
+	boolean noValDraw;
 	int16_t prevValue;
 };
 
