@@ -22,7 +22,7 @@ Arduino library for MicroView.
 
 ### Example 1 - Hello World!
 <pre><code>
-#include &lt;MicroView.h&gt;
+# include &lt;MicroView.h&gt;
 
 void setup() {
     uView.begin();
@@ -36,7 +36,7 @@ void loop() {
 
 ### Example 2 - Basic Drawing
 <pre><code>
-#include &lt;MicroView.h&gt;
+# include &lt;MicroView.h&gt;
 
 void setup() {
     uView.begin();
@@ -56,7 +56,7 @@ void loop() {
 
 ### Example 3 - Widgets
 <pre><code>
-#include &lt;MicroView.h&gt;
+# include &lt;MicroView.h&gt;
 
 MicroViewWidget *widget,*widget2;
 
@@ -78,7 +78,7 @@ void loop() {
 
 ### Example 4 - Communication
 <pre><code>
-#include &lt;MicroView.h&gt;
+# include &lt;MicroView.h&gt;
 
 void setup() {
     uView.begin();
